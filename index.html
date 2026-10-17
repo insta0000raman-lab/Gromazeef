@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gromazeef</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0c0c12;color:white;font-family:Arial,sans-serif}
+header{position:sticky;top:0;background:#101018;padding:16px;border-bottom:1px solid #292936;display:flex;justify-content:space-between;align-items:center;z-index:5}
+.logo{font-size:25px;font-weight:900;background:linear-gradient(90deg,#ff4d9d,#8d70ff);background-clip:text;color:transparent}
+button{cursor:pointer;border:0;border-radius:10px;padding:10px 14px;font-weight:bold}
+.primary{background:#8b5cf6;color:white}
+main{max-width:600px;margin:auto;padding:14px 12px 85px}
+.stories{display:flex;gap:14px;overflow:auto;padding:12px 0 20px}
+.story{text-align:center;min-width:65px;font-size:12px}
+.circle{width:58px;height:58px;border-radius:50%;background:linear-gradient(45deg,#ff4d9d,#ffb347,#8b5cf6);padding:3px;margin:auto auto 7px}
+.circle div{height:100%;border-radius:50%;background:#252535;display:grid;place-items:center;font-size:21px}
+.card{background:#171722;border:1px solid #2b2b3b;border-radius:15px;margin-bottom:18px;overflow:hidden}
+.user{padding:13px;display:flex;align-items:center;gap:10px}
+.avatar{width:38px;height:38px;background:#39314f;border-radius:50%;display:grid;place-items:center}
+.username{font-weight:bold}.sub{font-size:12px;color:#aaa;margin-top:3px}
+.media{height:330px;background:linear-gradient(135deg,#241a39,#46294d,#171722);display:grid;place-items:center;text-align:center;padding:20px}
+.media span{font-size:50px}.media p{color:#ddd}
+.actions{padding:12px;display:flex;gap:18px}
+.action{background:none;color:white;font-size:20px;padding:3px}
+.caption{padding:0 13px 14px;line-height:1.5}
+nav{position:fixed;bottom:0;left:0;right:0;background:#101018;border-top:1px solid #292936;display:flex;justify-content:space-around;padding:12px 4px;z-index:10}
+nav button{background:none;color:#ccc;font-size:20px;padding:6px}
+nav button.active{color:#c4a5ff}
+.panel{display:none}.panel.active{display:block}
+input{width:100%;padding:13px;background:#1b1b28;color:white;border:1px solid #39394b;border-radius:10px;margin:10px 0}
+.empty{text-align:center;padding:45px 15px;color:#bbb}
+footer{text-align:center;color:#777;font-size:12px;padding:15px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Gromazeef</div>
+  <button class="primary" onclick="showPanel('upload')">＋ Create</button>
+</header>
+
+<main>
+<section id="home" class="panel active">
+  <div class="stories">
+    <div class="story"><div class="circle"><div>＋</div></div>Your story</div>
+    <div class="story"><div class="circle"><div>😎</div></div>Creator01</div>
+    <div class="story"><div class="circle"><div>🎧</div></div>Music</div>
+    <div class="story"><div class="circle"><div>🔥</div></div>Trending</div>
+    <div class="story"><div class="circle"><div>🌍</div></div>Explore</div>
+  </div>
+
+  <article class="card">
+    <div class="user"><div class="avatar">G</div><div><div class="username">gromazeef</div><div class="sub">Welcome to your new community</div></div></div>
+    <div class="media"><div><span>🌍</span><h2>Your world. Your videos.</h2><p>Gromazeef is getting ready.</p></div></div>
+    <div class="actions">
+      <button class="action" onclick="like(this)">♡</button>
+      <button class="action" onclick="alert('Comments will be available after backend setup.')">♧</button>
+      <button class="action" onclick="sharePost()">↗</button>
+    </div>
+    <div class="caption"><b>gromazeef</b> Welcome! This is the beginning of something new. ✨</div>
+  </article>
+</section>
+
+<section id="reels" class="panel">
+  <div class="empty"><div style="font-size:55px">🎬</div><h2>Gromazeef Reels</h2><p>Your vertical video feed will appear here.</p><button class="primary" onclick="showPanel('upload')">＋ Create a Reel</button></div>
+</section>
+
+<section id="search" class="panel">
+  <h2>Explore Gromazeef</h2>
+  <input id="searchInput" placeholder="Search usernames..." oninput="searchDemo()">
+  <div id="searchResult" class="empty">Find creators and discover videos.</div>
+</section>
+
+<section id="upload" class="panel">
+  <h2>Create a post</h2>
+  <p>Choose a photo or video to preview it on your device.</p>
+  <input type="file" id="fileInput" accept="image/*,video/*">
+  <input id="captionInput" placeholder="Write a caption...">
+  <div id="preview"></div>
+  <button class="primary" onclick="previewPost()">Preview Post</button>
+  <p class="sub">Demo only: this does not upload to a server yet.</p>
+</section>
+
+<section id="profile" class="panel">
+  <div class="empty">
+    <div style="font-size:60px">👤</div>
+    <h2>gromazeef</h2>
+    <p>Your profile will live here.</p>
+    <button class="primary" onclick="showPanel('upload')">＋ Create Post</button>
+  </div>
+</section>
+</main>
+
+<nav>
+<button class="active" onclick="showPanel('home',this)">⌂</button>
+<button onclick="showPanel('search',this)">⌕</button>
+<button onclick="showPanel('upload',this)">＋</button>
+<button onclick="showPanel('reels',this)">▷</button>
+<button onclick="showPanel('profile',this)">◉</button>
+</nav>
+
+<footer>Gromazeef © 2026 · Built for creators</footer>
+
+<script>
+function showPanel(id,btn){
+ document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+ if(btn) btn.classList.add('active');
+ else if(id==='upload') document.querySelectorAll('nav button')[2].classList.add('active');
+ window.scrollTo(0,0);
+}
+function like(btn){
+ if(btn.dataset.liked==='yes'){btn.dataset.liked='no';btn.textContent='♡';btn.style.color='white'}
+ else{btn.dataset.liked='yes';btn.textContent='♥';btn.style.color='#ff4d8d'}
+}
+function sharePost(){
+ if(navigator.share) navigator.share({title:'Gromazeef',url:location.href});
+ else alert('Copy this page link to share Gromazeef.');
+}
+function searchDemo(){
+ let q=document.getElementById('searchInput').value.trim();
+ document.getElementById('searchResult').textContent=q?'Search will work after connecting the database.':'Find creators and discover videos.';
+}
+function previewPost(){
+ const f=document.getElementById('fileInput').files[0];
+ const box=document.getElementById('preview');
+ if(!f){box.textContent='Please select a photo or video first.';return}
+ const url=URL.createObjectURL(f);
+ box.innerHTML='';
+ const el=document.createElement(f.type.startsWith('video/')?'video':'img');
+ el.src=url;el.style.maxWidth='100%';el.style.maxHeight='350px';
+ if(el.tagName==='VIDEO')el.controls=true;
+ box.appendChild(el);
+ const p=document.createElement('p');
+ p.textContent='Caption: '+document.getElementById('captionInput').value;
+ box.appendChild(p);
+}
+</script>
+</body>
+  </html>
