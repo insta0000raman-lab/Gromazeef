@@ -1,142 +1,699 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gromazeef</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090b12">
+<title>GROMAZEEF — Create. Connect. Go Viral.</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
 <style>
+:root{
+--bg:#090b12;
+--panel:#121725;
+--line:#282e40;
+--txt:#f5f6ff;
+--muted:#9aa3b8;
+--pink:#ff4c9a;
+--violet:#8a65ff;
+--cyan:#4de3d2
+}
 *{box-sizing:border-box}
-body{margin:0;background:#0c0c12;color:white;font-family:Arial,sans-serif}
-header{position:sticky;top:0;background:#101018;padding:16px;border-bottom:1px solid #292936;display:flex;justify-content:space-between;align-items:center;z-index:5}
-.logo{font-size:25px;font-weight:900;background:linear-gradient(90deg,#ff4d9d,#8d70ff);background-clip:text;color:transparent}
-button{cursor:pointer;border:0;border-radius:10px;padding:10px 14px;font-weight:bold}
-.primary{background:#8b5cf6;color:white}
-main{max-width:600px;margin:auto;padding:14px 12px 85px}
-.stories{display:flex;gap:14px;overflow:auto;padding:12px 0 20px}
-.story{text-align:center;min-width:65px;font-size:12px}
-.circle{width:58px;height:58px;border-radius:50%;background:linear-gradient(45deg,#ff4d9d,#ffb347,#8b5cf6);padding:3px;margin:auto auto 7px}
-.circle div{height:100%;border-radius:50%;background:#252535;display:grid;place-items:center;font-size:21px}
-.card{background:#171722;border:1px solid #2b2b3b;border-radius:15px;margin-bottom:18px;overflow:hidden}
-.user{padding:13px;display:flex;align-items:center;gap:10px}
-.avatar{width:38px;height:38px;background:#39314f;border-radius:50%;display:grid;place-items:center}
-.username{font-weight:bold}.sub{font-size:12px;color:#aaa;margin-top:3px}
-.media{height:330px;background:linear-gradient(135deg,#241a39,#46294d,#171722);display:grid;place-items:center;text-align:center;padding:20px}
-.media span{font-size:50px}.media p{color:#ddd}
-.actions{padding:12px;display:flex;gap:18px}
-.action{background:none;color:white;font-size:20px;padding:3px}
-.caption{padding:0 13px 14px;line-height:1.5}
-nav{position:fixed;bottom:0;left:0;right:0;background:#101018;border-top:1px solid #292936;display:flex;justify-content:space-around;padding:12px 4px;z-index:10}
-nav button{background:none;color:#ccc;font-size:20px;padding:6px}
-nav button.active{color:#c4a5ff}
-.panel{display:none}.panel.active{display:block}
-input{width:100%;padding:13px;background:#1b1b28;color:white;border:1px solid #39394b;border-radius:10px;margin:10px 0}
-.empty{text-align:center;padding:45px 15px;color:#bbb}
-footer{text-align:center;color:#777;font-size:12px;padding:15px}
+body{
+margin:0;
+background:radial-gradient(ellipse at 65% -10%,#38215a 0,transparent 38%),var(--bg);
+color:var(--txt);
+font-family:'DM Sans',sans-serif
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.app{
+max-width:1400px;
+margin:auto;
+min-height:100vh;
+padding:22px;
+display:grid;
+grid-template-columns:225px minmax(0,1fr) 260px;
+gap:24px
+}
+.side{position:sticky;top:20px;height:calc(100vh - 40px)}
+.brand{
+font:700 22px 'Space Grotesk';
+display:flex;
+align-items:center;
+gap:10px;
+margin:8px 0 34px
+}
+.logo{
+width:39px;height:39px;border-radius:14px;
+display:grid;place-items:center;
+background:linear-gradient(135deg,var(--pink),var(--violet),var(--cyan));
+font-weight:700
+}
+.nav{display:grid;gap:7px}
+.nav button{
+padding:14px;text-align:left;border-radius:14px;
+background:none;color:#b9c1d4;font-weight:600;
+border:0
+}
+.nav button:hover,.nav button.active{
+background:#8a65ff25;color:#fff
+}
+.nav .primary,.primary{
+background:linear-gradient(110deg,var(--pink),var(--violet));
+color:white;border:0
+}
+.sidefoot{
+position:absolute;bottom:0;color:var(--muted);
+font-size:11px;line-height:1.8
+}
+.main{min-width:0}
+.top{display:flex;gap:12px;align-items:center;margin-bottom:20px}
+.search{
+flex:1;min-width:0;background:#131827;
+border:1px solid var(--line);border-radius:14px;
+padding:13px 15px;color:white;outline:none
+}
+.btn{
+padding:12px 15px;border-radius:13px;
+border:1px solid var(--line);
+background:#171d2b;color:white;font-weight:600
+}
+.hero{
+border:1px solid #ffffff12;border-radius:25px;padding:27px;
+background:linear-gradient(115deg,#321d4b,#17172d 62%,#123438);
+position:relative;overflow:hidden
+}
+.eyebrow{
+font-size:11px;letter-spacing:2px;
+text-transform:uppercase;color:#d6baff;font-weight:700
+}
+.hero h1{
+font:700 clamp(27px,4vw,38px)/1.1 'Space Grotesk';
+margin:13px 0
+}
+.hero p{max-width:480px;color:#c7c7dc;line-height:1.6;font-size:14px}
+.hero .btn{margin-top:6px}
+.section{
+display:flex;justify-content:space-between;
+align-items:center;margin:23px 0 12px
+}
+.section h2{font:600 19px 'Space Grotesk';margin:0}
+.muted{color:var(--muted);font-size:12px}
+.stories{display:flex;gap:16px;overflow:auto;padding:3px 0 10px}
+.story{text-align:center;min-width:65px;font-size:12px;color:#c5cbda}
+.ring{
+width:60px;height:60px;border-radius:50%;
+padding:3px;margin:auto auto 6px;
+background:linear-gradient(135deg,var(--pink),var(--violet),var(--cyan))
+}
+.ring div{
+height:100%;border-radius:50%;background:#202638;
+border:2px solid var(--bg);display:grid;place-items:center;font-size:22px
+}
+.composer,.post,.card{
+background:linear-gradient(145deg,#151a29,#10141e);
+border:1px solid var(--line);border-radius:20px
+}
+.composer{display:flex;align-items:center;gap:10px;padding:14px}
+.avatar{
+width:41px;height:41px;border-radius:50%;
+background:linear-gradient(135deg,var(--pink),var(--violet));
+display:grid;place-items:center;font-weight:700;flex-shrink:0
+}
+.composer input{
+flex:1;min-width:0;background:#0b101a;
+border:1px solid var(--line);border-radius:12px;
+padding:13px;color:white
+}
+.empty{
+padding:35px 18px;margin-top:14px;text-align:center;
+border:1px dashed #3a4053;border-radius:20px;
+color:var(--muted);line-height:1.7
+}
+.post{padding:16px;margin-top:14px;overflow:hidden}
+.posthead{display:flex;gap:10px;align-items:center}
+.posthead small{display:block;color:var(--muted);margin-top:4px}
+.caption{white-space:pre-wrap;line-height:1.6;overflow-wrap:anywhere}
+.media{
+width:100%;max-height:560px;object-fit:contain;
+background:#080a10;border-radius:14px;margin-top:10px
+}
+.actions{display:flex;gap:8px;margin-top:12px}
+.actions button{
+background:#202638;border:0;padding:9px 12px;
+border-radius:11px;color:white
+}
+.card{padding:17px;margin-bottom:14px}
+.card h3{font:600 16px 'Space Grotesk';margin:0 0 12px}
+.card p{font-size:13px;color:var(--muted);line-height:1.6}
+.trend{padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+.trend:last-child{border:0}
+.modal{
+display:none;position:fixed;inset:0;z-index:10;
+background:#03040bdc;backdrop-filter:blur(9px);
+padding:18px;place-items:center;overflow:auto
+}
+.box{
+width:min(430px,100%);background:#121725;
+border:1px solid #343a4e;border-radius:23px;padding:24px
+}
+.box h2{font:700 26px 'Space Grotesk';margin:6px 0}
+.box p{color:var(--muted);font-size:13px}
+.box label{display:block;font-size:12px;color:#c4cbe0;margin:13px 0 6px}
+.box input,.box textarea{
+width:100%;background:#090e17;border:1px solid var(--line);
+border-radius:11px;padding:12px;color:white
+}
+.wide{width:100%;margin-top:15px}
+.close{
+float:right;background:#262c3c;border:0;
+border-radius:9px;color:white;padding:7px 10px
+}
+.status{font-size:12px;color:var(--cyan);min-height:18px;margin-top:10px}
+.switch{display:flex;gap:8px}
+.switch button{flex:1}
+.mobilebrand,.bottom{display:none}
+button:disabled{opacity:.55;cursor:wait}
+@media(max-width:1000px){
+.app{grid-template-columns:190px minmax(0,1fr);gap:16px;padding:15px}
+.right{display:none}
+}
+@media(max-width:680px){
+.app{display:block;padding:12px 12px 80px}
+.side{display:none}
+.mobilebrand{
+display:flex;align-items:center;gap:8px;
+font:700 19px 'Space Grotesk';white-space:nowrap
+}
+.top{flex-wrap:wrap}
+.search{order:3;flex-basis:100%}
+.hero{padding:22px}
+.bottom{
+display:flex;position:fixed;bottom:0;left:0;right:0;
+z-index:5;justify-content:space-around;
+padding:10px 4px calc(10px + env(safe-area-inset-bottom));
+background:#0b1019ed;border-top:1px solid var(--line)
+}
+.bottom button{background:none;color:#d5d9e8;font-size:20px;border:0}
+.bottom span{display:block;font-size:10px}
+.composer{flex-wrap:wrap}
+.composer input{flex-basis:calc(100% - 55px)}
+.composer .btn{flex:1}
+}
 </style>
 </head>
+
 <body>
-<header>
-  <div class="logo">Gromazeef</div>
-  <button class="primary" onclick="showPanel('upload')">＋ Create</button>
+<div class="app">
+
+<aside class="side">
+<div class="brand"><div class="logo">G</div>GROMAZEEF</div>
+<nav class="nav">
+<button class="active" data-page="home">⌂ &nbsp; Home Feed</button>
+<button data-page="discover">⌕ &nbsp; Discover</button>
+<button data-page="zeef">▷ &nbsp; Zeef</button>
+<button data-page="strip">◉ &nbsp; Strip</button>
+<button data-page="profile">♙ &nbsp; My Profile</button>
+<button data-page="saved">▣ &nbsp; Saved</button>
+<button data-page="activity">♧ &nbsp; Activity</button>
+<button class="primary" id="createNav">＋ &nbsp; Create post</button>
+</nav>
+<div class="sidefoot">CREATE. CONNECT. GO VIRAL.<br>GROMAZEEF</div>
+</aside>
+
+<main class="main">
+
+<header class="top">
+<div class="mobilebrand"><div class="logo">G</div>GROMAZEEF</div>
+<input class="search" id="search" placeholder="Search captions…">
+<button class="btn" id="account">Log in</button>
+<button class="btn primary" id="join">Join free ↗</button>
 </header>
 
-<main>
-<section id="home" class="panel active">
-  <div class="stories">
-    <div class="story"><div class="circle"><div>＋</div></div>Your story</div>
-    <div class="story"><div class="circle"><div>😎</div></div>Creator01</div>
-    <div class="story"><div class="circle"><div>🎧</div></div>Music</div>
-    <div class="story"><div class="circle"><div>🔥</div></div>Trending</div>
-    <div class="story"><div class="circle"><div>🌍</div></div>Explore</div>
-  </div>
-
-  <article class="card">
-    <div class="user"><div class="avatar">G</div><div><div class="username">gromazeef</div><div class="sub">Welcome to your new community</div></div></div>
-    <div class="media"><div><span>🌍</span><h2>Your world. Your videos.</h2><p>Gromazeef is getting ready.</p></div></div>
-    <div class="actions">
-      <button class="action" onclick="like(this)">♡</button>
-      <button class="action" onclick="alert('Comments will be available after backend setup.')">♧</button>
-      <button class="action" onclick="sharePost()">↗</button>
-    </div>
-    <div class="caption"><b>gromazeef</b> Welcome! This is the beginning of something new. ✨</div>
-  </article>
+<section class="hero">
+<div class="eyebrow">Your world. Your people.</div>
+<h1>Make your moment<br>mean something.</h1>
+<p>Discover creators, share your story, and find your people. Welcome to a new space for creativity.</p>
+<button class="btn primary" id="heroJoin">Get started free ↗</button>
 </section>
 
-<section id="reels" class="panel">
-  <div class="empty"><div style="font-size:55px">🎬</div><h2>Gromazeef Reels</h2><p>Your vertical video feed will appear here.</p><button class="primary" onclick="showPanel('upload')">＋ Create a Reel</button></div>
-</section>
+<div class="section">
+<h2>🟣 Strip circles</h2>
+<span class="muted">Stories • 24 hours</span>
+</div>
 
-<section id="search" class="panel">
-  <h2>Explore Gromazeef</h2>
-  <input id="searchInput" placeholder="Search usernames..." oninput="searchDemo()">
-  <div id="searchResult" class="empty">Find creators and discover videos.</div>
-</section>
+<div class="stories">
+<div class="story"><div class="ring"><div>＋</div></div>Your Strip</div>
+<div class="story"><div class="ring"><div>🎨</div></div>Creators</div>
+<div class="story"><div class="ring"><div>🎧</div></div>Music</div>
+<div class="story"><div class="ring"><div>📸</div></div>Moments</div>
+<div class="story"><div class="ring"><div>🌍</div></div>Explore</div>
+</div>
 
-<section id="upload" class="panel">
-  <h2>Create a post</h2>
-  <p>Choose a photo or video to preview it on your device.</p>
-  <input type="file" id="fileInput" accept="image/*,video/*">
-  <input id="captionInput" placeholder="Write a caption...">
-  <div id="preview"></div>
-  <button class="primary" onclick="previewPost()">Preview Post</button>
-  <p class="sub">Demo only: this does not upload to a server yet.</p>
-</section>
+<div class="section">
+<h2 id="feedTitle">Your feed</h2>
+<span class="muted" id="feedSubtitle">Fresh ideas, real people</span>
+</div>
 
-<section id="profile" class="panel">
-  <div class="empty">
-    <div style="font-size:60px">👤</div>
-    <h2>gromazeef</h2>
-    <p>Your profile will live here.</p>
-    <button class="primary" onclick="showPanel('upload')">＋ Create Post</button>
-  </div>
-</section>
+<div class="composer">
+<div class="avatar" id="myAvatar">G</div>
+<input id="quickCaption" placeholder="What are you creating today?">
+<button class="btn primary" id="quickCreate">＋ Create</button>
+</div>
+
+<div id="feed">
+<div class="empty">
+<div style="font-size:34px">✦</div>
+<strong style="color:white">Your next chapter starts here.</strong><br>
+Connect your Supabase project to load your feed and share posts.
+</div>
+</div>
 </main>
 
-<nav>
-<button class="active" onclick="showPanel('home',this)">⌂</button>
-<button onclick="showPanel('search',this)">⌕</button>
-<button onclick="showPanel('upload',this)">＋</button>
-<button onclick="showPanel('reels',this)">▷</button>
-<button onclick="showPanel('profile',this)">◉</button>
+<aside class="right">
+<div class="card">
+<h3>✨ Your creator space</h3>
+<p>Set up your profile, share moments and find your community.</p>
+<button class="btn primary" style="width:100%" id="rightJoin">Create your profile ↗</button>
+</div>
+<div class="card">
+<h3>🔥 Explore topics</h3>
+<div class="trend"># CreatorLife<br><span class="muted">Ideas & inspiration</span></div>
+<div class="trend"># MusicCulture<br><span class="muted">Sounds and artists</span></div>
+<div class="trend"># DailyMoments<br><span class="muted">Life in frames</span></div>
+<div class="trend"># ZeefClips<br><span class="muted">Short-form video</span></div>
+</div>
+<div class="card">
+<h3>🛡️ Account safety</h3>
+<p>Use only your Supabase publishable key in this browser file. Never expose a secret or service_role key.</p>
+</div>
+</aside>
+</div>
+
+<nav class="bottom">
+<button data-page="home">⌂<span>Home</span></button>
+<button data-page="discover">⌕<span>Discover</span></button>
+<button id="mobileCreate">＋<span>Create</span></button>
+<button data-page="zeef">▷<span>Zeef</span></button>
+<button data-page="profile">♙<span>Profile</span></button>
 </nav>
 
-<footer>Gromazeef © 2026 · Built for creators</footer>
+<div class="modal" id="authModal">
+<div class="box">
+<button class="close" id="closeAuth">✕</button>
+<div class="brand"><div class="logo">G</div>GROMAZEEF</div>
+<h2 id="authTitle">Welcome back.</h2>
+<p id="authHint">Log in to find your people.</p>
+<div class="switch">
+<button class="btn" id="loginMode">Log in</button>
+<button class="btn" id="signupMode">Create account</button>
+</div>
+<form id="authForm">
+<label>Email</label>
+<input type="email" id="email" autocomplete="email" required placeholder="you@example.com">
+<label>Password</label>
+<input type="password" id="password" minlength="6" required placeholder="At least 6 characters">
+<div id="signupFields" style="display:none">
+<label>Username</label>
+<input id="username" maxlength="30" placeholder="your_unique_name">
+<label>Display name</label>
+<input id="fullName" maxlength="60" placeholder="Your name">
+</div>
+<button class="btn primary wide" id="authSubmit">Log in ↗</button>
+<div class="status" id="authStatus"></div>
+</form>
+</div>
+</div>
+
+<div class="modal" id="postModal">
+<div class="box">
+<button class="close" id="closePost">✕</button>
+<h2>Create a post</h2>
+<p>Share a photo or video with your community. Maximum file size: 50 MB.</p>
+<form id="postForm">
+<label>Caption</label>
+<textarea id="caption" rows="3" maxlength="2200" placeholder="Write a caption…"></textarea>
+<label>Photo or video</label>
+<input type="file" id="media" accept="image/*,video/*" required>
+<button class="btn primary wide" type="submit">Upload post ↗</button>
+<div class="status" id="postStatus"></div>
+</form>
+</div>
+</div>
 
 <script>
-function showPanel(id,btn){
- document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
- document.getElementById(id).classList.add('active');
- document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
- if(btn) btn.classList.add('active');
- else if(id==='upload') document.querySelectorAll('nav button')[2].classList.add('active');
- window.scrollTo(0,0);
+// Supabase Project URL and Publishable Key yahan paste karo.
+// Secret/service_role key kabhi frontend mein mat daalna.
+const SUPABASE_URL = "https://jwkpergysvdicyzvqypy.supabas";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Y2J7myGmTRSrRGN5PxnbYg_m0";
+const BUCKET = "gromazeef-media";
+
+let sb = null;
+let user = null;
+let mode = "login";
+let page = "home";
+
+const $ = id => document.getElementById(id);
+
+const isConfigured =
+  SUPABASE_URL.startsWith("https://") &&
+  !SUPABASE_URL.includes("PASTE_") &&
+  SUPABASE_PUBLISHABLE_KEY &&
+  !SUPABASE_PUBLISHABLE_KEY.includes("PASTE_");
+
+if (isConfigured && window.supabase) {
+  sb = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
 }
-function like(btn){
- if(btn.dataset.liked==='yes'){btn.dataset.liked='no';btn.textContent='♡';btn.style.color='white'}
- else{btn.dataset.liked='yes';btn.textContent='♥';btn.style.color='#ff4d8d'}
+
+function say(id, message) {
+  $(id).textContent = message;
 }
-function sharePost(){
- if(navigator.share) navigator.share({title:'Gromazeef',url:location.href});
- else alert('Copy this page link to share Gromazeef.');
+
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[c]));
 }
-function searchDemo(){
- let q=document.getElementById('searchInput').value.trim();
- document.getElementById('searchResult').textContent=q?'Search will work after connecting the database.':'Find creators and discover videos.';
+
+function initials(value) {
+  return (value || "G").trim().slice(0, 1).toUpperCase();
 }
-function previewPost(){
- const f=document.getElementById('fileInput').files[0];
- const box=document.getElementById('preview');
- if(!f){box.textContent='Please select a photo or video first.';return}
- const url=URL.createObjectURL(f);
- box.innerHTML='';
- const el=document.createElement(f.type.startsWith('video/')?'video':'img');
- el.src=url;el.style.maxWidth='100%';el.style.maxHeight='350px';
- if(el.tagName==='VIDEO')el.controls=true;
- box.appendChild(el);
- const p=document.createElement('p');
- p.textContent='Caption: '+document.getElementById('captionInput').value;
- box.appendChild(p);
+
+function openAuth(selectedMode = "login") {
+  setMode(selectedMode);
+  $("authModal").style.display = "grid";
+  say(
+    "authStatus",
+    sb ? "" : "Setup required: add your Supabase URL and Publishable key."
+  );
 }
-</script>
-</body>
-  </html>
+
+function setMode(selectedMode) {
+  mode = selectedMode;
+  const signup = mode === "signup";
+
+  $("authTitle").textContent = signup
+    ? "Join GROMAZEEF."
+    : "Welcome back.";
+
+  $("authHint").textContent = signup
+    ? "Create an account and start sharing."
+    : "Log in to find your people.";
+
+  $("signupFields").style.display = signup ? "block" : "none";
+  $("authSubmit").textContent = signup
+    ? "Create account ↗"
+    : "Log in ↗";
+
+  $("username").required = signup;
+  $("fullName").required = signup;
+
+  $("password").autocomplete = signup
+    ? "new-password"
+    : "current-password";
+}
+
+async function ensureProfile(authUser, requestedUsername, requestedName) {
+  const { data, error } = await sb
+    .from("profiles")
+    .select("id,username,full_name")
+    .eq("id", authUser.id)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (data) return data;
+
+  let username = (
+    requestedUsername ||
+    authUser.email.split("@")[0] ||
+    "creator"
+  ).toLowerCase().replace(/[^a-z0-9_.]/g, "").slice(0, 30);
+
+  if (username.length < 3) {
+    username = "user" + authUser.id.replace(/-/g, "").slice(0, 12);
+  }
+
+  const result = await sb.from("profiles").insert({
+    id: authUser.id,
+    username,
+    full_name: requestedName || username
+  }).select().single();
+
+  if (result.error) throw result.error;
+  return result.data;
+}
+
+async function refresh() {
+  if (!sb) {
+    $("feed").innerHTML =
+      '<div class="empty"><strong style="color:white">Website setup needed</strong><br>Replace the two Supabase placeholders in this HTML file.</div>';
+    return;
+  }
+
+  const { data, error } = await sb.auth.getSession();
+
+  if (error) {
+    $("feed").textContent = error.message;
+    return;
+  }
+
+  user = data.session?.user || null;
+
+  $("account").textContent = user ? "Log out" : "Log in";
+  $("join").textContent = user ? "Account" : "Join free ↗";
+  $("myAvatar").textContent = user ? initials(user.email) : "G";
+
+  if (user) {
+    await loadFeed();
+  } else {
+    $("feed").innerHTML =
+      '<div class="empty"><div style="font-size:34px">✦</div><strong style="color:white">Your next chapter starts here.</strong><br>Log in to load the community feed and share your first post.<br><br><button class="btn primary" id="feedLogin">Sign in / Create account</button></div>';
+
+    $("feedLogin").onclick = () => openAuth();
+  }
+}
+
+async function loadFeed() {
+  if (!user || !sb) return;
+
+  const box = $("feed");
+  box.innerHTML = '<div class="empty">Loading feed…</div>';
+
+  const { data: posts, error } = await sb
+    .from("posts")
+    .select("id,user_id,caption,media_url,media_type,created_at")
+    .order("created_at", { ascending: false })
+    .limit(40);
+
+  if (error) {
+    box.innerHTML =
+      '<div class="empty">Could not load posts: ' + esc(error.message) + '</div>';
+    return;
+  }
+
+  if (!posts || !posts.length) {
+    box.innerHTML =
+      '<div class="empty"><strong style="color:white">Your feed is ready for its first post.</strong><br>Share a photo or video to get started.</div>';
+    return;
+  }
+
+  box.innerHTML = "";
+
+  for (const post of posts) {
+    const profileResult = await sb
+      .from("profiles")
+      .select("username,full_name")
+      .eq("id", post.user_id)
+      .maybeSingle();
+
+    const profile = profileResult.data || {
+      username: "creator",
+      full_name: "Creator"
+    };
+
+    let mediaHTML = "";
+
+    try {
+      const { data, error: mediaError } = await sb.storage
+        .from(BUCKET)
+        .createSignedUrl(post.media_url, 3600);
+
+      if (mediaError) throw mediaError;
+
+      const url = esc(data.signedUrl);
+
+      if (post.media_type === "video") {
+        mediaHTML =
+          `<video class="media" src="${url}" controls playsinline preload="metadata"></video>`;
+      } else {
+        mediaHTML =
+          `<img class="media" src="${url}" alt="Post media" loading="lazy">`;
+      }
+    } catch (error) {
+      mediaHTML =
+        '<p class="muted">Media could not load. Check your Storage permissions.</p>';
+    }
+
+    const article = document.createElement("article");
+    article.className = "post";
+
+    article.innerHTML = `
+      <div class="posthead">
+        <div class="avatar">${esc(initials(profile.full_name || profile.username))}</div>
+        <div>
+          <strong>${esc(profile.full_name || profile.username)}</strong>
+          <small>@${esc(profile.username)} · ${esc(new Date(post.created_at).toLocaleDateString())}</small>
+        </div>
+      </div>
+      ${post.caption ? `<p class="caption">${esc(post.caption)}</p>` : ""}
+      ${mediaHTML}
+    `;
+
+    box.appendChild(article);
+  }
+}
+
+async function createPost(event) {
+  event.preventDefault();
+
+  if (!user) {
+    openAuth();
+    return;
+  }
+
+  const file = $("media").files[0];
+
+  if (!file) return;
+
+  if (file.size > 50 * 1024 * 1024) {
+    say("postStatus", "File is larger than 50 MB.");
+    return;
+  }
+
+  if (
+    !file.type.startsWith("image/") &&
+    !file.type.startsWith("video/")
+  ) {
+    say("postStatus", "Choose an image or video.");
+    return;
+  }
+
+  const submitButton = $("postForm").querySelector('button[type="submit"]');
+  submitButton.disabled = true;
+
+  let uploadedPath = null;
+
+  try {
+    say("postStatus", "Uploading media…");
+
+    const extension = (file.name.split(".").pop() || "bin")
+      .replace(/[^a-z0-9]/gi, "")
+      .slice(0, 8) || "bin";
+
+    uploadedPath =
+      `${user.id}/${Date.now()}-${crypto.randomUUID()}.${extension}`;
+
+    const upload = await sb.storage
+      .from(BUCKET)
+      .upload(uploadedPath, file, {
+        contentType: file.type,
+        upsert: false
+      });
+
+    if (upload.error) throw upload.error;
+
+    say("postStatus", "Saving post…");
+
+    const result = await sb.from("posts").insert({
+      user_id: user.id,
+      caption: $("caption").value.trim(),
+      media_url: uploadedPath,
+      media_type: file.type.startsWith("video/") ? "video" : "image"
+    });
+
+    if (result.error) throw result.error;
+
+    say("postStatus", "Post shared! ✨");
+    $("postForm").reset();
+
+    setTimeout(() => {
+      $("postModal").style.display = "none";
+      loadFeed();
+    }, 700);
+
+  } catch (error) {
+    if (uploadedPath) {
+      await sb.storage.from(BUCKET).remove([uploadedPath]);
+    }
+
+    say("postStatus", error.message || "Upload failed. Check Storage and table policies.");
+  } finally {
+    submitButton.disabled = false;
+  }
+}
+
+$("account").onclick = async () => {
+  if (!user) {
+    openAuth();
+    return;
+  }
+
+  const { error } = await sb.auth.signOut();
+
+  if (error) alert(error.message);
+  else await refresh();
+};
+
+$("join").onclick = () => {
+  if (user) {
+    sb.auth.signOut().then(refresh);
+  } else {
+    openAuth("signup");
+  }
+};
+
+$("heroJoin").onclick = () => openAuth("signup");
+$("rightJoin").onclick = () => openAuth("signup");
+
+$("closeAuth").onclick = () => {
+  $("authModal").style.display = "none";
+};
+
+$("closePost").onclick = () => {
+  $("postModal").style.display = "none";
+};
+
+$("loginMode").onclick = () => setMode("login");
+$("signupMode").onclick = () => setMode("signup");
+
+$("createNav").onclick =
+$("mobileCreate").onclick =
+$("quickCreate").onclick = () => {
+  if (!user) {
+    openAuth();
+    return;
+  }
+
+  $("postModal").style.display = "grid";
+
+  if ($("quickCaption").value) {
+    $("caption").value = $("quickCaption").value;
+  }
+};
+
+$("postForm").onsubmit = createPost;
+
+$("authForm").onsubmit = async event => {
+  event.preventDefault();
+
+  
