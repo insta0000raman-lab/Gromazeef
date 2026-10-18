@@ -1078,7 +1078,142 @@ textarea.field{resize:vertical;min-height:90px}
     state.uploadObjectUrl=URL.createObjectURL(file);
     $("#upload-preview").innerHTML=isVideo?`<video class="preview-media" src="${state.uploadObjectUrl}" controls playsinline></video>`:`<img class="preview-media" src="${state.uploadObjectUrl}" alt="Upload preview">`;
   }
+async function showSavedPosts() {
+  if (!state.user) {
+    toast("Please log in first.", "error");
+    return;
+  }
 
+  const result = await state.client
+    .from("saved_posts")
+    .select("post_id, created_at")
+    .eq("user_id", state.user.id)
+    .order("created_at", { ascending: false });
+
+  if (result.error) {
+    toast("Saved posts load nahi hue: " + friendlyError(result.error), "error");
+    return;
+  }
+
+  const ids = (result.data || []).map(row => row.post_id);
+
+  if (!ids.length) {
+    openModal(
+      "Saved posts",
+      `<div class="empty-state">
+        <div class="empty-icon">♧</div>
+        <h3>No saved posts yet</h3>
+        <p>Feed mein kisi post ko Save karo. Woh yahan dikhegi.</p>
+      </div>`
+    );
+    return;
+  }
+
+  const postsResult = await state.client
+    .from("posts")
+    .select("*")
+    .in("id", ids);
+
+  if (postsResult.error) {
+    toast("Posts load nahi hue: " + friendlyError(postsResult.error), "error");
+    return;
+  }
+
+  const posts = await enrichPosts(postsResult.data || []);
+  await loadSocialState(posts);
+
+  openModal(
+    "Your saved posts",
+    `<div class="feed">
+      ${posts.length
+        ? posts.map(postHTML).join("")
+        : `<p class="muted">Saved posts abhi available nahi hain.</p>`}
+    </div>`
+  );
+}
+
+async function showArchivedPosts() {
+  if (!state.user) {
+    toast("Please log in first.", "error");
+    return;
+  }
+
+  const result = await state.client
+    .from("archived_posts")
+    .select("post_id, created_at")
+    .eq("user_id", state.user.id)
+    .order("created_at", { ascending: false });
+
+  if (result.error) {
+    toast("Archive load nahi hua: " + friendlyError(result.error), "error");
+    return;
+  }
+
+  const ids = (result.data || []).map(row => row.post_id);
+
+  if (!ids.length) {
+    openModal(
+      "Your archive",
+      `<div class="empty-state">
+        <div class="empty-icon">▣</div>
+        <h3>Your archive is empty</h3>
+        <p>Jab tum apni post archive karoge, woh yahan dikhegi.</p>
+      </div>`
+    );
+    return;
+  }
+
+  const postsResult = await state.client
+    .from("posts")
+    .select("*")
+    .in("id", ids)
+    .eq("user_id", state.user.id);
+
+  if (postsResult.error) {
+    toast("Archived posts load nahi hue: " + friendlyError(postsResult.error), "error");
+    return;
+  }
+
+  const posts = await enrichPosts(postsResult.data || []);
+
+  openModal(
+    "Your archive",
+    `<div class="feed">
+      ${posts.length
+        ? posts.map(post => `
+          <div class="card card-pad">
+            ${postHTML(post)}
+            <button class="btn primary"
+              data-unarchive-post="${esc(post.id)}">
+              Restore post
+            </button>
+          </div>
+        `).join("")
+        : `<p class="muted">Archive mein dikhane ke liye posts nahi hain.</p>`}
+    </div>`
+  );
+
+  $$("[data-unarchive-post]").forEach(button => {
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+
+      const restore = await state.client
+        .from("archived_posts")
+        .delete()
+        .eq("post_id", button.dataset.unarchivePost)
+        .eq("user_id", state.user.id);
+
+      if (restore.error) {
+        toast("Post restore nahi hui: " + friendlyError(restore.error), "error");
+        button.disabled = false;
+        return;
+      }
+
+      toast("Post archive se restore ho gayi.", "success");
+      await showArchivedPosts();
+    });
+  });
+}
   async function uploadPost(event) {
     event.preventDefault();
     const file=state.selectedFile;
