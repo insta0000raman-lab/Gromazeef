@@ -3,339 +3,302 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#080b16">
-<title>GROMAZEEF — Connect Beyond</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+<meta name="theme-color" content="#090b14">
+<title>GROMAZEEF</title>
 <style>
-:root{
-  --bg:#080b16;
-  --panel:#101629;
-  --panel2:#151d34;
-  --border:#273452;
-  --text:#f4f7ff;
-  --muted:#94a3c5;
-  --blue:#00d5ff;
-  --purple:#9b5cff;
-  --pink:#ff42bc;
-  --danger:#ff5368;
+:root {
+  --bg:#090b14;
+  --panel:#121626;
+  --panel2:#191f33;
+  --text:#f5f7ff;
+  --muted:#9ba5c1;
+  --blue:#5c8dff;
+  --purple:#a36aff;
+  --border:#2a3048;
+  --danger:#ff5475;
   --radius:18px;
 }
-*{box-sizing:border-box}
-body{
-  margin:0;background:var(--bg);color:var(--text);
+* {box-sizing:border-box}
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
   font-family:system-ui,-apple-system,Arial,sans-serif;
 }
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-button:disabled{opacity:.5;cursor:not-allowed}
-.hidden{display:none!important}
-.muted{color:var(--muted)}
-.small{font-size:12px}
-a{color:var(--blue)}
-.topbar{
-  position:sticky;top:0;z-index:20;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:13px max(14px,calc((100% - 980px)/2));
-  background:#080b16ed;border-bottom:1px solid var(--border);
-  backdrop-filter:blur(18px);
+button,input,textarea {font:inherit}
+button {cursor:pointer}
+button:disabled {opacity:.5;cursor:not-allowed}
+a {color:inherit}
+.hidden,[hidden] {display:none!important}
+.topbar {
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+  border-bottom:1px solid var(--border);
+  background:#0b0e19;
+  position:sticky;
+  top:0;
+  z-index:10;
 }
-.brand{
-  font-size:22px;font-weight:950;letter-spacing:1px;
-  background:linear-gradient(90deg,var(--blue),var(--purple),var(--pink));
-  -webkit-background-clip:text;background-clip:text;color:transparent;
+.brand {
+  font-weight:900;
+  font-size:22px;
+  letter-spacing:1px;
+  background:linear-gradient(90deg,var(--blue),var(--purple));
+  color:transparent;
+  background-clip:text;
 }
-.iconbtn,.btn,.navbtn{
-  border:1px solid var(--border);border-radius:12px;
-  color:var(--text);background:var(--panel2);padding:10px 14px;
+.icon-btn,.btn {
+  border:0;
+  border-radius:12px;
+  padding:10px 14px;
+  background:linear-gradient(120deg,var(--blue),var(--purple));
+  color:white;
+  font-weight:700;
 }
-.btn.primary{
-  color:#050816;border:0;font-weight:800;
-  background:linear-gradient(100deg,var(--blue),#8c76ff);
+.secondary {
+  background:var(--panel2);
+  border:1px solid var(--border);
 }
-.btn.danger{color:white;background:#541b31}
-.btn.full{width:100%}
-button:active{transform:scale(.98)}
-input,textarea,select{
-  width:100%;padding:12px;margin:5px 0 12px;
-  background:#090e1e;color:var(--text);
-  border:1px solid var(--border);border-radius:12px;
+.danger {background:#562034}
+.page {
+  width:min(720px,100%);
+  margin:auto;
+  padding:16px;
+  padding-bottom:95px;
+}
+.card {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px;
+  margin-bottom:16px;
+  overflow:hidden;
+}
+h1,h2,h3,p {overflow-wrap:anywhere}
+.muted {color:var(--muted);font-size:13px}
+input,textarea {
+  width:100%;
+  padding:13px;
+  margin:6px 0 12px;
+  color:var(--text);
+  background:#0b0f1d;
+  border:1px solid var(--border);
+  border-radius:12px;
   outline:none;
 }
-input:focus,textarea:focus{
-  border-color:var(--blue);box-shadow:0 0 0 2px #00d5ff18;
+input:focus,textarea:focus {border-color:var(--blue)}
+textarea {resize:vertical;min-height:75px}
+.row {display:flex;gap:10px;align-items:center}
+.row>* {min-width:0}
+.row input {flex:1}
+.actions {display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.actions button {flex:1}
+.avatar {
+  width:44px;height:44px;flex-shrink:0;
+  display:grid;place-items:center;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  font-weight:800;
+  overflow:hidden;
 }
-textarea{resize:vertical;min-height:80px}
-label{font-size:13px;color:var(--muted)}
-.card{
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:var(--radius);padding:15px;margin-bottom:15px;
-  min-width:0;
+.avatar img {width:100%;height:100%;object-fit:cover}
+.post-head {display:flex;align-items:center;gap:10px}
+.post-media {
+  width:100%;
+  max-height:620px;
+  object-fit:contain;
+  background:#05060a;
+  border-radius:12px;
+  margin-top:12px;
 }
-main{max-width:680px;margin:20px auto;padding:0 12px 95px}
-#authScreen{max-width:440px;margin:8vh auto;padding:18px}
-.authlogo{text-align:center;font-size:34px;margin-bottom:5px}
-.authsub{text-align:center;color:var(--muted);margin-bottom:24px}
-.tabs{display:flex;gap:8px;margin-bottom:18px}
-.tabs button{flex:1}
-.section-title{font-size:19px;font-weight:800;margin:8px 0 14px}
-.row{display:flex;align-items:center;gap:12px}
-.between{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.avatar{
-  width:44px;height:44px;border-radius:50%;object-fit:cover;
-  background:var(--panel2);border:2px solid #7667ff;flex-shrink:0;
+.empty {
+  text-align:center;
+  padding:28px 12px;
+  color:var(--muted);
 }
-.posthead{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.posthead p{margin:3px 0}
-.postmedia{
-  display:block;width:100%;max-height:650px;object-fit:contain;
-  background:#03050b;border-radius:14px;
+.bottom-nav {
+  position:fixed;
+  bottom:0;left:0;right:0;
+  display:flex;justify-content:space-around;
+  background:#0b0e19f5;
+  border-top:1px solid var(--border);
+  padding:9px 4px calc(9px + env(safe-area-inset-bottom));
+  z-index:20;
 }
-.caption{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.actions button{flex:1;min-width:70px}
-.striprow{
-  display:flex;gap:14px;overflow-x:auto;padding:7px 2px 14px;
+.nav-btn {
+  border:0;background:none;color:var(--muted);
+  padding:8px 6px;font-size:12px;
 }
-.stripitem{
-  background:none;border:0;color:var(--text);min-width:68px;
-  text-align:center;font-size:12px;overflow-wrap:anywhere;
+.nav-btn.active {color:#a8c3ff}
+.nav-btn span {display:block;font-size:19px;margin-bottom:3px}
+.auth-wrap {
+  width:min(420px,100%);
+  margin:40px auto;
+  padding:18px;
 }
-.stripcircle{
-  width:62px;height:62px;padding:3px;border-radius:50%;
-  margin:0 auto 6px;
-  background:linear-gradient(140deg,var(--blue),var(--purple),var(--pink));
+.toast {
+  position:fixed;bottom:90px;left:50%;
+  transform:translateX(-50%);
+  z-index:100;
+  background:#252c42;color:white;
+  border:1px solid #454e6b;
+  padding:12px 18px;border-radius:12px;
+  width:max-content;max-width:90%;
 }
-.stripcircle img{
-  width:100%;height:100%;object-fit:cover;border-radius:50%;
-  border:3px solid var(--bg);
+.profile-result {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;
 }
-.grid{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;
+.profile-result-left {display:flex;align-items:center;gap:10px;min-width:0}
+.stats {display:flex;gap:20px;margin-top:15px}
+.strip-row {
+  display:flex;gap:12px;overflow-x:auto;padding:8px 0 14px;
 }
-.grid img,.grid video{
-  width:100%;aspect-ratio:3/4;object-fit:cover;
-  background:var(--panel2);border-radius:6px;
+.strip-item {
+  min-width:70px;text-align:center;
+  background:none;border:0;color:var(--text);
 }
-.bottomnav{
-  position:fixed;bottom:0;left:0;right:0;z-index:30;
-  display:flex;justify-content:center;gap:5px;
-  padding:9px 5px calc(9px + env(safe-area-inset-bottom));
-  background:#080b16f5;border-top:1px solid var(--border);
-  backdrop-filter:blur(18px);
+.strip-circle {
+  width:60px;height:60px;margin:auto auto 6px;
+  border:3px solid var(--purple);border-radius:50%;
+  display:grid;place-items:center;overflow:hidden;
 }
-.navbtn{
-  flex:1;max-width:125px;padding:10px 4px;
-  border-color:transparent;background:transparent;
-  font-size:12px;
+.strip-circle img {width:100%;height:100%;object-fit:cover}
+.comment-row {display:flex;gap:8px;align-items:center}
+.comment-row input {margin-bottom:0}
+.message {
+  max-width:85%;padding:10px 12px;
+  margin:8px 0;border-radius:14px;
+  overflow-wrap:anywhere;
 }
-.navbtn.active{color:var(--blue);background:#15213a}
-.empty{text-align:center;padding:25px;color:var(--muted)}
-.toastbox{
-  position:fixed;top:75px;left:50%;transform:translateX(-50%);
-  z-index:100;background:#1b2946;border:1px solid var(--blue);
-  padding:12px 17px;border-radius:13px;max-width:90%;box-shadow:0 8px 35px #0008;
-}
-.profilehero{text-align:center;padding:22px 10px}
-.profilehero .avatar{width:90px;height:90px;margin:auto}
-.profilestats{display:flex;justify-content:center;gap:28px;margin:18px 0}
-.profilestats b{display:block;font-size:18px}
-.profilestats span{font-size:12px;color:var(--muted)}
-hr{border:0;border-top:1px solid var(--border);margin:15px 0}
-@media(min-width:760px){
-  main{padding-top:12px}
-  .bottomnav{gap:18px}
+.mine {margin-left:auto;background:#34356d}
+.theirs {background:#22283b}
+#chatMessages {max-height:50vh;overflow:auto}
+@media(min-width:850px) {
+  .page {padding-top:24px}
+  .bottom-nav {left:50%;right:auto;transform:translateX(-50%);
+    width:min(650px,100%);border:1px solid var(--border);
+    border-radius:18px 18px 0 0}
 }
 </style>
 </head>
-
 <body>
-
 <header class="topbar">
   <div class="brand">GROMAZEEF</div>
-  <button class="iconbtn" onclick="showPage('search')" aria-label="Search">⌕ Search</button>
+  <button class="icon-btn secondary" onclick="showPage('searchPage')">⌕ Search</button>
 </header>
 
-<section id="authScreen">
-  <div class="authlogo brand">GROMAZEEF</div>
-  <p class="authsub">Your world. Your people. Your ZEEF.</p>
-
+<section id="authScreen" class="auth-wrap">
   <div class="card">
-    <div class="tabs">
-      <button class="btn primary" id="loginTab" onclick="authMode('login')">Login</button>
-      <button class="btn" id="signupTab" onclick="authMode('signup')">Create account</button>
-    </div>
-
+    <h1 class="brand">Welcome to GROMAZEEF 🔥</h1>
+    <p class="muted">Connect. Create. Share your world.</p>
     <form id="authForm">
-      <div id="signupFields" class="hidden">
-        <label>Full name</label>
-        <input id="fullName" maxlength="70" autocomplete="name" placeholder="Your name">
-
-        <label>Username</label>
-        <input id="username" maxlength="30" autocomplete="username"
-          placeholder="your_username">
-      </div>
-
       <label>Email</label>
-      <input id="email" type="email" required autocomplete="email"
-        placeholder="you@example.com">
-
+      <input id="authEmail" type="email" autocomplete="email" required>
       <label>Password</label>
-      <input id="password" type="password" required minlength="6"
-        autocomplete="current-password" placeholder="At least 6 characters">
-
-      <button class="btn primary full" id="authSubmit" type="submit">Login</button>
+      <input id="authPassword" type="password" minlength="6" required>
+      <button class="btn" id="authSubmit" type="submit" style="width:100%">Login</button>
     </form>
-
-    <button class="btn full" style="margin-top:10px"
-      onclick="forgotPassword()">Forgot password?</button>
+    <button class="btn secondary" style="width:100%;margin-top:10px" onclick="authMode()">
+      Create account / Switch mode
+    </button>
+    <button class="btn secondary" style="width:100%;margin-top:10px" onclick="forgotPassword()">
+      Forgot password?
+    </button>
+    <p id="authHint" class="muted">Login to continue.</p>
   </div>
-  <p class="muted small" style="text-align:center">
-    GROMAZEEF · Connect responsibly
-  </p>
 </section>
 
-<section id="appScreen" class="hidden">
-<main>
-
-  <section id="homePage">
+<main id="appScreen" hidden>
+  <section id="homePage" class="page">
     <div class="card">
-      <div class="between">
-        <div class="section-title">Your STRIPS</div>
-        <button class="btn" onclick="openStripUpload()">＋ Add</button>
-      </div>
-      <div id="stripRow" class="striprow">
-        <div class="muted">Loading Strips…</div>
-      </div>
+      <h2>STRIP · Stories</h2>
+      <div id="stripRow" class="strip-row"></div>
+      <button class="btn" onclick="openStripUpload()">＋ Add story</button>
     </div>
-
-    <div class="card">
-      <div class="section-title">Create a post</div>
-      <form id="postForm">
-        <label>Photo or video</label>
-        <input id="postFile" type="file" accept="image/*,video/*" required>
-        <label>Caption</label>
-        <textarea id="postCaption" maxlength="2200"
-          placeholder="Share something with your world…"></textarea>
-        <button class="btn primary full" type="submit">Publish post</button>
-      </form>
-    </div>
-
-    <div class="between">
-      <div class="section-title">Your Feed</div>
-      <button class="btn" onclick="loadFeed()">↻ Refresh</button>
-    </div>
-    <div id="homeFeed"><div class="card empty">Your feed will appear here.</div></div>
+    <form id="postForm" class="card">
+      <h2>Create post</h2>
+      <textarea id="postCaption" maxlength="2000" placeholder="What's happening?"></textarea>
+      <input id="postFile" type="file" accept="image/*,video/*">
+      <button class="btn" type="submit">Publish post</button>
+    </form>
+    <div id="homeFeed"><div class="empty">Loading posts...</div></div>
   </section>
 
-  <section id="searchPage" class="hidden">
-    <div class="section-title">Discover people</div>
+  <section id="searchPage" class="page" hidden>
     <div class="card">
-      <input id="searchInput" maxlength="60" placeholder="Search usernames or names…"
-        oninput="debouncedSearch()">
+      <h2>Discover people</h2>
+      <input id="searchInput" placeholder="Search username or name">
       <div id="searchResults"></div>
     </div>
   </section>
 
-  <section id="zeefPage" class="hidden">
-    <div class="section-title">🎬 ZEEF</div>
-    <div class="card">
-      <div class="section-title">Create a ZEEF</div>
-      <form id="zeefForm">
-        <label>Video</label>
-        <input id="zeefFile" type="file" accept="video/*" required>
-        <label>Caption</label>
-        <textarea id="zeefCaption" maxlength="1500"
-          placeholder="Your next ZEEF…"></textarea>
-        <button class="btn primary full" type="submit">Publish ZEEF</button>
-      </form>
-    </div>
-    <div id="zeefFeed"><div class="card empty">Loading ZEEFs…</div></div>
+  <section id="zeefPage" class="page" hidden>
+    <form id="zeefForm" class="card">
+      <h2>Upload ZEEF</h2>
+      <p class="muted">Share a short video.</p>
+      <input id="zeefFile" type="file" accept="video/*" required>
+      <textarea id="zeefCaption" maxlength="1000" placeholder="Add a caption"></textarea>
+      <button class="btn" type="submit">Publish ZEEF</button>
+    </form>
+    <div id="zeefFeed"></div>
   </section>
 
-  <section id="profilePage" class="hidden">
-    <div class="card profilehero">
-      <div id="profileSummary">Loading profile…</div>
-    </div>
-
+  <section id="chatPage" class="page" hidden>
     <div class="card">
-      <div class="section-title">Edit profile</div>
-      <form id="profileForm">
-        <label>Profile photo</label>
-        <input id="avatarFile" type="file" accept="image/*">
-
-        <label>Full name</label>
-        <input id="editName" maxlength="70" placeholder="Full name">
-
-        <label>Username</label>
-        <input id="editUsername" maxlength="30" placeholder="username">
-
-        <label>Bio</label>
-        <textarea id="editBio" maxlength="300" placeholder="Tell people about yourself…"></textarea>
-
-        <button class="btn primary full" type="submit">Save profile</button>
-      </form>
-    </div>
-
-    <div class="card">
-      <div class="section-title">Account settings</div>
-      <label>Change email</label>
-      <input id="newEmail" type="email" placeholder="New email address">
-      <button class="btn full" onclick="changeEmail()">Update email</button>
-      <hr>
-      <label>Change password</label>
-      <input id="newPassword" type="password" minlength="6"
-        placeholder="New password">
-      <button class="btn full" onclick="changePassword()">Update password</button>
-      <hr>
-      <button class="btn danger full" onclick="logout()">Log out</button>
-    </div>
-
-    <div class="section-title">Your posts</div>
-    <div id="myPosts" class="grid"></div>
-  </section>
-
-  <section id="chatPage" class="hidden">
-    <div class="section-title">💬 Z-CHAT</div>
-    <div class="card">
-      <p>Choose a user from Search to open a chat.</p>
-      <p class="muted small">Messaging needs a compatible chat table and access policies in Supabase.</p>
+      <h2>Z-CHAT</h2>
       <div id="chatUsers"></div>
     </div>
-    <div id="chatPanel" class="hidden card">
-      <div class="between">
-        <b id="chatTitle">Z-CHAT</b>
-        <button class="btn" onclick="closeChat()">Close</button>
-      </div>
+    <div id="chatPanel" class="card" hidden>
+      <h3 id="chatTitle">Chat</h3>
       <div id="chatMessages"></div>
-      <form id="chatForm" class="row">
-        <input id="chatText" maxlength="2000" placeholder="Write a message…" required>
-        <button class="btn primary" type="submit">Send</button>
+      <form id="chatForm">
+        <input id="chatText" maxlength="3000" placeholder="Write a message..." required>
+        <button class="btn" type="submit">Send</button>
       </form>
     </div>
   </section>
 
+  <section id="profilePage" class="page" hidden>
+    <div id="profileSummary" class="card"></div>
+    <form id="profileEditForm" class="card">
+      <h2>Edit profile</h2>
+      <label>Name</label><input id="editName" maxlength="80">
+      <label>Username</label><input id="editUsername" maxlength="30">
+      <label>Bio</label><textarea id="editBio" maxlength="300"></textarea>
+      <label>Avatar</label><input id="avatarFile" type="file" accept="image/*">
+      <button class="btn" type="submit">Save profile</button>
+    </form>
+    <form id="emailForm" class="card">
+      <h3>Change email</h3>
+      <input id="newEmail" type="email" placeholder="New email">
+      <button class="btn" type="submit">Update email</button>
+    </form>
+    <form id="passwordForm" class="card">
+      <h3>Change password</h3>
+      <input id="newPassword" type="password" minlength="8" placeholder="New password">
+      <button class="btn" type="submit">Update password</button>
+    </form>
+    <h2>My posts</h2>
+    <div id="myPosts"></div>
+    <button class="btn danger" onclick="logout()">Log out</button>
+  </section>
 </main>
-</section>
 
-<nav id="bottomNav" class="bottomnav hidden">
-  <button class="navbtn active" data-page="home" onclick="showPage('home')">⌂<br>Home</button>
-  <button class="navbtn" data-page="search" onclick="showPage('search')">⌕<br>Search</button>
-  <button class="navbtn" data-page="zeef" onclick="showPage('zeef')">▶<br>ZEEF</button>
-  <button class="navbtn" data-page="chat" onclick="showPage('chat')">✉<br>Z-CHAT</button>
-  <button class="navbtn" data-page="profile" onclick="showPage('profile')">◉<br>Profile</button>
+<nav class="bottom-nav" id="bottomNav" hidden>
+  <button class="nav-btn active" data-page="homePage"><span>⌂</span>Home</button>
+  <button class="nav-btn" data-page="searchPage"><span>⌕</span>Search</button>
+  <button class="nav-btn" data-page="zeefPage"><span>▶</span>ZEEF</button>
+  <button class="nav-btn" data-page="chatPage"><span>✉</span>Z-CHAT</button>
+  <button class="nav-btn" data-page="profilePage"><span>◎</span>Profile</button>
 </nav>
-
-<div id="toastBox" class="toastbox hidden" role="status"></div>
-
+<div id="toastBox" class="toast" hidden></div>
 <script>
-/* PART 1/10 END — PART 2 will contain Supabase setup and shared helpers. */
- /* =========================
-   PART 2/10
-   SUPABASE + AUTHENTICATION
-========================= */
-
+/* PART 1 END */
+  // PART 2 START
 const SUPABASE_URL = "https://jwkpergysvdicyzvqypy.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Y2J7myGmTRSrRGN5PxnbYg_m07KlrmB";
 
@@ -343,861 +306,507 @@ let db = null;
 let currentUser = null;
 let currentProfile = null;
 let authAction = "login";
-let toastTimer = null;
-let searchTimer = null;
 let activeChatUser = null;
+let searchTimer = null;
+let toastTimer = null;
 
-function initSupabase(){
-  if(!window.supabase){
-    toast("Supabase library load nahi hui. Internet check karo.");
-    return false;
-  }
-
-  try{
-    db = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
-    return true;
-  }catch(error){
-    toast("Supabase connection setup error.");
-    console.error(error);
-    return false;
-  }
-}
-
-function toast(message){
+function toast(message) {
   const box = document.getElementById("toastBox");
-  if(!box){
-    console.log(message);
-    return;
-  }
-
+  if (!box) return;
   box.textContent = String(message || "");
-  box.classList.remove("hidden");
-
+  box.hidden = false;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>{
-    box.classList.add("hidden");
-  },3500);
+  toastTimer = setTimeout(() => box.hidden = true, 3500);
 }
 
-function esc(value){
-  return String(value ?? "").replace(/[&<>"']/g,char=>({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
   })[char]);
 }
 
-function safeUrl(value){
-  if(typeof value !== "string" || !value.trim()) return "";
+function avatar(url, name) {
+  const fallback = esc((name || "U").slice(0,1).toUpperCase());
+  if (!url) return `<div class="avatar">${fallback}</div>`;
+  return `<div class="avatar"><img src="${esc(url)}" alt="" onerror="this.parentElement.textContent='${fallback}'"></div>`;
+}
 
-  try{
-    const url = new URL(value,location.origin);
-
-    if(url.protocol !== "https:" && url.protocol !== "http:"){
-      return "";
-    }
-
-    return url.href;
-  }catch{
-    return "";
+function mediaMarkup(url, type) {
+  if (!url) return "";
+  const safe = esc(url);
+  if (type === "video") {
+    return `<video class="post-media" src="${safe}" controls playsinline preload="metadata"></video>`;
   }
+  return `<img class="post-media" src="${safe}" alt="Post media" loading="lazy">`;
 }
 
-function avatar(profile){
-  const url = safeUrl(profile?.avatar_url);
-
-  if(url) return url;
-
-  const label = encodeURIComponent(
-    (profile?.full_name || profile?.username || "G").trim().slice(0,1).toUpperCase()
-  );
-
-  return "https://placehold.co/100x100/151d34/00d5ff?text="+label;
-}
-
-function getError(error){
-  if(!error) return "Unknown error";
-  return error.message || error.error_description || String(error);
-}
-
-function setBusy(button,busy,label){
-  if(!button) return;
-
-  if(busy){
-    button.dataset.originalText = button.textContent;
-    button.disabled = true;
-    button.textContent = label || "Please wait…";
-  }else{
-    button.disabled = false;
-    button.textContent = button.dataset.originalText || label || "Submit";
-    delete button.dataset.originalText;
+async function initSupabase() {
+  if (!window.supabase) {
+    throw new Error("Supabase library load nahi hui. Internet check karo.");
   }
+  db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 }
 
-function authMode(mode){
-  authAction = mode === "signup" ? "signup" : "login";
-
-  const signup = authAction === "signup";
-
-  document.getElementById("signupFields").classList.toggle("hidden",!signup);
-  document.getElementById("loginTab").classList.toggle("primary",!signup);
-  document.getElementById("signupTab").classList.toggle("primary",signup);
-
+function authMode() {
+  authAction = authAction === "login" ? "signup" : "login";
   document.getElementById("authSubmit").textContent =
-    signup ? "Create account" : "Login";
-
-  document.getElementById("password").autocomplete =
-    signup ? "new-password" : "current-password";
-
-  document.getElementById("fullName").required = signup;
-  document.getElementById("username").required = signup;
+    authAction === "login" ? "Login" : "Create account";
+  document.getElementById("authHint").textContent =
+    authAction === "login"
+      ? "Login to continue."
+      : "Naya account banane ke liye details bharo.";
 }
 
-async function ensureProfile(user){
-  if(!db || !user) return null;
+async function ensureProfile() {
+  if (!currentUser) return;
 
-  const {data:existing,error:readError} = await db
+  const { data: profile, error } = await db
     .from("profiles")
     .select("*")
-    .eq("id",user.id)
+    .eq("id", currentUser.id)
     .maybeSingle();
 
-  if(readError) throw readError;
-
-  if(existing){
-    currentProfile = existing;
-    return existing;
-  }
-
-  const metadata = user.user_metadata || {};
-
-  const full_name =
-    metadata.full_name ||
-    metadata.name ||
-    user.email?.split("@")[0] ||
-    "Gromazeef User";
-
-  const username =
-    metadata.username ||
-    ("user_"+user.id.replace(/-/g,"").slice(0,12));
-
-  const {data,error} = await db
-    .from("profiles")
-    .insert({
-      id:user.id,
-      full_name,
-      username,
-      bio:"",
-      avatar_url:""
-    })
-    .select()
-    .single();
-
-  if(error){
-    /*
-      Agar RLS ya username uniqueness ki wajah se insert fail ho,
-      error ko chupane ke bajaye caller ko dikhayenge.
-    */
-    throw error;
-  }
-
-  currentProfile = data;
-  return data;
-}
-
-document.getElementById("authForm").addEventListener("submit",async event=>{
-  event.preventDefault();
-
-  if(!db){
-    toast("Supabase initialize nahi hua.");
+  if (error) throw error;
+  if (profile) {
+    currentProfile = profile;
     return;
   }
 
+  const base = (currentUser.email || "user")
+    .split("@")[0].toLowerCase()
+    .replace(/[^a-z0-9_.]/g, "")
+    .slice(0,20) || "user";
+
+  const newProfile = {
+    id: currentUser.id,
+    username: `${base}_${currentUser.id.slice(0,5)}`,
+    full_name: base,
+    bio: "",
+    avatar_url: null
+  };
+
+  const result = await db.from("profiles").insert(newProfile);
+  if (result.error) throw result.error;
+  currentProfile = newProfile;
+}
+
+document.getElementById("authForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
   const button = document.getElementById("authSubmit");
-  setBusy(button,true,"Connecting…");
 
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+  button.disabled = true;
 
-  try{
-    if(authAction === "signup"){
-      const full_name = document.getElementById("fullName").value.trim();
-      const username = document.getElementById("username")
-        .value.trim().toLowerCase();
+  try {
+    let result;
 
-      if(!full_name){
-        throw new Error("Apna full name likho.");
-      }
-
-      if(!/^[a-z0-9_.]{3,30}$/.test(username)){
-        throw new Error("Username 3–30 characters ka hona chahiye. Letters, numbers, _ aur . use karo.");
-      }
-
-      const {data,error} = await db.auth.signUp({
-        email,
-        password,
-        options:{
-          data:{
-            full_name,
-            username
-          }
-        }
-      });
-
-      if(error) throw error;
-
-      if(data.session && data.user){
-        currentUser = data.user;
-        await enterApp(data.user);
-        toast("Welcome to GROMAZEEF! 🎉");
-      }else{
-        toast("Signup request ho gayi. Email verification complete karke login karo.");
-      }
-
-    }else{
-      const {data,error} = await db.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if(error) throw error;
-
-      if(data.user){
-        await enterApp(data.user);
-        toast("Welcome back! 💙");
-      }
+    if (authAction === "signup") {
+      result = await db.auth.signUp({ email, password });
+    } else {
+      result = await db.auth.signInWithPassword({ email, password });
     }
 
-  }catch(error){
-    console.error("Authentication error:",error);
-    toast(getError(error));
-  }finally{
-    setBusy(button,false);
+    if (result.error) throw result.error;
+
+    if (result.data.user) {
+      currentUser = result.data.user;
+
+      if (authAction === "signup" && !result.data.session) {
+        toast("Email confirmation check karo.");
+      } else {
+        await enterApp();
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    toast(error.message || "Authentication error");
+  } finally {
+    button.disabled = false;
   }
 });
 
-async function forgotPassword(){
-  if(!db) return toast("Supabase initialize nahi hua.");
+async function forgotPassword() {
+  const email = document.getElementById("authEmail").value.trim();
+  if (!email) return toast("Pehle email likho.");
 
-  const email = document.getElementById("email").value.trim();
-
-  if(!email){
-    toast("Pehle email field mein apna email likho.");
-    return;
-  }
-
-  try{
-    const {error} = await db.auth.resetPasswordForEmail(email,{
-      redirectTo:location.origin + location.pathname
-    });
-
-    if(error) throw error;
-
-    toast("Agar email account registered hai, reset instructions bhej di gayi hain.");
-  }catch(error){
-    toast("Password reset error: "+getError(error));
+  try {
+    const { error } = await db.auth.resetPasswordForEmail(email);
+    if (error) throw error;
+    toast("Password reset email check karo.");
+  } catch (error) {
+    toast(error.message);
   }
 }
 
-async function logout(){
-  if(!db) return;
+async function logout() {
+  if (!db) return;
+  const { error } = await db.auth.signOut();
+  if (error) return toast(error.message);
 
-  try{
-    const {error} = await db.auth.signOut();
-    if(error) throw error;
+  currentUser = null;
+  currentProfile = null;
+  activeChatUser = null;
 
-    currentUser = null;
-    currentProfile = null;
-    activeChatUser = null;
-
-    document.getElementById("appScreen").classList.add("hidden");
-    document.getElementById("bottomNav").classList.add("hidden");
-    document.getElementById("authScreen").classList.remove("hidden");
-
-    toast("Logged out successfully.");
-  }catch(error){
-    toast("Logout error: "+getError(error));
-  }
- }
- /* =========================
-   PART 3/10
-   MEDIA + HOME FEED + POSTS
-========================= */
-
+  document.getElementById("appScreen").hidden = true;
+  document.getElementById("bottomNav").hidden = true;
+  document.getElementById("authScreen").hidden = false;
+}
+  // PART 3 START
 const MEDIA_BUCKET = "gromazeef-media";
 const MAX_MEDIA_SIZE = 50 * 1024 * 1024;
 
-function mediaMarkup(url,type){
-  const safe = safeUrl(url);
-  if(!safe) return "";
-
-  if(type === "video"){
-    return `<video class="postmedia" src="${esc(safe)}"
-      controls playsinline preload="metadata"></video>`;
-  }
-
-  return `<img class="postmedia" src="${esc(safe)}"
-    alt="Post media" loading="lazy">`;
-}
-
-async function uploadMedia(file,folder){
-  if(!db || !currentUser) throw new Error("Pehle login karo.");
-  if(!file) throw new Error("File select karo.");
-
-  if(file.size > MAX_MEDIA_SIZE){
-    throw new Error("File 50 MB se chhoti honi chahiye.");
-  }
-
-  const allowed = file.type.startsWith("image/") ||
-                  file.type.startsWith("video/");
-
-  if(!allowed) throw new Error("Sirf image ya video upload kar sakte ho.");
+async function uploadMedia(file, folder) {
+  if (!file) throw new Error("File select karo.");
+  if (file.size > MAX_MEDIA_SIZE) throw new Error("File 50 MB se chhoti honi chahiye.");
 
   const extension = (file.name.split(".").pop() || "bin")
-    .toLowerCase().replace(/[^a-z0-9]/g,"");
-
+    .toLowerCase().replace(/[^a-z0-9]/g, "");
   const path = `${currentUser.id}/${folder}/${Date.now()}_${crypto.randomUUID()}.${extension}`;
 
-  const {error} = await db.storage
+  const { error } = await db.storage
     .from(MEDIA_BUCKET)
-    .upload(path,file,{
-      contentType:file.type,
-      upsert:false
-    });
+    .upload(path, file, { upsert: false, contentType: file.type });
 
-  if(error) throw error;
+  if (error) throw error;
 
-  const {data} = db.storage
-    .from(MEDIA_BUCKET)
-    .getPublicUrl(path);
-
-  const url = safeUrl(data?.publicUrl);
-  if(!url) throw new Error("Uploaded media ka public URL nahi mila.");
-
-  return url;
+  const { data } = db.storage.from(MEDIA_BUCKET).getPublicUrl(path);
+  return data.publicUrl;
 }
 
-async function getProfilesFor(ids){
-  const unique = [...new Set((ids || []).filter(Boolean))];
-  if(!unique.length) return {};
+async function getProfilesFor(ids) {
+  if (!ids.length) return {};
+  const { data, error } = await db
+    .from("profiles")
+    .select("id,username,full_name,avatar_url")
+    .in("id", [...new Set(ids)]);
 
-  const {data,error} = await db.from("profiles")
-    .select("id,username,full_name,avatar_url,bio")
-    .in("id",unique);
-
-  if(error) throw error;
-
-  return Object.fromEntries((data || []).map(p=>[p.id,p]));
+  if (error) throw error;
+  return Object.fromEntries((data || []).map(profile => [profile.id, profile]));
 }
 
-async function loadFeed(){
-  if(!db || !currentUser) return;
+async function loadFeed() {
+  if (!currentUser) return;
 
-  const box = document.getElementById("homeFeed");
-  box.innerHTML = '<div class="card empty">Loading feed…</div>';
+  const feed = document.getElementById("homeFeed");
+  feed.innerHTML = '<div class="empty">Loading posts...</div>';
 
-  try{
-    const {data:posts,error} = await db.from("posts")
+  try {
+    const { data: posts, error } = await db
+      .from("posts")
       .select("*")
-      .order("created_at",{ascending:false})
-      .limit(40);
+      .order("created_at", { ascending: false })
+      .limit(50);
 
-    if(error) throw error;
+    if (error) throw error;
 
-    if(!posts?.length){
-      box.innerHTML = '<div class="card empty">Abhi posts nahi hain. Pehli post share karo! 💙</div>';
-      return;
-    }
+    const profiles = await getProfilesFor((posts || []).map(p => p.user_id));
+    const { data: likes, error: likeError } = await db
+      .from("likes").select("post_id,user_id");
 
-    const profiles = await getProfilesFor(posts.map(p=>p.user_id));
-    const postIds = posts.map(p=>p.id);
+    if (likeError) throw likeError;
 
-    const [{data:likes,error:likeError},{data:comments,error:commentError}] =
-      await Promise.all([
-        db.from("likes").select("post_id,user_id").in("post_id",postIds),
-        db.from("comments").select("id,post_id,user_id,comment_text,created_at")
-          .in("post_id",postIds).order("created_at",{ascending:true})
-      ]);
+    const { data: comments, error: commentError } = await db
+      .from("comments")
+      .select("*")
+      .order("created_at", { ascending: true })
+      .limit(300);
 
-    if(likeError) throw likeError;
-    if(commentError) throw commentError;
+    if (commentError) throw commentError;
 
-    const likeRows = likes || [];
-    const commentRows = comments || [];
-    const commentProfiles = await getProfilesFor(commentRows.map(c=>c.user_id));
+    const commentProfiles = await getProfilesFor((comments || []).map(c => c.user_id));
 
-    box.innerHTML = posts.map(post=>{
-      const p = profiles[post.user_id] || {};
-      const postLikes = likeRows.filter(l=>String(l.post_id)===String(post.id));
-      const liked = postLikes.some(l=>l.user_id===currentUser.id);
-      const postComments = commentRows.filter(c=>String(c.post_id)===String(post.id));
+    feed.innerHTML = (posts || []).map(post => {
+      const owner = profiles[post.user_id] || {};
+      const postLikes = (likes || []).filter(l => l.post_id === post.id);
+      const postComments = (comments || []).filter(c => c.post_id === post.id);
 
       return `
-        <article class="card" id="post-${esc(post.id)}">
-          <div class="posthead">
-            <img class="avatar" src="${esc(avatar(p))}" alt="">
-            <div>
-              <b>${esc(p.full_name || p.username || "Gromazeef User")}</b>
-              <p class="muted small">@${esc(p.username || "user")}</p>
-            </div>
+        <article class="card">
+          <div class="post-head">
+            ${avatar(owner.avatar_url, owner.username)}
+            <div><strong>${esc(owner.full_name || owner.username || "User")}</strong>
+            <div class="muted">@${esc(owner.username || "user")}</div></div>
           </div>
-
-          ${mediaMarkup(post.media_url,post.media_type)}
-          <p class="caption">${esc(post.caption || "")}</p>
-
+          ${post.caption ? `<p>${esc(post.caption)}</p>` : ""}
+          ${mediaMarkup(post.media_url, post.media_type)}
           <div class="actions">
-            <button class="btn" onclick="toggleLike('${esc(post.id)}')">
-              ${liked ? "❤️" : "🤍"} ${postLikes.length}
+            <button class="btn secondary" onclick="toggleLike('${esc(post.id)}')">
+              ${postLikes.some(l => l.user_id === currentUser.id) ? "♥" : "♡"}
+              ${postLikes.length}
             </button>
-            <button class="btn" onclick="focusComment('${esc(post.id)}')">
-              💬 ${postComments.length}
+            <button class="btn secondary" onclick="focusComment('${esc(post.id)}')">
+              Comments ${postComments.length}
             </button>
           </div>
-
-          <div class="comments">
-            ${postComments.slice(-5).map(c=>{
-              const cp = commentProfiles[c.user_id] || {};
-              return `<p><b>@${esc(cp.username || "user")}</b>
-                ${esc(c.comment_text || "")}</p>`;
+          <div>
+            ${postComments.map(comment => {
+              const cp = commentProfiles[comment.user_id] || {};
+              return `<p class="muted"><strong>${esc(cp.username || "user")}</strong>
+                ${esc(comment.comment_text || "")}</p>`;
             }).join("")}
-
-            <form class="row" onsubmit="submitComment(event,'${esc(post.id)}')">
-              <input id="comment-${esc(post.id)}" maxlength="1000"
-                placeholder="Write a comment…" required>
-              <button class="btn primary" type="submit">Send</button>
-            </form>
           </div>
+          <form class="comment-row" onsubmit="submitComment(event,'${esc(post.id)}')">
+            <input id="comment-${esc(post.id)}" maxlength="1000" placeholder="Write a comment..." required>
+            <button class="btn" type="submit">Send</button>
+          </form>
         </article>`;
-    }).join("");
+    }).join("") || '<div class="empty">Abhi koi post nahi hai. Pehli post banao!</div>';
 
-  }catch(error){
-    console.error("Feed error:",error);
-    box.innerHTML = `<div class="card empty">Feed error: ${esc(getError(error))}</div>`;
+  } catch (error) {
+    console.error(error);
+    feed.innerHTML = `<div class="card">Feed error: ${esc(error.message)}</div>`;
   }
 }
 
-document.getElementById("postForm").addEventListener("submit",async event=>{
+document.getElementById("postForm").addEventListener("submit", async event => {
   event.preventDefault();
+  if (!currentUser) return toast("Pehle login karo.");
 
-  if(!currentUser) return toast("Pehle login karo.");
-
-  const form = event.currentTarget;
-  const button = form.querySelector('button[type="submit"]');
   const file = document.getElementById("postFile").files[0];
   const caption = document.getElementById("postCaption").value.trim();
 
-  if(!file) return toast("Photo ya video select karo.");
+  if (!file && !caption) return toast("Caption ya media add karo.");
 
-  setBusy(button,true,"Uploading…");
+  try {
+    let mediaUrl = null;
+    let mediaType = null;
 
-  try{
-    const media_url = await uploadMedia(file,"posts");
-    const media_type = file.type.startsWith("video/") ? "video" : "image";
+    if (file) {
+      if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
+        throw new Error("Image ya video select karo.");
+      }
+      mediaUrl = await uploadMedia(file, "posts");
+      mediaType = file.type.startsWith("video/") ? "video" : "image";
+    }
 
-    const {error} = await db.from("posts").insert({
-      user_id:currentUser.id,
+    const { error } = await db.from("posts").insert({
+      user_id: currentUser.id,
       caption,
-      media_url,
-      media_type
+      media_url: mediaUrl,
+      media_type: mediaType
     });
 
-    if(error) throw error;
+    if (error) throw error;
 
-    form.reset();
-    toast("Post publish ho gayi! 🎉");
+    event.target.reset();
+    toast("Post publish ho gayi!");
     await loadFeed();
-
-  }catch(error){
-    console.error("Post upload error:",error);
-    toast("Post upload error: "+getError(error));
-  }finally{
-    setBusy(button,false);
+  } catch (error) {
+    console.error(error);
+    toast(error.message);
   }
 });
 
-async function toggleLike(postId){
-  if(!currentUser || !db) return;
-
-  try{
-    const {data:existing,error:readError} = await db.from("likes")
+async function toggleLike(postId) {
+  try {
+    const { data, error } = await db.from("likes")
       .select("post_id")
-      .eq("post_id",postId)
-      .eq("user_id",currentUser.id)
+      .eq("post_id", postId)
+      .eq("user_id", currentUser.id)
       .maybeSingle();
 
-    if(readError) throw readError;
+    if (error) throw error;
 
-    if(existing){
-      const {error} = await db.from("likes")
-        .delete()
-        .eq("post_id",postId)
-        .eq("user_id",currentUser.id);
+    const result = data
+      ? await db.from("likes").delete().eq("post_id", postId).eq("user_id", currentUser.id)
+      : await db.from("likes").insert({ post_id: postId, user_id: currentUser.id });
 
-      if(error) throw error;
-    }else{
-      const {error} = await db.from("likes").insert({
-        post_id:postId,
-        user_id:currentUser.id
-      });
-
-      if(error) throw error;
-    }
-
+    if (result.error) throw result.error;
     await loadFeed();
-
-  }catch(error){
-    toast("Like error: "+getError(error));
+  } catch (error) {
+    toast("Like error: " + error.message);
   }
 }
 
-function focusComment(postId){
-  const input = document.getElementById("comment-"+postId);
-  if(input){
-    input.focus();
-    input.scrollIntoView({behavior:"smooth",block:"center"});
-  }
+function focusComment(postId) {
+  document.getElementById(`comment-${postId}`)?.focus();
 }
 
-async function submitComment(event,postId){
+async function submitComment(event, postId) {
   event.preventDefault();
 
-  if(!currentUser || !db) return;
+  const input = document.getElementById(`comment-${postId}`);
+  const commentText = input.value.trim();
 
-  const input = document.getElementById("comment-"+postId);
-  const comment_text = input.value.trim();
+  if (!commentText) return;
 
-  if(!comment_text) return;
-
-  const button = event.submitter;
-  setBusy(button,true,"Sending…");
-
-  try{
-    const {error} = await db.from("comments").insert({
-      post_id:postId,
-      user_id:currentUser.id,
-      comment_text
+  try {
+    const { error } = await db.from("comments").insert({
+      post_id: postId,
+      user_id: currentUser.id,
+      comment_text: commentText
     });
 
-    if(error) throw error;
-
-    input.value = "";
-    toast("Comment added! 💬");
+    if (error) throw error;
     await loadFeed();
-
-  }catch(error){
-    toast("Comment error: "+getError(error));
-  }finally{
-    setBusy(button,false);
+  } catch (error) {
+    toast("Comment error: " + error.message);
   }
- }
- /* =========================
-   PART 4/10
-   STRIP STORIES
-========================= */
-
-const STRIP_MAX_SIZE = 50 * 1024 * 1024;
-
-async function openStripUpload(){
-  if(!currentUser || !db){
-    return toast("Pehle login karo.");
-  }
+}
+// PART 4 START
+async function openStripUpload() {
+  if (!currentUser) return toast("Login karo.");
 
   const picker = document.createElement("input");
   picker.type = "file";
   picker.accept = "image/*,video/*";
 
-  picker.onchange = async ()=>{
-    const file = picker.files?.[0];
-    if(!file) return;
+  picker.onchange = async () => {
+    const file = picker.files[0];
+    if (!file) return;
 
-    if(file.size > STRIP_MAX_SIZE){
-      return toast("STRIP file 50 MB se chhoti honi chahiye.");
-    }
+    try {
+      if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
+        throw new Error("Image ya video select karo.");
+      }
 
-    if(!file.type.startsWith("image/") &&
-       !file.type.startsWith("video/")){
-      return toast("Sirf photo ya video upload karo.");
-    }
+      const mediaUrl = await uploadMedia(file, "strips");
+      const now = new Date();
+      const expires = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
-    try{
-      toast("STRIP upload ho rahi hai…");
-
-      const media_url = await uploadMedia(file,"strips");
-      const media_type = file.type.startsWith("video/") ? "video" : "image";
-
-      const created_at = new Date();
-      const expires_at = new Date(
-        created_at.getTime() + 24 * 60 * 60 * 1000
-      );
-
-      const {error} = await db.from("strips").insert({
-        user_id:currentUser.id,
-        media_url,
-        media_type,
-        created_at:created_at.toISOString(),
-        expires_at:expires_at.toISOString()
+      const { error } = await db.from("strips").insert({
+        user_id: currentUser.id,
+        media_url: mediaUrl,
+        media_type: file.type.startsWith("video/") ? "video" : "image",
+        created_at: now.toISOString(),
+        expires_at: expires.toISOString()
       });
 
-      if(error) throw error;
+      if (error) throw error;
 
-      toast("STRIP publish ho gayi! 🎉");
+      toast("Story upload ho gayi!");
       await loadStrips();
-
-    }catch(error){
-      console.error("STRIP upload error:",error);
-      toast("STRIP error: "+getError(error));
+    } catch (error) {
+      toast("Story error: " + error.message);
     }
   };
 
   picker.click();
 }
 
-async function loadStrips(){
-  if(!db || !currentUser) return;
+async function loadStrips() {
+  if (!currentUser) return;
 
   const box = document.getElementById("stripRow");
-  box.innerHTML = '<p class="muted">Loading STRIPS…</p>';
+  if (!box) return;
 
-  try{
-    const {data:strips,error} = await db.from("strips")
+  try {
+    const { data, error } = await db
+      .from("strips")
       .select("*")
-      .gt("expires_at",new Date().toISOString())
-      .order("created_at",{ascending:false})
-      .limit(50);
+      .gt("expires_at", new Date().toISOString())
+      .order("created_at", { ascending: false })
+      .limit(100);
 
-    if(error) throw error;
+    if (error) throw error;
 
-    window.gromazeefStrips = strips || [];
+    const profiles = await getProfilesFor((data || []).map(s => s.user_id));
 
-    if(!strips?.length){
-      box.innerHTML = '<p class="muted">No active STRIPS. Add yours! ✨</p>';
-      return;
-    }
-
-    const profiles = await getProfilesFor(strips.map(s=>s.user_id));
-
-    box.innerHTML = strips.map(strip=>{
+    box.innerHTML = `
+      <button class="strip-item" onclick="openStripUpload()">
+        <div class="strip-circle">＋</div>
+        Add yours
+      </button>
+    ` + (data || []).map(strip => {
       const profile = profiles[strip.user_id] || {};
-      const isMine = strip.user_id === currentUser.id;
-
       return `
-        <button class="stripitem" type="button"
-          onclick="viewStrip('${esc(strip.id)}')">
-          <div class="stripcircle">
-            <img src="${esc(avatar(profile))}" alt="">
+        <button class="strip-item" onclick="viewStrip('${esc(strip.id)}')">
+          <div class="strip-circle">
+            ${strip.media_type === "video" ? "▶" : "◉"}
           </div>
-          ${esc(isMine ? "Your STRIP" : profile.username || "user")}
+          ${esc(profile.username || "User")}
         </button>`;
     }).join("");
-
-  }catch(error){
-    console.error("STRIP load error:",error);
-    box.innerHTML = '<p class="muted">STRIPS load nahi hui. Database permissions check karo.</p>';
-  }
-}
-
-function viewStrip(id){
-  const strips = window.gromazeefStrips || [];
-  const strip = strips.find(s=>String(s.id)===String(id));
-
-  if(!strip) return toast("STRIP nahi mili ya expire ho gayi.");
-
-  if(new Date(strip.expires_at).getTime() <= Date.now()){
-    toast("Ye STRIP expire ho chuki hai.");
-    loadStrips();
-    return;
-  }
-
-  const profile = strip._profile || {};
-  const profilesPromise = getProfilesFor([strip.user_id]);
-
-  profilesPromise.then(profiles=>{
-    openStripViewer(strip,profiles[strip.user_id] || {});
-  }).catch(error=>{
+  } catch (error) {
     console.error(error);
-    openStripViewer(strip,{});
-  });
+    box.innerHTML = '<div class="muted">Stories load nahi hui.</div>';
+  }
 }
 
-function openStripViewer(strip,profile){
-  const url = safeUrl(strip.media_url);
-  if(!url) return toast("STRIP media URL invalid hai.");
+async function viewStrip(stripId) {
+  try {
+    const { data, error } = await db.from("strips")
+      .select("*").eq("id", stripId).single();
 
-  const old = document.getElementById("stripViewer");
-  if(old) old.remove();
+    if (error) throw error;
 
-  const viewer = document.createElement("div");
-  viewer.id = "stripViewer";
+    const overlay = document.createElement("div");
+    overlay.style.cssText =
+      "position:fixed;inset:0;z-index:200;background:#000;display:grid;place-items:center;padding:20px";
 
-  Object.assign(viewer.style,{
-    position:"fixed",
-    inset:"0",
-    zIndex:"999",
-    background:"#000",
-    display:"flex",
-    flexDirection:"column",
-    justifyContent:"center",
-    padding:"16px"
-  });
+    overlay.innerHTML = `
+      <button class="btn secondary" style="position:absolute;top:20px;right:20px"
+        id="closeStrip">Close ✕</button>
+      <div style="width:min(600px,100%)">
+        ${mediaMarkup(data.media_url, data.media_type)}
+        ${data.user_id === currentUser.id
+          ? `<button class="btn danger" id="deleteStrip">Delete story</button>`
+          : ""}
+      </div>`;
 
-  const header = document.createElement("div");
-  header.className = "between";
-  header.style.cssText =
-    "position:absolute;top:20px;left:16px;right:16px;z-index:2";
+    document.body.appendChild(overlay);
+    overlay.querySelector("#closeStrip").onclick = () => overlay.remove();
 
-  const identity = document.createElement("div");
-  identity.className = "row";
-
-  const image = document.createElement("img");
-  image.className = "avatar";
-  image.src = avatar(profile);
-  image.alt = "";
-
-  const name = document.createElement("b");
-  name.textContent = profile.username || "Gromazeef User";
-
-  identity.append(image,name);
-
-  const controls = document.createElement("div");
-  controls.className = "row";
-
-  const close = document.createElement("button");
-  close.className = "btn";
-  close.textContent = "✕ Close";
-  close.onclick = ()=>viewer.remove();
-
-  controls.append(close);
-
-  if(strip.user_id === currentUser?.id){
-    const remove = document.createElement("button");
-    remove.className = "btn danger";
-    remove.textContent = "Delete";
-    remove.onclick = ()=>deleteStrip(strip.id);
-    controls.append(remove);
+    const deleteButton = overlay.querySelector("#deleteStrip");
+    if (deleteButton) {
+      deleteButton.onclick = async () => {
+        try {
+          const result = await db.from("strips")
+            .delete().eq("id", stripId).eq("user_id", currentUser.id);
+          if (result.error) throw result.error;
+          overlay.remove();
+          toast("Story deleted.");
+          await loadStrips();
+        } catch (error) {
+          toast(error.message);
+        }
+      };
+    }
+  } catch (error) {
+    toast("Story open error: " + error.message);
   }
-
-  header.append(identity,controls);
-
-  const content = document.createElement("div");
-  content.style.cssText =
-    "display:flex;align-items:center;justify-content:center;width:100%;height:100%;padding-top:55px";
-
-  let media;
-
-  if(strip.media_type === "video"){
-    media = document.createElement("video");
-    media.controls = true;
-    media.autoplay = true;
-    media.playsInline = true;
-  }else{
-    media = document.createElement("img");
-    media.alt = "STRIP";
-  }
-
-  media.src = url;
-  media.style.cssText =
-    "max-width:100%;max-height:100%;object-fit:contain;border-radius:12px";
-
-  content.append(media);
-
-  const timer = document.createElement("p");
-  timer.style.cssText =
-    "position:absolute;bottom:10px;left:0;right:0;text-align:center;color:#aaa;font-size:12px";
-  timer.textContent = "STRIP expires 24 hours after publishing.";
-
-  viewer.append(header,content,timer);
-  document.body.append(viewer);
 }
-
-async function deleteStrip(stripId){
-  if(!currentUser || !db) return;
-
-  if(!confirm("Apni STRIP delete karni hai?")) return;
-
-  try{
-    const {error} = await db.from("strips")
-      .delete()
-      .eq("id",stripId)
-      .eq("user_id",currentUser.id);
-
-    if(error) throw error;
-
-    const viewer = document.getElementById("stripViewer");
-    if(viewer) viewer.remove();
-
-    toast("STRIP delete ho gayi.");
-    await loadStrips();
-
-  }catch(error){
-    toast("STRIP delete error: "+getError(error));
-  }
- }
- /* =========================
-   PART 5/10
-   ZEEF VIDEO SYSTEM
-========================= */
-
-const ZEEF_MAX_SIZE = 50 * 1024 * 1024;
-
+// PART 5 START
 document.getElementById("zeefForm").addEventListener("submit", async event => {
   event.preventDefault();
+  if (!currentUser) return toast("Login karo.");
 
-  if (!currentUser || !db) {
-    toast("Pehle login karo.");
-    return;
-  }
-
-  const form = event.currentTarget;
-  const button = form.querySelector('button[type="submit"]');
   const file = document.getElementById("zeefFile").files[0];
   const caption = document.getElementById("zeefCaption").value.trim();
 
-  if (!file) return toast("ZEEF video select karo.");
-  if (!file.type.startsWith("video/")) {
-    return toast("ZEEF ke liye video select karo.");
-  }
-  if (file.size > ZEEF_MAX_SIZE) {
-    return toast("Video 50 MB se chhoti honi chahiye.");
-  }
-
-  setBusy(button, true, "Uploading video…");
+  if (!file) return toast("Video select karo.");
+  if (!file.type.startsWith("video/")) return toast("Video file select karo.");
 
   try {
-    const video_url = await uploadMedia(file, "zeefs");
+    const videoUrl = await uploadMedia(file, "zeefs");
 
     const { error } = await db.from("zeefs").insert({
       user_id: currentUser.id,
-      video_url,
+      video_url: videoUrl,
       caption
     });
 
     if (error) throw error;
 
-    form.reset();
-    toast("ZEEF publish ho gayi! 🎬");
+    event.target.reset();
+    toast("ZEEF publish ho gaya!");
     await loadZeefs();
-
   } catch (error) {
-    console.error("ZEEF upload error:", error);
-    toast("ZEEF upload error: " + getError(error));
-  } finally {
-    setBusy(button, false);
+    toast("ZEEF error: " + error.message);
   }
 });
 
 async function loadZeefs() {
-  if (!db || !currentUser) return;
+  if (!currentUser) return;
 
   const box = document.getElementById("zeefFeed");
-  box.innerHTML = '<div class="card empty">Loading ZEEFs…</div>';
+  box.innerHTML = '<div class="empty">Loading ZEEF...</div>';
 
   try {
-    const { data: zeefs, error } = await db
+    const { data, error } = await db
       .from("zeefs")
       .select("*")
       .order("created_at", { ascending: false })
@@ -1205,149 +814,77 @@ async function loadZeefs() {
 
     if (error) throw error;
 
-    if (!zeefs || zeefs.length === 0) {
-      box.innerHTML =
-        '<div class="card empty">Abhi koi ZEEF nahi hai. Pehli video upload karo! 🎥</div>';
-      return;
-    }
+    const profiles = await getProfilesFor((data || []).map(z => z.user_id));
 
-    const profiles = await getProfilesFor(zeefs.map(z => z.user_id));
-
-    box.innerHTML = zeefs.map(z => {
-      const profile = profiles[z.user_id] || {};
-      const videoUrl = safeUrl(z.video_url || z.media_url);
-
+    box.innerHTML = (data || []).map(zeef => {
+      const profile = profiles[zeef.user_id] || {};
       return `
         <article class="card">
-          <div class="posthead">
-            <img class="avatar"
-              src="${esc(avatar(profile))}"
-              alt="Creator avatar">
-            <div>
-              <b>${esc(profile.full_name || profile.username || "Creator")}</b>
-              <p class="muted small">@${esc(profile.username || "user")}</p>
-            </div>
+          <div class="post-head">
+            ${avatar(profile.avatar_url, profile.username)}
+            <strong>${esc(profile.username || "User")}</strong>
           </div>
-
-          ${
-            videoUrl
-              ? `<video
-                  class="postmedia"
-                  src="${esc(videoUrl)}"
-                  controls
-                  playsinline
-                  preload="metadata"
-                  style="max-height:75vh;background:#000"
-                ></video>`
-              : '<p class="muted">Video unavailable.</p>'
-          }
-
-          <p class="caption">${esc(z.caption || "")}</p>
-          <p class="muted small">🎬 ZEEF</p>
-        </article>
-      `;
-    }).join("");
-
+          ${mediaMarkup(zeef.video_url, "video")}
+          <p>${esc(zeef.caption || "")}</p>
+        </article>`;
+    }).join("") || '<div class="empty">Abhi koi ZEEF nahi hai.</div>';
   } catch (error) {
-    console.error("ZEEF feed error:", error);
-    box.innerHTML =
-      `<div class="card empty">ZEEF error: ${esc(getError(error))}</div>`;
+    console.error(error);
+    box.innerHTML = `<div class="card">ZEEF error: ${esc(error.message)}</div>`;
   }
- }
- // ================= PART 6/10 =================
-
-// SEARCH USERS
+}
+// PART 6 START
 async function searchUsers() {
-  const input = document.getElementById("searchInput");
-  const results = document.getElementById("searchResults");
+  if (!currentUser) return;
 
-  if (!input || !results || !db) return;
-
-  const term = input.value.trim();
+  const term = document.getElementById("searchInput").value.trim();
+  const box = document.getElementById("searchResults");
 
   if (term.length < 2) {
-    results.innerHTML =
-      '<div class="empty">Search karne ke liye username likho.</div>';
+    box.innerHTML = '<div class="empty">Kam se kam 2 characters likho.</div>';
     return;
   }
 
-  results.innerHTML = '<div class="empty">Searching...</div>';
-
   try {
-    const cleanTerm = term.replace(/[,%()]/g, "");
+    const clean = term.replace(/[,%()]/g, "");
 
-    const { data, error } = await db
-      .from("profiles")
+    const { data, error } = await db.from("profiles")
       .select("id,username,full_name,avatar_url,bio")
-      .or(
-        `username.ilike.%${cleanTerm}%,full_name.ilike.%${cleanTerm}%`
-      )
+      .or(`username.ilike.%${clean}%,full_name.ilike.%${clean}%`)
       .limit(30);
 
     if (error) throw error;
 
-    if (!data || data.length === 0) {
-      results.innerHTML =
-        '<div class="empty">Koi user nahi mila.</div>';
-      return;
-    }
-
-    results.innerHTML = data.map(user => `
+    box.innerHTML = (data || []).map(user => `
       <div class="card profile-result">
         <div class="profile-result-left">
           ${avatar(user.avatar_url, user.username)}
           <div>
             <strong>${esc(user.full_name || user.username)}</strong>
-            <div class="muted">@${esc(user.username || "user")}</div>
-            <div>${esc(user.bio || "")}</div>
+            <div class="muted">@${esc(user.username || "")}</div>
+            <p>${esc(user.bio || "")}</p>
           </div>
         </div>
-        ${
-          user.id === currentUser.id
-            ? '<button class="btn secondary" disabled>You</button>'
-            : `<button class="btn" onclick="toggleFollow('${esc(user.id)}',this)">Follow</button>`
-        }
-      </div>
-    `).join("");
+        ${user.id === currentUser.id
+          ? '<button class="btn secondary" disabled>You</button>'
+          : `<button class="btn" onclick="toggleFollow('${esc(user.id)}',this)">Follow</button>`}
+      </div>`).join("") || '<div class="empty">Koi user nahi mila.</div>';
 
-    await updateSearchFollowButtons(data);
-
-  } catch (error) {
-    console.error(error);
-    results.innerHTML =
-      '<div class="empty">Search error: ' + esc(error.message) + '</div>';
-  }
-}
-
-async function updateSearchFollowButtons(users) {
-  if (!currentUser || !users.length) return;
-
-  const ids = users
-    .filter(user => user.id !== currentUser.id)
-    .map(user => user.id);
-
-  if (!ids.length) return;
-
-  try {
-    const { data, error } = await db
-      .from("follows")
+    const { data: follows } = await db.from("follows")
       .select("following_id")
-      .eq("follower_id", currentUser.id)
-      .in("following_id", ids);
+      .eq("follower_id", currentUser.id);
 
-    if (error) throw error;
+    const following = new Set((follows || []).map(f => f.following_id));
 
-    const following = new Set((data || []).map(row => row.following_id));
-
-    document.querySelectorAll("#searchResults button[onclick]").forEach(button => {
+    box.querySelectorAll("button[onclick]").forEach(button => {
       const match = button.getAttribute("onclick").match(/toggleFollow\('([^']+)'/);
-      if (!match) return;
-
-      button.textContent = following.has(match[1]) ? "Following" : "Follow";
-      button.classList.toggle("secondary", following.has(match[1]));
+      if (match && following.has(match[1])) {
+        button.textContent = "Following";
+        button.classList.add("secondary");
+      }
     });
   } catch (error) {
-    console.warn("Follow status:", error.message);
+    box.innerHTML = `<div class="empty">Search error: ${esc(error.message)}</div>`;
   }
 }
 
@@ -1356,548 +893,337 @@ function debouncedSearch() {
   searchTimer = setTimeout(searchUsers, 350);
 }
 
-const searchInputElement = document.getElementById("searchInput");
+document.getElementById("searchInput").addEventListener("input", debouncedSearch);
 
-if (searchInputElement) {
-  searchInputElement.addEventListener("input", debouncedSearch);
-}
-
-async function toggleFollow(targetUserId, button) {
-  if (!currentUser) return toast("Pehle login karo.");
-
-  if (targetUserId === currentUser.id) {
-    return toast("Khud ko follow nahi kar sakte.");
-  }
-
+async function toggleFollow(userId, button) {
   if (button) button.disabled = true;
 
   try {
-    const { data, error } = await db
-      .from("follows")
-      .select("follower_id")
+    const { data, error } = await db.from("follows")
+      .select("following_id")
       .eq("follower_id", currentUser.id)
-      .eq("following_id", targetUserId)
+      .eq("following_id", userId)
       .maybeSingle();
 
     if (error) throw error;
 
     if (data) {
-      const result = await db
-        .from("follows")
-        .delete()
+      const result = await db.from("follows").delete()
         .eq("follower_id", currentUser.id)
-        .eq("following_id", targetUserId);
-
+        .eq("following_id", userId);
       if (result.error) throw result.error;
-      toast("Unfollow kar diya.");
     } else {
-      const result = await db
-        .from("follows")
-        .insert({
-          follower_id: currentUser.id,
-          following_id: targetUserId
-        });
-
+      const result = await db.from("follows").insert({
+        follower_id: currentUser.id,
+        following_id: userId
+      });
       if (result.error) throw result.error;
-      toast("Follow ho gaya!");
     }
 
     await searchUsers();
     await loadProfile();
-
   } catch (error) {
-    console.error(error);
     toast("Follow error: " + error.message);
   } finally {
     if (button) button.disabled = false;
   }
 }
 
-
-// PROFILE PAGE
 async function loadProfile() {
-  if (!currentUser || !db) return;
+  if (!currentUser) return;
 
   try {
-    const { data: profile, error } = await db
-      .from("profiles")
-      .select("*")
-      .eq("id", currentUser.id)
-      .single();
+    const { data: profile, error } = await db.from("profiles")
+      .select("*").eq("id", currentUser.id).single();
 
     if (error) throw error;
-
     currentProfile = profile;
 
     const summary = document.getElementById("profileSummary");
+    summary.innerHTML = `
+      <div class="post-head">
+        ${avatar(profile.avatar_url, profile.username)}
+        <div><h2>${esc(profile.full_name || profile.username)}</h2>
+        <div class="muted">@${esc(profile.username || "")}</div>
+        <p>${esc(profile.bio || "")}</p></div>
+      </div>`;
 
-    if (summary) {
-      summary.innerHTML = `
-        <div class="profile-header">
-          ${avatar(profile.avatar_url, profile.username)}
-          <div>
-            <h2>${esc(profile.full_name || profile.username)}</h2>
-            <div class="muted">@${esc(profile.username || "")}</div>
-            <p>${esc(profile.bio || "")}</p>
-          </div>
-        </div>
-      `;
-    }
+    document.getElementById("editName").value = profile.full_name || "";
+    document.getElementById("editUsername").value = profile.username || "";
+    document.getElementById("editBio").value = profile.bio || "";
 
-    const nameField = document.getElementById("editName");
-    const usernameField = document.getElementById("editUsername");
-    const bioField = document.getElementById("editBio");
-
-    if (nameField) nameField.value = profile.full_name || "";
-    if (usernameField) usernameField.value = profile.username || "";
-    if (bioField) bioField.value = profile.bio || "";
-
-    const { count: followers } = await db
-      .from("follows")
-      .select("*", { count: "exact", head: true })
+    const { count: followers } = await db.from("follows")
+      .select("*", {count:"exact",head:true})
       .eq("following_id", currentUser.id);
 
-    const { count: following } = await db
-      .from("follows")
-      .select("*", { count: "exact", head: true })
+    const { count: following } = await db.from("follows")
+      .select("*", {count:"exact",head:true})
       .eq("follower_id", currentUser.id);
 
-    if (summary) {
-      summary.innerHTML += `
-        <div class="stats">
-          <span><strong>${followers || 0}</strong> Followers</span>
-          <span><strong>${following || 0}</strong> Following</span>
-        </div>
-      `;
-    }
+    summary.innerHTML += `<div class="stats">
+      <span><strong>${followers || 0}</strong> Followers</span>
+      <span><strong>${following || 0}</strong> Following</span>
+    </div>`;
 
-    const { data: posts, error: postsError } = await db
-      .from("posts")
-      .select("*")
-      .eq("user_id", currentUser.id)
-      .order("created_at", { ascending: false });
+    const { data: posts, error: postsError } = await db.from("posts")
+      .select("*").eq("user_id", currentUser.id)
+      .order("created_at", {ascending:false});
 
     if (postsError) throw postsError;
 
-    const myPosts = document.getElementById("myPosts");
-
-    if (myPosts) {
-      myPosts.innerHTML = (posts || []).map(post => `
-        <div class="card">
-          ${mediaMarkup(post.media_url, post.media_type)}
-          <p>${esc(post.caption || "")}</p>
-          <button class="btn danger"
-            onclick="deleteMyPost('${esc(post.id)}')">
-            Delete post
-          </button>
-        </div>
-      `).join("") || '<div class="empty">Abhi koi post nahi hai.</div>';
-    }
+    document.getElementById("myPosts").innerHTML = (posts || []).map(post => `
+      <div class="card">
+        ${mediaMarkup(post.media_url, post.media_type)}
+        <p>${esc(post.caption || "")}</p>
+        <button class="btn danger" onclick="deleteMyPost('${esc(post.id)}')">Delete</button>
+      </div>`).join("") || '<div class="empty">No posts yet.</div>';
 
   } catch (error) {
-    console.error(error);
-    toast("Profile load error: " + error.message);
+    toast("Profile error: " + error.message);
   }
 }
 
 async function saveProfile(event) {
-  if (event) event.preventDefault();
-  if (!currentUser) return;
+  event.preventDefault();
 
-  const name = document.getElementById("editName")?.value.trim() || "";
-  const username = document.getElementById("editUsername")?.value.trim().toLowerCase() || "";
-  const bio = document.getElementById("editBio")?.value.trim() || "";
+  const full_name = document.getElementById("editName").value.trim();
+  const username = document.getElementById("editUsername").value.trim().toLowerCase();
+  const bio = document.getElementById("editBio").value.trim();
 
   if (!/^[a-z0-9_.]{3,30}$/.test(username)) {
-    return toast("Username 3–30 characters ka ho: letters, numbers, _ ya .");
+    return toast("Username 3–30 characters ka hona chahiye.");
   }
 
   try {
-    let avatarUrl = currentProfile?.avatar_url || null;
+    let avatar_url = currentProfile?.avatar_url || null;
+    const file = document.getElementById("avatarFile").files[0];
 
-    const avatarFile = document.getElementById("avatarFile")?.files?.[0];
-
-    if (avatarFile) {
-      if (!avatarFile.type.startsWith("image/")) {
-        return toast("Avatar ke liye image select karo.");
-      }
-
-      avatarUrl = await uploadMedia(avatarFile, "avatars");
+    if (file) {
+      if (!file.type.startsWith("image/")) throw new Error("Image select karo.");
+      avatar_url = await uploadMedia(file, "avatars");
     }
 
-    const { error } = await db
-      .from("profiles")
-      .update({
-        full_name: name,
-        username,
-        bio,
-        avatar_url: avatarUrl
-      })
-      .eq("id", currentUser.id);
+    const { error } = await db.from("profiles").update({
+      full_name, username, bio, avatar_url
+    }).eq("id", currentUser.id);
 
     if (error) throw error;
 
-    toast("Profile save ho gayi!");
+    toast("Profile updated!");
     await loadProfile();
-
   } catch (error) {
-    console.error(error);
-    toast("Profile save error: " + error.message);
+    toast(error.message);
   }
 }
 
 async function deleteMyPost(postId) {
-  if (!confirm("Bhai, ye post delete karni hai?")) return;
+  if (!confirm("Post delete karni hai?")) return;
 
   try {
-    const { error } = await db
-      .from("posts")
-      .delete()
-      .eq("id", postId)
-      .eq("user_id", currentUser.id);
+    const { error } = await db.from("posts").delete()
+      .eq("id", postId).eq("user_id", currentUser.id);
 
     if (error) throw error;
 
-    toast("Post delete ho gayi.");
-    await loadProfile();
+    toast("Post deleted.");
     await loadFeed();
-
+    await loadProfile();
   } catch (error) {
-    toast("Delete error: " + error.message);
+    toast(error.message);
   }
 }
 
-// ============== END PART 6/10 ==============
- // ================= PART 7/10 =================
-
+document.getElementById("profileEditForm").addEventListener("submit", saveProfile);
+// PART 7 START
 async function loadChatUsers() {
-  if (!currentUser || !db) return;
-
   const box = document.getElementById("chatUsers");
-  if (!box) return;
-
-  box.innerHTML = '<div class="empty">Users load ho rahe hain...</div>';
+  if (!currentUser) return;
 
   try {
-    const { data, error } = await db
-      .from("profiles")
+    const { data, error } = await db.from("profiles")
       .select("id,username,full_name,avatar_url")
-      .neq("id", currentUser.id)
-      .limit(50);
+      .neq("id", currentUser.id).limit(50);
 
     if (error) throw error;
 
     box.innerHTML = (data || []).map(user => `
-      <button class="chat-user" onclick="openChat('${esc(user.id)}')">
-        ${avatar(user.avatar_url, user.username)}
-        <span>${esc(user.full_name || user.username)}</span>
-      </button>
-    `).join("") || '<div class="empty">Abhi koi doosra user nahi hai.</div>';
-
+      <button class="card profile-result" style="width:100%;color:inherit"
+        onclick="openChat('${esc(user.id)}')">
+        <div class="profile-result-left">
+          ${avatar(user.avatar_url, user.username)}
+          <strong>${esc(user.full_name || user.username)}</strong>
+        </div>
+        <span>Message</span>
+      </button>`).join("") || '<div class="empty">No other users yet.</div>';
   } catch (error) {
-    console.error(error);
-    box.innerHTML = '<div class="empty">Users load nahi hue.</div>';
+    box.innerHTML = `<div class="empty">Chat users error: ${esc(error.message)}</div>`;
   }
 }
 
 async function openChat(userId) {
-  if (!currentUser || userId === currentUser.id) return;
-
   activeChatUser = userId;
-
-  const panel = document.getElementById("chatPanel");
-  const title = document.getElementById("chatTitle");
-
-  if (panel) panel.hidden = false;
-  if (title) title.textContent = "Chat loading...";
+  document.getElementById("chatPanel").hidden = false;
 
   try {
-    const { data: profile, error } = await db
-      .from("profiles")
-      .select("username,full_name")
-      .eq("id", userId)
-      .single();
+    const { data, error } = await db.from("profiles")
+      .select("username,full_name").eq("id", userId).single();
 
     if (error) throw error;
 
-    if (title) {
-      title.textContent = profile.full_name || profile.username || "Chat";
-    }
+    document.getElementById("chatTitle").textContent =
+      data.full_name || data.username || "Chat";
 
     await loadMessages();
-
   } catch (error) {
-    console.error(error);
-    toast("Chat open nahi hui: " + error.message);
+    toast(error.message);
   }
 }
 
 async function loadMessages() {
-  if (!currentUser || !activeChatUser || !db) return;
+  if (!currentUser || !activeChatUser) return;
 
   const box = document.getElementById("chatMessages");
-  if (!box) return;
 
   try {
-    const { data, error } = await db
-      .from("messages")
+    const { data, error } = await db.from("messages")
       .select("*")
-      .or(
-        `and(sender_id.eq.${currentUser.id},receiver_id.eq.${activeChatUser}),and(sender_id.eq.${activeChatUser},receiver_id.eq.${currentUser.id})`
-      )
-      .order("created_at", { ascending: true })
+      .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${activeChatUser}),and(sender_id.eq.${activeChatUser},receiver_id.eq.${currentUser.id})`)
+      .order("created_at", {ascending:true})
       .limit(200);
 
     if (error) throw error;
 
     box.innerHTML = (data || []).map(message => `
       <div class="message ${message.sender_id === currentUser.id ? "mine" : "theirs"}">
-        <div>${esc(message.message_text || "")}</div>
-        <small>${message.created_at ? esc(new Date(message.created_at).toLocaleString()) : ""}</small>
-      </div>
-    `).join("") || '<div class="empty">Pehla message bhejo 👋</div>';
+        ${esc(message.message_text || "")}
+        <div class="muted">${esc(message.created_at || "")}</div>
+      </div>`).join("") || '<div class="empty">Say hello 👋</div>';
 
     box.scrollTop = box.scrollHeight;
-
   } catch (error) {
-    console.error(error);
-    box.innerHTML =
-      '<div class="empty">Messages load nahi hue. messages table aur RLS check karo.</div>';
+    box.innerHTML = `<div class="empty">Chat setup required: ${esc(error.message)}</div>`;
   }
 }
 
-const chatFormElement = document.getElementById("chatForm");
+document.getElementById("chatForm").addEventListener("submit", async event => {
+  event.preventDefault();
 
-if (chatFormElement) {
-  chatFormElement.addEventListener("submit", async event => {
-    event.preventDefault();
+  const input = document.getElementById("chatText");
+  const message_text = input.value.trim();
 
-    const input = document.getElementById("chatText");
-    const messageText = input?.value.trim();
+  if (!message_text || !activeChatUser) return;
 
-    if (!messageText || !activeChatUser || !currentUser) {
-      return toast("Pehle user select karo aur message likho.");
-    }
+  try {
+    const { error } = await db.from("messages").insert({
+      sender_id: currentUser.id,
+      receiver_id: activeChatUser,
+      message_text
+    });
 
-    if (messageText.length > 3000) {
-      return toast("Message 3000 characters se chhota rakho.");
-    }
+    if (error) throw error;
 
-    try {
-      const { error } = await db
-        .from("messages")
-        .insert({
-          sender_id: currentUser.id,
-          receiver_id: activeChatUser,
-          message_text: messageText
-        });
-
-      if (error) throw error;
-
-      input.value = "";
-      await loadMessages();
-
-    } catch (error) {
-      console.error(error);
-      toast("Message send nahi hua: " + error.message);
-    }
-  });
-}
-
-// ============== END PART 7/10 ==============
- // ================= PART 8/10 =================
-
+    input.value = "";
+    await loadMessages();
+  } catch (error) {
+    toast("Message error: " + error.message);
+  }
+});
+// PART 8 START
 function showPage(pageName) {
-  const pages = [
-    "homePage",
-    "searchPage",
-    "zeefPage",
-    "chatPage",
-    "profilePage"
-  ];
+  const pages = ["homePage","searchPage","zeefPage","chatPage","profilePage"];
 
   pages.forEach(id => {
-    const element = document.getElementById(id);
-    if (element) element.hidden = id !== pageName;
+    document.getElementById(id).hidden = id !== pageName;
   });
 
   document.querySelectorAll("[data-page]").forEach(button => {
-    button.classList.toggle(
-      "active",
-      button.dataset.page === pageName
-    );
+    button.classList.toggle("active", button.dataset.page === pageName);
   });
 
   if (pageName === "homePage") {
     loadFeed();
     loadStrips();
-  }
-
-  if (pageName === "searchPage") {
-    document.getElementById("searchInput")?.focus();
-  }
-
-  if (pageName === "zeefPage") {
+  } else if (pageName === "searchPage") {
+    document.getElementById("searchInput").focus();
+  } else if (pageName === "zeefPage") {
     loadZeefs();
-  }
-
-  if (pageName === "profilePage") {
-    loadProfile();
-  }
-
-  if (pageName === "chatPage") {
+  } else if (pageName === "chatPage") {
     loadChatUsers();
+  } else if (pageName === "profilePage") {
+    loadProfile();
   }
 }
 
 document.querySelectorAll("[data-page]").forEach(button => {
-  button.addEventListener("click", () => {
-    showPage(button.dataset.page);
-  });
+  button.addEventListener("click", () => showPage(button.dataset.page));
 });
 
 async function changeEmail(event) {
-  if (event) event.preventDefault();
+  event.preventDefault();
+  const email = document.getElementById("newEmail").value.trim();
 
-  const email = document.getElementById("newEmail")?.value.trim();
-
-  if (!email) return toast("Naya email likho.");
+  if (!email) return toast("New email likho.");
 
   try {
-    const { error } = await db.auth.updateUser({ email });
-
+    const { error } = await db.auth.updateUser({email});
     if (error) throw error;
-
-    toast("Email change request bhej di. Inbox check karo.");
+    toast("Email confirmation check karo.");
   } catch (error) {
-    toast("Email update error: " + error.message);
+    toast(error.message);
   }
 }
 
 async function changePassword(event) {
-  if (event) event.preventDefault();
+  event.preventDefault();
+  const password = document.getElementById("newPassword").value;
 
-  const password = document.getElementById("newPassword")?.value || "";
-
-  if (password.length < 8) {
-    return toast("Password kam se kam 8 characters ka rakho.");
-  }
+  if (password.length < 8) return toast("Password minimum 8 characters.");
 
   try {
-    const { error } = await db.auth.updateUser({ password });
-
+    const { error } = await db.auth.updateUser({password});
     if (error) throw error;
-
     document.getElementById("newPassword").value = "";
-    toast("Password update ho gaya.");
+    toast("Password updated.");
   } catch (error) {
-    toast("Password update error: " + error.message);
+    toast(error.message);
   }
 }
 
-document.getElementById("profileEditForm")?.addEventListener(
-  "submit",
-  saveProfile
-);
+document.getElementById("emailForm").addEventListener("submit", changeEmail);
+document.getElementById("passwordForm").addEventListener("submit", changePassword);
+// PART 9 START
+async function enterApp() {
+  if (!currentUser || !db) return;
 
-document.getElementById("emailForm")?.addEventListener(
-  "submit",
-  changeEmail
-);
+  try {
+    await ensureProfile();
 
-document.getElementById("passwordForm")?.addEventListener(
-  "submit",
-  changePassword
-);
+    document.getElementById("authScreen").hidden = true;
+    document.getElementById("appScreen").hidden = false;
+    document.getElementById("bottomNav").hidden = false;
 
-// ============== END PART 8/10 ==============
- // ================= PART 9/10 =================
-
-function requireLogin() {
-  if (!currentUser) {
-    toast("Bhai, pehle login karo.");
-    return false;
+    await refreshEverything();
+    showPage("homePage");
+    toast("Welcome to GROMAZEEF 🔥");
+  } catch (error) {
+    console.error("App initialization:", error);
+    toast("App setup error: " + error.message);
   }
-
-  return true;
-}
-
-function formatDate(dateValue) {
-  if (!dateValue) return "";
-
-  const date = new Date(dateValue);
-
-  if (Number.isNaN(date.getTime())) return "";
-
-  return date.toLocaleString();
 }
 
 async function refreshEverything() {
-  if (!currentUser) return;
-
   await Promise.allSettled([
     loadFeed(),
     loadStrips(),
     loadZeefs(),
-    loadProfile(),
-    loadChatUsers()
+    loadProfile()
   ]);
 }
 
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden && currentUser) {
-    const visiblePage = [
-      "homePage",
-      "searchPage",
-      "zeefPage",
-      "chatPage",
-      "profilePage"
-    ].find(id => {
-      const element = document.getElementById(id);
-      return element && !element.hidden;
-    });
-
-    if (visiblePage === "homePage") {
-      loadFeed();
-      loadStrips();
-    } else if (visiblePage === "zeefPage") {
-      loadZeefs();
-    } else if (visiblePage === "chatPage" && activeChatUser) {
-      loadMessages();
-    }
-  }
-});
-
-window.addEventListener("online", () => {
-  toast("Internet connected.");
-});
-
-window.addEventListener("offline", () => {
-  toast("Internet nahi hai. Connection check karo.");
-});
-
-// ============== END PART 9/10 ==============
- // ================= PART 10/10 =================
-
-async function enterApp() {
-  if (!currentUser || !db) return;
-
-  const authScreen = document.getElementById("authScreen");
-  const appScreen = document.getElementById("appScreen");
-
-  if (authScreen) authScreen.hidden = true;
-  if (appScreen) appScreen.hidden = false;
-
-  try {
-    await ensureProfile();
-    await refreshEverything();
-    showPage("homePage");
-
-    toast("Welcome to GROMAZEEF 🔥");
-  } catch (error) {
-    console.error(error);
-    toast("App start error: " + error.message);
-  }
+function showAuth() {
+  document.getElementById("authScreen").hidden = false;
+  document.getElementById("appScreen").hidden = true;
+  document.getElementById("bottomNav").hidden = true;
 }
 
 async function startGromazeef() {
@@ -1905,63 +1231,43 @@ async function startGromazeef() {
     await initSupabase();
 
     const { data, error } = await db.auth.getSession();
-
     if (error) throw error;
 
     if (data.session?.user) {
       currentUser = data.session.user;
       await enterApp();
     } else {
-      const authScreen = document.getElementById("authScreen");
-      const appScreen = document.getElementById("appScreen");
-
-      if (authScreen) authScreen.hidden = false;
-      if (appScreen) appScreen.hidden = true;
+      showAuth();
     }
 
     db.auth.onAuthStateChange((event, session) => {
       setTimeout(async () => {
         if (session?.user) {
           currentUser = session.user;
-
-          if (event === "SIGNED_IN") {
-            await enterApp();
-          }
+          if (event === "SIGNED_IN") await enterApp();
         } else {
           currentUser = null;
           currentProfile = null;
           activeChatUser = null;
-
-          const authScreen = document.getElementById("authScreen");
-          const appScreen = document.getElementById("appScreen");
-
-          if (authScreen) authScreen.hidden = false;
-          if (appScreen) appScreen.hidden = true;
+          showAuth();
         }
       }, 0);
     });
 
   } catch (error) {
-    console.error("GROMAZEEF start error:", error);
-
-    const authScreen = document.getElementById("authScreen");
-
-    if (authScreen) {
-      authScreen.hidden = false;
-      authScreen.innerHTML += `
-        <div class="card">
-          <h3>App connection error</h3>
-          <p>Supabase URL, publishable key aur internet check karo.</p>
-          <p>${esc(error.message || "Unknown error")}</p>
-          <button class="btn" onclick="location.reload()">Retry</button>
-        </div>
-      `;
-    }
+    console.error(error);
+    showAuth();
+    toast("Connection error: " + error.message);
   }
 }
 
+window.addEventListener("online", () => toast("Internet connected."));
+window.addEventListener("offline", () => toast("Internet disconnected."));
+// PART 10 START
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
 startGromazeef();
-
 </script>
 </body>
 </html>
