@@ -762,17 +762,7 @@ if (data === true) {
   }
 
   function renderShell() {
-    const savedAccounts = (() => {
-  try {
-    return JSON.parse(
-      localStorage.getItem("gromazeef-saved-accounts") || "[]"
-    );
-  } catch {
-    return [];
-  }
-})();
-
-const savedAccountsHTML = savedAccounts.length
+     = savedAccounts.length
   ? `
     <div class="card card-pad" style="margin-bottom:18px">
       <h3 style="margin:0 0 12px">Continue as</h3>
