@@ -1319,8 +1319,7 @@ async function showArchivedPosts() {
     `
       <p>Apne doosre Gromazeef account mein login kar sakte ho.</p>
       <p class="muted">
-        Pehle account ka password save nahi hoga.
-        Wapas switch karne ke liye us account se dobara login karna padega.
+        Doosre account mein login karne ke liye pehle current account se logout hoga.
       </p>
     `,
     {
@@ -1337,15 +1336,22 @@ async function showArchivedPosts() {
     const button = $("#continue-add-account");
     button.disabled = true;
 
-    const { error } = await state.client.auth.signOut();
+    try {
+      const { error } = await state.client.auth.signOut();
 
-    if (error) {
+      if (error) {
+        button.disabled = false;
+        toast("Logout nahi hua: " + friendlyError(error), "error");
+        return;
+      }
+
+      closeModal();
+    } catch (error) {
       button.disabled = false;
-      toast("Logout nahi hua: " + friendlyError(error), "error");
-      return;
+      toast("Error: " + friendlyError(error), "error");
     }
-    closeModal();
-$("#settings-saved").addEventListener("click",()=>showSavedPosts());
+  });
+});$("#settings-saved").addEventListener("click",()=>showSavedPosts());
 $("#settings-archive").addEventListener("click",()=>showArchivedPosts());
     $("#settings-saved").addEventListener("click",()=>showSavedPosts());
     $("#settings-archive").addEventListener("click",()=>showArchivedPosts());
