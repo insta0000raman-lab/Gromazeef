@@ -559,18 +559,55 @@ if (data === true) {
   }
 
   async function requestPasswordReset() {
-    const email=String($("#auth-email")?.value||"").trim();
-    if(!email){toast("Pehle apni Gmail/email likho.","error");$("#auth-email")?.focus();return;}
-    const button=$("#forgot-password"); if(button)button.disabled=true;
-    try {
-      const redirectTo=location.origin+location.pathname;
-      const {error}=await state.client.auth.resetPasswordForEmail(email,{redirectTo});
-      if(error)throw error;
-      toast("Password reset email bhej diya. Gmail Inbox/Spam check karo.","success");
-    } catch(error){toast("Reset email nahi bheja: "+friendlyError(error),"error");}
-    finally{if(button)button.disabled=false;}
+  const username = String(
+    $("#auth-username")?.value || ""
+  ).trim().toLowerCase();
+
+  if (!username) {
+    toast("Pehle apna username likho.", "error");
+    $("#auth-username")?.focus();
+    return;
   }
 
+  const button = $("#forgot-password");
+  if (button) button.disabled = true;
+
+  try {
+    const response = await fetch(
+      "https://jwkpergysvdicyzvqypy.supabase.co/functions/v1/username-password-reset",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": CONFIG.SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${CONFIG.SUPABASE_ANON_KEY}`
+        },
+        body: JSON.stringify({ username })
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        result.error || "Reset request fail ho gayi."
+      );
+    }
+
+    toast(
+      result.message ||
+      "Agar username registered hai, toh reset email check karo.",
+      "success"
+    );
+  } catch (error) {
+    toast(
+      "Reset request fail: " + friendlyError(error),
+      "error"
+    );
+  } finally {
+    if (button) button.disabled = false;
+  }
+  }
   async function sendEmailOtp() {
     const email=String($("#auth-email")?.value||"").trim();
     if(!email){toast("Pehle apni Gmail/email likho.","error");$("#auth-email")?.focus();return;}
