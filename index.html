@@ -495,6 +495,55 @@ textarea.field{resize:vertical;min-height:90px}
       </main>`;
     $("#auth-toggle").addEventListener("click",()=>{state.authMode=signup?"login":"signup";renderAuth();});
     $("#auth-form").addEventListener("submit",handleAuth);
+        const usernameInput = $("#auth-username");
+    const usernameStatus = $("#username-status");
+
+    if (usernameInput && usernameStatus) {
+      let usernameCheckTimer;
+
+      usernameInput.addEventListener("input", () => {
+        clearTimeout(usernameCheckTimer);
+
+        const name = usernameInput.value.trim().toLowerCase()
+          .replace(/[^a-z0-9_.]/g, "");
+
+        if (usernameInput.value !== name) {
+          usernameInput.value = name;
+        }
+
+        if (name.length < 3) {
+          usernameStatus.textContent = "Username kam se kam 3 characters ka hona chahiye.";
+          usernameStatus.style.color = "#ff7996";
+          return;
+        }
+
+        usernameStatus.textContent = "Checking availability…";
+        usernameStatus.style.color = "#a5a8c4";
+
+        usernameCheckTimer = setTimeout(async () => {
+          try {
+            const { data, error } = await state.client
+              .from("profiles")
+              .select("username")
+              .ilike("username", name)
+              .limit(1);
+
+            if (error) throw error;
+
+            if (data && data.length > 0) {
+              usernameStatus.textContent = "❌ Username unavailable";
+              usernameStatus.style.color = "#ff7996";
+            } else {
+              usernameStatus.textContent = "✅ Username available";
+              usernameStatus.style.color = "#c6ff68";
+            }
+          } catch (error) {
+            usernameStatus.textContent = "Availability check nahi ho paaya. Dobara try karo.";
+            usernameStatus.style.color = "#ff7996";
+          }
+        }, 350);
+      });
+    }
     $("#forgot-password")?.addEventListener("click",requestPasswordReset);
     $("#email-otp-login")?.addEventListener("click",sendEmailOtp);
   }
