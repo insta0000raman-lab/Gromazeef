@@ -1344,11 +1344,9 @@ async function showArchivedPosts() {
       toast("Logout nahi hua: " + friendlyError(error), "error");
       return;
     }
-
     closeModal();
   });
-});.addEventListener("click",()=>{
-      openModal("Add a Gromazeef account",`<p>Supabase ka current login session replace kiye bina multiple accounts ke liye separate auth storage setup zaroori hai.</p><p class="muted">Is current build mein bina separate session storage ke login switch karne se active account badal sakta hai. Abhi current account ko logout nahi kiya gaya.</p>`,{footer:`<button class="btn" data-modal-close>Cancel</button><button class="btn primary" id="continue-add-account">Continue to login</button>`});
+});      openModal("Add a Gromazeef account",`<p>Supabase ka current login session replace kiye bina multiple accounts ke liye separate auth storage setup zaroori hai.</p><p class="muted">Is current build mein bina separate session storage ke login switch karne se active account badal sakta hai. Abhi current account ko logout nahi kiya gaya.</p>`,{footer:`<button class="btn" data-modal-close>Cancel</button><button class="btn primary" id="continue-add-account">Continue to login</button>`});
       $("#continue-add-account")?.addEventListener("click",async()=>{closeModal();await state.client.auth.signOut();});
     });
     $("#settings-saved").addEventListener("click",()=>showSavedPosts());
