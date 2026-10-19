@@ -479,7 +479,11 @@ textarea.field{resize:vertical;min-height:90px}
             <form id="auth-form" class="auth-form">
               ${signup?`<div><label class="label" for="auth-name">Full name</label><input class="field" id="auth-name" name="full_name" placeholder="Your name" required maxlength="70"></div>`:""}
               <div><label class="label" for="auth-email">Email</label><input class="field" id="auth-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required></div>
-              ${signup?`<div><label class="label" for="auth-username">Username</label><input class="field" id="auth-username" name="username" placeholder="choose_username" minlength="3" maxlength="24" pattern="[A-Za-z0-9_.]+" required></div>`:""}
+              ${signup?`<div>
+  <label class="label" for="auth-username">Username</label>
+  <input class="field" id="auth-username" name="username" placeholder="choose_username" minlength="3" maxlength="24" pattern="[A-Za-z0-9_.]+" autocomplete="username" required>
+  <small id="username-status" style="display:block;margin-top:6px;font-size:13px" aria-live="polite"></small>
+</div>`:""}
               <div><label class="label" for="auth-password">Password</label><input class="field" id="auth-password" name="password" type="password" placeholder="At least 6 characters" minlength="6" autocomplete="${signup?"new-password":"current-password"}" required></div>
               <button class="btn primary" id="auth-submit" type="submit">${signup?"Create account":"Sign in"} <span>→</span></button>
             </form>
