@@ -498,6 +498,24 @@ textarea.field{resize:vertical;min-height:90px}
       </main>`;
     $("#auth-toggle").addEventListener("click",()=>{state.authMode=signup?"login":"signup";renderAuth();});
     $("#auth-form").addEventListener("submit",handleAuth);
+    $$("[data-saved-account]").forEach(button => {
+  button.addEventListener("click", () => {
+    const username = button.dataset.savedAccount;
+
+    const input = $("#auth-username");
+    if (input) {
+      input.value = username;
+      input.focus();
+    }
+
+    toast("Password daal kar sign in karo.", "success");
+  });
+});
+
+$("#add-account")?.addEventListener("click", () => {
+  const input = $("#auth-username");
+  if (input) input.focus();
+});
         const usernameInput = $("#auth-username");
     const usernameStatus = $("#username-status");
 
