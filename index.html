@@ -526,7 +526,15 @@ textarea.field{resize:vertical;min-height:90px}
   "is_username_available",
   { username_to_check: name }
 );
+if (error) throw error;
 
+if (data === true) {
+  usernameStatus.textContent = "✅ Username available";
+  usernameStatus.style.color = "#c6ff68";
+} else {
+  usernameStatus.textContent = "❌ Username unavailable";
+  usernameStatus.style.color = "#ff7996";
+}
 if (error) throw error;
 
 if (data === true) {
