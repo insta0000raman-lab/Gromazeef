@@ -462,6 +462,47 @@ textarea.field{resize:vertical;min-height:90px}
   }
 
   function renderAuth() {
+    function renderAuth() {
+    const signup = state.authMode === "signup";
+    $("#app").innerHTML = `
+      <main class="auth-screen">
+        <section class="auth-art">
+          <div class="brand"><div class="brand-mark">G</div><div class="brand-name">Groma<span>zeef</span></div></div>
+          <h1>Your people.<br><span class="gradient-text">Your universe.</span></h1>
+          <p>Share the little moments, discover bold creators, and stay close to the people who make your world feel bigger.</p>
+          <div class="feature-pills"><span class="pill">✦ Groms</span><span class="pill">▷ Zeefs</span><span class="pill">♡ Strips</span><span class="pill">✉ Private chats</span></div>
+        </section>
+        ${savedAccountsHTML}
+        <section class="auth-card-wrap">
+          <div class="auth-card card">
+            <div class="brand" style="margin-bottom:25px"><div class="brand-mark">G</div><div><div class="brand-name">Welcome to <span>Gromazeef</span></div><div class="small muted">A fresh space for your social life</div></div></div>
+            <h2>${signup?"Create your account":"Good to see you again"}</h2>
+            <p>${signup?"Join the community and start sharing your world.":"Sign in to catch up with your people."}</p>
+            <form id="auth-form" class="auth-form">
+              ${signup?`<div><label class="label" for="auth-name">Full name</label><input class="field" id="auth-name" name="full_name" placeholder="Your name" required maxlength="70"></div>`:""}
+              ${signup
+  ? `<div><label class="label" for="auth-email">Email</label><input class="field" id="auth-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required></div>`
+  : `<div><label class="label" for="auth-username">Username</label><input class="field" id="auth-username" name="username" type="text" placeholder="your_username" autocomplete="username" minlength="3" maxlength="24" required></div>`
+              }
+              ${signup?`<div>
+  <label class="label" for="auth-username">Username</label>
+  <input class="field" id="auth-username" name="username" placeholder="choose_username" minlength="3" maxlength="24" pattern="[A-Za-z0-9_.]+" autocomplete="username" required>
+  <small id="username-status" style="display:block;margin-top:6px;font-size:13px" aria-live="polite"></small>
+</div>`:""}
+              <div><label class="label" for="auth-password">Password</label><input class="field" id="auth-password" name="password" type="password" placeholder="At least 6 characters" minlength="6" autocomplete="${signup?"new-password":"current-password"}" required></div>
+              <button class="btn primary" id="auth-submit" type="submit">${signup?"Create account":"Sign in"} <span>→</span></button>
+            </form>
+            ${!signup?`<div class="auth-extra-actions"><button type="button" class="text-button" id="forgot-password">Forgot password?</button><button type="button" class="text-button" id="email-otp-login">Email OTP / sign-in link</button></div>`:""}
+            <div class="auth-toggle">${signup?"Already have an account?":"New to Gromazeef?"} <button id="auth-toggle">${signup?"Sign in":"Create account"}</button></div>
+            <p class="small muted" style="margin:18px 0 0">By continuing, you agree to keep Gromazeef kind and safe.</p>
+          </div>
+        </section>
+      </main>`;
+    $("#auth-toggle").addEventListener("click",()=>{state.authMode=signup?"login":"signup";renderAuth();});
+    $("#auth-form").addEventListener("submit",handleAuth);
+    $$("[data-saved-account]").forEach(button => {
+  button.addEventListener("click", () => {
+    const username = button.dataset.savedAccount;
     const signup = state.authMode === "signup";
     $("#app").innerHTML = `
       <main class="auth-screen">
