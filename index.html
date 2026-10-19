@@ -460,8 +460,6 @@ textarea.field{resize:vertical;min-height:90px}
       auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true }
     });
   }
-
-  function renderAuth() {
     function renderAuth() {
     const signup = state.authMode === "signup";
     $("#app").innerHTML = `
@@ -472,7 +470,6 @@ textarea.field{resize:vertical;min-height:90px}
           <p>Share the little moments, discover bold creators, and stay close to the people who make your world feel bigger.</p>
           <div class="feature-pills"><span class="pill">✦ Groms</span><span class="pill">▷ Zeefs</span><span class="pill">♡ Strips</span><span class="pill">✉ Private chats</span></div>
         </section>
-        ${savedAccountsHTML}
         <section class="auth-card-wrap">
           <div class="auth-card card">
             <div class="brand" style="margin-bottom:25px"><div class="brand-mark">G</div><div><div class="brand-name">Welcome to <span>Gromazeef</span></div><div class="small muted">A fresh space for your social life</div></div></div>
