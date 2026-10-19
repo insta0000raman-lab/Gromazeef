@@ -1313,7 +1313,41 @@ async function showArchivedPosts() {
     $("#settings-edit-profile").addEventListener("click",()=>openEditProfile(state.profile));
     $("#settings-update-password").addEventListener("click",openUpdatePassword);
     $("#logout-button").addEventListener("click",logout);
-    $("#add-account").addEventListener("click",()=>{
+    $("#add-account").addEventListener("click", () => {
+  openModal(
+    "Add or switch account",
+    `
+      <p>Apne doosre Gromazeef account mein login kar sakte ho.</p>
+      <p class="muted">
+        Pehle account ka password save nahi hoga.
+        Wapas switch karne ke liye us account se dobara login karna padega.
+      </p>
+    `,
+    {
+      footer: `
+        <button class="btn" data-modal-close>Cancel</button>
+        <button class="btn primary" id="continue-add-account">
+          Switch account
+        </button>
+      `
+    }
+  );
+
+  $("#continue-add-account")?.addEventListener("click", async () => {
+    const button = $("#continue-add-account");
+    button.disabled = true;
+
+    const { error } = await state.client.auth.signOut();
+
+    if (error) {
+      button.disabled = false;
+      toast("Logout nahi hua: " + friendlyError(error), "error");
+      return;
+    }
+
+    closeModal();
+  });
+});.addEventListener("click",()=>{
       openModal("Add a Gromazeef account",`<p>Supabase ka current login session replace kiye bina multiple accounts ke liye separate auth storage setup zaroori hai.</p><p class="muted">Is current build mein bina separate session storage ke login switch karne se active account badal sakta hai. Abhi current account ko logout nahi kiya gaya.</p>`,{footer:`<button class="btn" data-modal-close>Cancel</button><button class="btn primary" id="continue-add-account">Continue to login</button>`});
       $("#continue-add-account")?.addEventListener("click",async()=>{closeModal();await state.client.auth.signOut();});
     });
