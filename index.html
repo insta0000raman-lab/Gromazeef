@@ -1351,8 +1351,7 @@ async function showArchivedPosts() {
       toast("Error: " + friendlyError(error), "error");
     }
   });
-});$("#settings-saved").addEventListener("click",()=>showSavedPosts());
-$("#settings-archive").addEventListener("click",()=>showArchivedPosts());
+});
     $("#settings-saved").addEventListener("click",()=>showSavedPosts());
     $("#settings-archive").addEventListener("click",()=>showArchivedPosts());
     $("#time-management").addEventListener("click",()=>{const mins=prompt("Daily Gromazeef reminder in minutes (e.g. 30):","30");if(mins&&Number(mins)>0){localStorage.setItem("gromazeef-reminder-minutes",String(Math.round(Number(mins))));toast("Reminder preference saved on this device.","success");}});
