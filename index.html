@@ -1346,8 +1346,7 @@ async function showArchivedPosts() {
     }
     closeModal();
 });      openModal("Add a Gromazeef account",`<p>Supabase ka current login session replace kiye bina multiple accounts ke liye separate auth storage setup zaroori hai.</p><p class="muted">Is current build mein bina separate session storage ke login switch karne se active account badal sakta hai. Abhi current account ko logout nahi kiya gaya.</p>`,{footer:`<button class="btn" data-modal-close>Cancel</button><button class="btn primary" id="continue-add-account">Continue to login</button>`});
-      $("#continue-add-account")?.addEventListener("click",async()=>{closeModal();await state.client.auth.signOut();});
-    });
+      $("#continue-add-account")?.addEventListener("click",async()=>{closeModal();await state.client.auth.signOut});
     $("#settings-saved").addEventListener("click",()=>showSavedPosts());
     $("#settings-archive").addEventListener("click",()=>showArchivedPosts());
     $("#time-management").addEventListener("click",()=>{const mins=prompt("Daily Gromazeef reminder in minutes (e.g. 30):","30");if(mins&&Number(mins)>0){localStorage.setItem("gromazeef-reminder-minutes",String(Math.round(Number(mins))));toast("Reminder preference saved on this device.","success");}});
