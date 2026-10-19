@@ -762,35 +762,7 @@ if (data === true) {
   }
 
   function renderShell() {
-        ${savedAccounts.map(account => `
-          <button
-            type="button"
-            class="btn"
-            data-saved-account="${esc(account.username)}"
-            style="display:flex;align-items:center;gap:9px"
-          >
-            ${
-              account.avatar_url
-                ? `<img src="${esc(account.avatar_url)}" alt=""
-                    style="width:38px;height:38px;border-radius:50%;object-fit:cover">`
-                : `<span class="brand-mark">${esc((account.username || "G").charAt(0).toUpperCase())}</span>`
-            }
-
-            <span>@${esc(account.username)}</span>
-          </button>
-        `).join("")}
-      </div>
-
-      <button
-        type="button"
-        class="text-button"
-        id="add-account"
-        style="margin-top:12px"
-      >＋ Add account</button>
-    </div>
-  `
-  : "";
-    $("#app").innerHTML = `
+        $("#app").innerHTML = `
       <header class="topbar">
         <a class="brand" href="#" id="brand-home" aria-label="Gromazeef home"><div class="brand-mark">G</div><div class="brand-name">Groma<span>zeef</span></div></a>
         <div class="topbar-right">
