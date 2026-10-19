@@ -522,21 +522,20 @@ textarea.field{resize:vertical;min-height:90px}
 
         usernameCheckTimer = setTimeout(async () => {
           try {
-            const { data, error } = await state.client
-              .from("profiles")
-              .select("username")
-              .ilike("username", name)
-              .limit(1);
+            const { data, error } = await state.client.rpc(
+  "is_username_available",
+  { username_to_check: name }
+);
 
-            if (error) throw error;
+if (error) throw error;
 
-            if (data && data.length > 0) {
-              usernameStatus.textContent = "❌ Username unavailable";
-              usernameStatus.style.color = "#ff7996";
-            } else {
-              usernameStatus.textContent = "✅ Username available";
-              usernameStatus.style.color = "#c6ff68";
-            }
+if (data === true) {
+  usernameStatus.textContent = "✅ Username available";
+  usernameStatus.style.color = "#c6ff68";
+} else {
+  usernameStatus.textContent = "❌ Username unavailable";
+  usernameStatus.style.color = "#ff7996";
+}
           } catch (error) {
             usernameStatus.textContent = "Availability check nahi ho paaya. Dobara try karo.";
             usernameStatus.style.color = "#ff7996";
