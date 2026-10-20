@@ -4435,7 +4435,7 @@ async function bootstrap() {
   }
 
   try {
-    createClient();
+    state.client = createClient();
 
     if (!state.client) {
       throw new Error("Supabase client could not be initialized.");
