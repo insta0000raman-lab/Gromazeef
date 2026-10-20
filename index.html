@@ -681,41 +681,39 @@ if (loginForm) {
   loginForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    const identity = document
-      .getElementById("loginIdentity")
-      .value.trim();
+    const identityInput = document.getElementById("loginIdentity");
+    const passwordInput = document.getElementById("loginPassword");
+    const button = loginForm.querySelector('button[type="submit"]');
 
-    const password = document
-      .getElementById("loginPassword")
-      .value;
+    const email = identityInput?.value.trim() || "";
+    const password = passwordInput?.value || "";
 
-    const button = loginForm.querySelector(
-      'button[type="submit"]'
-    );
-
-    if (!identity || !password) {
-      alert("Email aur password bharo.");
+    if (!email || !password) {
+      alert("Email aur password dono bharo.");
       return;
     }
 
-    // Supabase password login ke liye email zaroori hai.
-    if (!identity.includes("@")) {
-      alert(
-        "Abhi email se login karo. Username login ke liye secure backend banana baaki hai."
-      );
+    if (!email.includes("@")) {
+      alert("Filhaal username ki jagah signup wala email daalo.");
       return;
     }
 
-    button.disabled = true;
-    button.textContent = "Logging in...";
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Logging in...";
+    }
 
     try {
       const { data, error } = await db.auth.signInWithPassword({
-        email: identity,
+        email: email,
         password: password
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase login error:", error);
+        alert("Login error: " + error.message);
+        return;
+      }
 
       activeUser = data.user;
 
@@ -723,20 +721,18 @@ if (loginForm) {
 
       showApp();
 
-      alert("Gromazeef mein login ho gaya! 🎉");
-
     } catch (error) {
       console.error("Gromazeef login error:", error);
-
-      alert("Login nahi hua: " + error.message);
-
+      alert("System error: " + (error.message || "Unknown error"));
     } finally {
-      button.disabled = false;
-      button.textContent = "Log in →";
+      if (button) {
+        button.disabled = false;
+        button.textContent = "Log in →";
+      }
     }
   });
-}
-let activeUser = null;
+  }
+  let activeUser = null;
 let activeProfile = null;
 let allPosts = [];
 let hindiSelected = false;
