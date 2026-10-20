@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#10111a">
+<title>Gromazeef — Social Universe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#0c0d14;--panel:#141621;--panel2:#191c2a;--line:#292c3c;--text:#f4f5fb;--muted:#9ba0b5;--accent:#9b7bff;--accent2:#37d6c0;--danger:#ff5e79;--radius:18px;--shadow:0 16px 45px #0003}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at top,#17152a 0,#0c0d14 55%);color:var(--text);font-family:Inter,system-ui,sans-serif;min-height:100vh}button,input,textarea,select{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}.hidden{display:none!important}.muted{color:var(--muted)}.small{font-size:12px}.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.6px;font-size:22px}.brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0b0d14;font-weight:900}.btn{border:1px solid var(--line);border-radius:12px;padding:10px 14px;color:var(--text);background:var(--panel2);font-weight:700;transition:.18s}.btn:hover{transform:translateY(-1px);filter:brightness(1.12)}.btn.primary{background:linear-gradient(135deg,var(--accent),#7760e8);border-color:transparent;color:white}.btn.teal{background:var(--accent2);color:#071512;border-color:transparent}.btn.danger{color:#ff9aac}.icon-btn{width:40px;height:40px;border:1px solid var(--line);border-radius:13px;background:var(--panel2);color:var(--text);display:grid;place-items:center}.field{display:grid;gap:7px;margin:12px 0}.field label{font-size:13px;color:var(--muted);font-weight:700}.field input,.field textarea,.field select,.searchbox{width:100%;background:#0f111b;border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--text);outline:none}.field input:focus,.field textarea:focus,.searchbox:focus{border-color:var(--accent)}.field textarea{min-height:100px;resize:vertical}.app-header{height:72px;position:sticky;top:0;z-index:20;background:#0c0d14eF;backdrop-filter:blur(18px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 max(18px,calc((100vw - 1320px)/2));gap:18px}.header-search{width:min(390px,38vw);position:relative}.header-actions{display:flex;gap:9px;align-items:center}.avatar{width:42px;height:42px;object-fit:cover;border-radius:50%;background:#272a3b;border:1px solid #ffffff18}.avatar.sm{width:32px;height:32px}.avatar.lg{width:90px;height:90px}.layout{max-width:1320px;margin:0 auto;padding:22px 18px;display:grid;grid-template-columns:230px minmax(0,680px) 280px;gap:22px;align-items:start}.sidebar,.rightbar{position:sticky;top:94px;display:grid;gap:14px}.panel,.card{background:linear-gradient(160deg,#171925,#12141e);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.side-card{padding:15px}.nav-list{display:grid;gap:5px}.nav-item{display:flex;align-items:center;gap:13px;padding:12px 13px;border-radius:12px;color:var(--muted);font-weight:650;border:1px solid transparent;cursor:pointer}.nav-item i{width:20px;text-align:center;font-size:17px}.nav-item:hover,.nav-item.active{color:var(--text);background:#9b7bff19;border-color:#9b7bff35}.nav-item.active i{color:var(--accent)}.main{min-width:0;display:grid;gap:16px}.page-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}.page-heading h1{font-size:25px;letter-spacing:-.8px;margin:0}.page-subtitle{color:var(--muted);font-size:13px;margin-top:7px}.composer{padding:17px;display:grid;gap:13px}.composer-top{display:flex;gap:12px;align-items:center}.composer-prompt{flex:1;text-align:left;color:var(--muted);background:#0f111b;border:1px solid var(--line);border-radius:15px;padding:13px}.composer-actions{display:flex;flex-wrap:wrap;gap:8px;border-top:1px solid var(--line);padding-top:13px}.post{overflow:hidden}.post-head{padding:16px 16px 10px;display:flex;align-items:center;gap:10px}.post-user{flex:1;min-width:0}.post-user strong{display:block;font-size:14px}.post-user span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.post-menu{background:transparent;border:0;color:var(--muted);padding:8px}.post-caption{padding:2px 16px 13px;line-height:1.55;overflow-wrap:anywhere;font-size:14px}.post-media{width:100%;max-height:720px;object-fit:contain;background:#08090e;display:block}.post-actions{display:flex;gap:7px;align-items:center;padding:12px 14px}.post-action{display:flex;gap:7px;align-items:center;border:0;background:transparent;color:var(--muted);padding:7px;border-radius:9px}.post-action:hover{background:#ffffff0a;color:var(--text)}.post-action.liked{color:#ff5e79}.post-action.saved{color:var(--accent2)}.post-tags{padding:0 16px 14px;color:var(--accent2);font-size:12px}.stories{display:flex;gap:13px;overflow-x:auto;padding:15px}.story{min-width:68px;text-align:center;cursor:pointer}.story-ring{width:58px;height:58px;padding:3px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));margin:0 auto 7px}.story-ring img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid var(--panel)}.story span{font-size:11px;color:var(--muted)}.section-card{padding:17px}.section-card h3{margin:0 0 13px;font-size:15px}.quick-stat{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;padding:8px 0}.quick-stat strong{color:var(--text)}.person-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.person-row:last-child{border-bottom:0}.person-info{flex:1;min-width:0}.person-info strong{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis}.person-info span{display:block;color:var(--muted);font-size:11px;margin-top:4px}.grid-posts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.grid-post{position:relative;aspect-ratio:1;background:var(--panel2);overflow:hidden;cursor:pointer}.grid-post img,.grid-post video{width:100%;height:100%;object-fit:cover}.grid-post .grid-overlay{position:absolute;inset:0;display:grid;place-items:center;background:#0007;opacity:0;transition:.2s}.grid-post:hover .grid-overlay{opacity:1}.profile-cover{height:155px;background:linear-gradient(120deg,#9b7bff55,#37d6c055);border-radius:18px 18px 0 0;overflow:hidden}.profile-cover img{width:100%;height:100%;object-fit:cover}.profile-main{padding:0 20px 20px}.profile-top{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-top:-43px}.profile-top .avatar{border:4px solid var(--panel);width:88px;height:88px}.profile-bio{line-height:1.55;color:#d7d9e5;font-size:14px;margin:12px 0}.profile-stats{display:flex;gap:23px;flex-wrap:wrap;color:var(--muted);font-size:13px}.profile-stats strong{color:var(--text)}.tabs{display:flex;gap:5px;border-bottom:1px solid var(--line);margin:14px 0}.tab{padding:12px 15px;background:transparent;color:var(--muted);border:0;border-bottom:2px solid transparent}.tab.active{color:var(--text);border-color:var(--accent)}.empty{padding:35px 18px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:15px}.empty i{font-size:28px;color:var(--accent);margin-bottom:12px}.empty h3{color:var(--text);margin:10px 0}.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:99px;padding:6px 10px;font-size:11px;color:var(--muted)}.feed-filter{display:flex;gap:7px;overflow:auto;padding-bottom:3px}.feed-filter button{white-space:nowrap}.modal-backdrop{position:fixed;inset:0;z-index:50;background:#000a;display:grid;place-items:center;padding:18px}.modal{width:min(540px,100%);max-height:90vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow)}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.modal-head h2{font-size:20px;margin:0}.toast-container{position:fixed;right:18px;top:85px;z-index:100;display:grid;gap:8px}.toast{max-width:340px;background:#202336;border:1px solid var(--line);border-radius:13px;padding:13px 16px;box-shadow:var(--shadow);font-size:13px}.toast.error{border-color:#ff5e7966}.toast.success{border-color:#37d6c066}.auth-screen{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}.auth-visual{padding:9vw 7vw;display:flex;flex-direction:column;justify-content:center;background:radial-gradient(circle at 25% 30%,#9b7bff44,transparent 45%),radial-gradient(circle at 80% 80%,#37d6c033,transparent 35%)}.auth-visual h1{font-size:clamp(38px,5vw,70px);line-height:1.03;letter-spacing:-3px;margin:30px 0}.auth-visual p{color:var(--muted);line-height:1.8;max-width:450px}.auth-box-wrap{display:grid;place-items:center;padding:25px}.auth-box{width:min(420px,100%);padding:28px}.auth-box h2{font-size:27px;margin:0 0 8px}.auth-switch{display:flex;gap:10px;margin-top:15px;color:var(--muted);font-size:13px}.auth-switch button{border:0;background:none;color:var(--accent);font-weight:700}.mobile-nav{display:none}.loading-state{display:grid;place-items:center;padding:45px;color:var(--muted)}.spinner{width:25px;height:25px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:12px}@keyframes spin{to{transform:rotate(360deg)}}.badge{font-size:10px;background:#9b7bff24;color:#c3b3ff;border-radius:7px;padding:4px 7px}.zchat-layout{display:grid;grid-template-columns:220px 1fr;min-height:430px}.chat-list{border-right:1px solid var(--line);padding:12px}.chat-window{padding:16px;display:flex;flex-direction:column;gap:12px}.chat-message{max-width:78%;padding:10px 13px;border-radius:14px;background:var(--panel2);font-size:13px;line-height:1.5}.chat-message.mine{align-self:flex-end;background:#7259d7}.chat-compose{display:flex;gap:8px;margin-top:auto}.chat-compose input{flex:1;min-width:0}.zfeed{display:grid;gap:15px}.zfeed-item{position:relative;min-height:280px;background:#08090e;border-radius:18px;overflow:hidden}.zfeed-item video{width:100%;max-height:650px;object-fit:contain;display:block}.zfeed-meta{padding:14px}.search-results{display:grid;gap:4px}.search-result{display:flex;align-items:center;gap:10px;padding:10px;border-radius:11px;cursor:pointer}.search-result:hover{background:var(--panel2)}.tag-cloud{display:flex;flex-wrap:wrap;gap:8px}.tag-cloud button{background:#37d6c012;border:1px solid #37d6c044;color:var(--accent2);border-radius:99px;padding:8px 12px}.divider{height:1px;background:var(--line);margin:15px 0}.footer-note{font-size:11px;line-height:1.7;color:var(--muted);padding:10px}.notice{border:1px solid #e9c46a44;background:#e9c46a0b;color:#e9d49b;padding:12px;border-radius:12px;font-size:12px;line-height:1.6}.error-box{padding:18px;border:1px solid #ff5e7955;background:#ff5e790d;border-radius:14px;color:#ffb3bf;font-size:13px;line-height:1.6}
+@media(max-width:1100px){.layout{grid-template-columns:205px minmax(0,1fr)}.rightbar{display:none}}
+@media(max-width:720px){.app-header{height:62px;padding:0 12px}.brand{font-size:19px}.brand-mark{width:34px;height:34px}.header-search{width:auto;flex:1}.header-search .searchbox{padding:10px}.header-actions .desktop-only{display:none}.layout{display:block;padding:13px 10px 85px}.sidebar,.rightbar{display:none}.main{gap:12px}.page-heading h1{font-size:22px}.mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:30;background:#10121cf5;border-top:1px solid var(--line);justify-content:space-around;padding:8px 3px calc(8px + env(safe-area-inset-bottom));backdrop-filter:blur(18px)}.mobile-nav button{border:0;background:transparent;color:var(--muted);display:grid;gap:4px;place-items:center;font-size:10px;min-width:43px}.mobile-nav button i{font-size:19px}.mobile-nav button.active{color:var(--accent)}.auth-screen{grid-template-columns:1fr}.auth-visual{display:none}.auth-box-wrap{min-height:100vh;padding:15px}.auth-box{padding:23px}.grid-posts{gap:3px}.zchat-layout{grid-template-columns:1fr}.chat-list{border-right:0;border-bottom:1px solid var(--line);max-height:140px;overflow:auto}.profile-cover{height:120px}.profile-main{padding:0 14px 15px}.profile-stats{gap:13px}.post-head{padding:13px}.post-caption{padding-left:13px;padding-right:13px}.post-actions{padding:9px}.composer{padding:13px}.header-actions{gap:5px}.header-actions .icon-btn{width:35px;height:35px}}
+</style>
+</head>
+<body>
+<div id="toast-container" class="toast-container" aria-live="polite"></div>
+<div id="app"><div class="loading-state"><div><div class="spinner"></div>Gromazeef is starting…</div></div></div>
+<script>
+"use strict";
+const SUPABASE_URL = "https://jwkpergysvdicyzvqypy.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_Y2J7myGmTRSrRGN5PxnbYg_m07KlrmB";
+const APP_NAME = "Gromazeef";
+const DEFAULT_AVATAR = "https://api.dicebear.com/9.x/initials/svg?seed=Gromazeef";
+const DEFAULT_COVER = "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1200&q=80";
+const $ = (selector, root=document) => root.querySelector(selector);
+const $$ = (selector, root=document) => [...root.querySelectorAll(selector)];
+const state = {
+  client:null,user:null,profile:null,currentPage:"home",viewingProfileId:null,
+  profiles:[],feedPosts:[],savedPostIds:new Set(),likedPostIds:new Set(),
+  currentFeedFilter:"for-you",searchQuery:"",activeProfileTab:"posts",
+  activeChatUserId:null,chatMessages:[],currentSearchResults:[],isLoading:false
+};
+const navItems = [
+  ["home","House","Home","fa-house"],
+  ["explore","Explore","Explore","fa-compass"],
+  ["create","Create","Create","fa-square-plus"],
+  ["zeefs","ZEEFS","ZEEFS","fa-bolt"],
+  ["groms","GROMS","GROMS","fa-clapperboard"],
+  ["zchat","Z-CHAT","Z-CHAT","fa-message"],
+  ["notifications","Notifications","Alerts","fa-bell"],
+  ["profile","My Profile","Profile","fa-user"],
+  ["saved","Saved","Saved","fa-bookmark"],
+  ["settings","Settings","Settings","fa-gear"]
+];
+function escapeHTML(value=""){
+  return String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function safeURL(value){
+  if(!value)return "";
+  try{const url=new URL(value,location.href);return ["https:","http:","blob:"].includes(url.protocol)?url.href:"";}
+  catch{return "";}
+}
+function getAvatar(profile=state.profile){
+  return safeURL(profile?.avatar_url || profile?.avatar || DEFAULT_AVATAR) || DEFAULT_AVATAR;
+}
+function getDisplayName(profile={}){
+  return profile.display_name || profile.full_name || profile.username || "Gromazeef User";
+}
+function getUsername(profile={}){
+  return profile.username ? "@"+profile.username : "@user";
+}
+function formatCount(n=0){
+  n=Number(n)||0;
+  if(n>=1e6)return (n/1e6).toFixed(1).replace(/\.0$/,"")+"M";
+  if(n>=1e3)return (n/1e3).toFixed(1).replace(/\.0$/,"")+"K";
+  return String(n);
+}
+function timeAgo(value){
+  if(!value)return "Just now";
+  const seconds=Math.max(0,Math.floor((Date.now()-new Date(value).getTime())/1000));
+  if(seconds<60)return "Just now";
+  if(seconds<3600)return Math.floor(seconds/60)+"m";
+  if(seconds<86400)return Math.floor(seconds/3600)+"h";
+  if(seconds<604800)return Math.floor(seconds/86400)+"d";
+  return new Date(value).toLocaleDateString();
+}
+function toast(message,type="success"){
+  const container=$("#toast-container");
+  if(!container)return;
+  const item=document.createElement("div");
+  item.className="toast "+(type==="error"?"error":"success");
+  item.textContent=message;
+  container.appendChild(item);
+  setTimeout(()=>item.remove(),3800);
+}
+function showLoading(message="Loading…"){
+  $("#app").innerHTML=`<div class="loading-state"><div><div class="spinner"></div>${escapeHTML(message)}</div></div>`;
+}
+function showFatal(error){
+  console.error(error);
+  $("#app").innerHTML=`<div class="loading-state"><div class="error-box"><strong>Gromazeef start nahi ho paaya.</strong><br>${escapeHTML(error?.message||"Unknown error")}<br><br>Supabase URL, public key aur browser console check karo. Public key browser mein use hoti hai; service-role key kabhi mat lagana.<br><button class="btn primary" onclick="location.reload()">Try again</button></div></div>`;
+}
+function currentUserId(){return state.user?.id||null;}
+function initials(name="Gromazeef"){return name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase()||"G";}
+function navButton(item,mobile=false){
+  const [key,label,mobileLabel,icon]=item;
+  return `<button class="${mobile?"":"nav-item"} ${state.currentPage===key?"active":""}" data-page="${key}" ${mobile?'aria-label="'+mobileLabel+'"':""}><i class="fa-solid ${icon}"></i>${mobile?`<span>${mobileLabel}</span>`:`<span>${label}</span>`}</button>`;
+}
+function renderShell(){
+  const nav=navItems.map(item=>navButton(item)).join("");
+  const mobile=["home","explore","create","zeefs","profile"].map(key=>navButton(navItems.find(x=>x[0]===key),true)).join("");
+  $("#app").innerHTML=`
+    <header class="app-header">
+      <a class="brand" href="#" data-page="home"><span class="brand-mark">G</span><span>Gromazeef</span></a>
+      <div class="header-search"><input class="searchbox" id="global-search" placeholder="Search people, GROMS, ZEEFS…" aria-label="Search Gromazeef"></div>
+      <div class="header-actions">
+        <button class="icon-btn" data-page="zchat" title="Z-CHAT"><i class="fa-regular fa-message"></i></button>
+        <button class="icon-btn" data-page="notifications" title="Notifications"><i class="fa-regular fa-bell"></i></button>
+        <button class="icon-btn" data-page="profile" title="Profile"><img class="avatar sm" src="${escapeHTML(getAvatar())}" alt=""></button>
+      </div>
+    </header>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="panel side-card">
+          <div class="person-row" style="padding-top:2px">
+            <img class="avatar" src="${escapeHTML(getAvatar())}" alt="">
+            <div class="person-info"><strong>${escapeHTML(getDisplayName())}</strong><span>${escapeHTML(getUsername())}</span></div>
+          </div>
+          <nav class="nav-list">${nav}</nav>
+          <div class="divider"></div>
+          <button class="btn primary" style="width:100%" data-page="create"><i class="fa-solid fa-plus"></i> Create post</button>
+        </div>
+        <div class="footer-note">Gromazeef · Your social universe<br>Share stories. Find your people.</div>
+      </aside>
+      <main class="main" id="main-content"></main>
+      <aside class="rightbar">
+        <div class="panel section-card">
+          <h3>Your universe <span class="badge">BETA</span></h3>
+          <div class="quick-stat"><span>Username</span><strong>${escapeHTML(getUsername())}</strong></div>
+          <div class="quick-stat"><span>Joined</span><strong>${state.user?.created_at?new Date(state.user.created_at).toLocaleDateString():"Today"}</strong></div>
+          <div class="divider"></div>
+          <div class="tag-cloud">
+            <button data-page="zeefs">⚡ ZEEFS</button><button data-page="groms">🎬 GROMS</button><button data-page="zchat">💬 Z-CHAT</button>
+          </div>
+        </div>
+        <div class="panel section-card">
+          <h3>Quick links</h3>
+          <div class="nav-list">
+            <div class="nav-item" data-page="saved"><i class="fa-regular fa-bookmark"></i><span>Saved posts</span></div>
+            <div class="nav-item" data-page="followers"><i class="fa-solid fa-users"></i><span>Followers</span></div>
+            <div class="nav-item" data-page="settings"><i class="fa-solid fa-gear"></i><span>Settings</span></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <nav class="mobile-nav">${mobile}</nav>
+    <div id="modal-root"></div>`;
+  $$("[data-page]").forEach(el=>el.addEventListener("click",async e=>{
+    e.preventDefault();
+    const page=el.dataset.page;
+    if(!page)return;
+    state.currentPage=page;
+    if(page==="profile")state.viewingProfileId=state.user.id;
+    await renderPage();
+    $$(".nav-item,.mobile-nav button").forEach(n=>n.classList.toggle("active",n.dataset.page===page));
+  }));
+  const search=$("#global-search");
+  search?.addEventListener("keydown",e=>{
+    if(e.key==="Enter"){state.searchQuery=search.value.trim();state.currentPage="explore";renderPage();}
+  });
+}
+function pageHeading(title,subtitle="",action=""){
+  return `<div class="page-heading"><div><h1>${title}</h1>${subtitle?`<div class="page-subtitle">${subtitle}</div>`:""}</div>${action}</div>`;
+}
+function emptyState(icon,title,description,button=""){
+  return `<div class="empty"><i class="fa-solid ${icon}"></i><h3>${escapeHTML(title)}</h3><p>${escapeHTML(description)}</p>${button}</div>`;
+}
+function getMediaUrl(post){
+  return safeURL(post.media_url||post.media_path||post.video_url||post.image_url||post.url||"");
+}
+function getPostText(post){return post.caption||post.text||post.content||"";}
+function getPostType(post){
+  const explicit=String(post.media_type||post.type||"").toLowerCase();
+  const url=getMediaUrl(post);
+  if(explicit.includes("video")||explicit==="reel"||explicit==="zeef"||/\.(mp4|webm|mov)(\?|$)/i.test(url))return "video";
+  if(url)return "image";
+  return "text";
+}
+function getPostOwnerId(post){return post.user_id||post.author_id||post.owner_id||"";}
+function postCard(post,options={}){
+  const owner=post.profiles||post.profile||{};
+  const ownId=getPostOwnerId(post);
+  const media=getMediaUrl(post);
+  const type=getPostType(post);
+  const liked=state.likedPostIds.has(post.id);
+  const saved=state.savedPostIds.has(post.id);
+  const likes=Number(post.likes_count||post.like_count||0);
+  const comments=Number(post.comments_count||post.comment_count||0);
+  let mediaHTML="";
+  if(media&&type==="video")mediaHTML=`<video class="post-media" src="${escapeHTML(media)}" controls playsinline preload="metadata"></video>`;
+  else if(media)mediaHTML=`<img class="post-media" src="${escapeHTML(media)}" alt="Post media" loading="lazy">`;
+  return `<article class="panel post" data-post-id="${escapeHTML(post.id)}">
+    <div class="post-head">
+      <img class="avatar" src="${escapeHTML(getAvatar(owner))}" alt="">
+      <div class="post-user"><strong>${escapeHTML(getDisplayName(owner))}</strong><span>${escapeHTML(getUsername(owner))} · ${escapeHTML(timeAgo(post.created_at||post.inserted_at))}</span></div>
+      ${ownId===currentUserId()?`<button class="post-menu" data-delete-post="${escapeHTML(post.id)}" title="Delete post"><i class="fa-solid fa-ellipsis"></i></button>`:`<button class="post-menu" data-follow-user="${escapeHTML(ownId)}" title="Follow user"><i class="fa-solid fa-user-plus"></i></button>`}
+    </div>
+    ${getPostText(post)?`<div class="post-caption">${escapeHTML(getPostText(post)).replace(/\n/g,"<br>")}</div>`:""}
+    ${mediaHTML}
+    <div class="post-actions">
+      <button class="post-action ${liked?"liked":""}" data-like-post="${escapeHTML(post.id)}"><i class="${liked?"fa-solid":"fa-regular"} fa-heart"></i><span>${formatCount(likes+(liked?1:0))}</span></button>
+      <button class="post-action" data-comment-post="${escapeHTML(post.id)}"><i class="fa-regular fa-comment"></i><span>${formatCount(comments)}</span></button>
+      <button class="post-action ${saved?"saved":""}" data-save-post="${escapeHTML(post.id)}"><i class="fa-regular fa-bookmark"></i><span>${saved?"Saved":"Save"}</span></button>
+      <button class="post-action" data-share-post="${escapeHTML(post.id)}"><i class="fa-solid fa-arrow-up-from-bracket"></i><span>Share</span></button>
+    </div>
+    ${post.hashtags?`<div class="post-tags">${escapeHTML(Array.isArray(post.hashtags)?post.hashtags.join(" "):post.hashtags)}</div>`:""}
+    <div class="post-comments hidden" id="comments-${escapeHTML(post.id)}"></div>
+  </article>`;
+}
+function attachPostEvents(root=$("#main-content")){
+  $$("[data-like-post]",root).forEach(btn=>btn.onclick=()=>toggleLike(btn.dataset.likePost));
+  $$("[data-save-post]",root).forEach(btn=>btn.onclick=()=>toggleSave(btn.dataset.savePost));
+  $$("[data-comment-post]",root).forEach(btn=>btn.onclick=()=>toggleComments(btn.dataset.commentPost));
+  $$("[data-delete-post]",root).forEach(btn=>btn.onclick=()=>deletePost(btn.dataset.deletePost));
+  $$("[data-follow-user]",root).forEach(btn=>btn.onclick=()=>followUser(btn.dataset.followUser));
+  $$("[data-share-post]",root).forEach(btn=>btn.onclick=async()=>{
+    const url=location.href.split("#")[0]+"#post-"+btn.dataset.sharePost;
+    try{if(navigator.share)await navigator.share({title:"Gromazeef post",url});else{await navigator.clipboard.writeText(url);toast("Post link copied");}}
+    catch(e){if(e.name!=="AbortError")toast("Share nahi ho paaya","error");}
+  });
+}
+async function loadPosts({limit=25,userId=null,videoOnly=false,search=""}={}){
+  let query=state.client.from("posts").select("*").order("created_at",{ascending:false}).limit(limit);
+  if(userId)query=query.eq("user_id",userId);
+  if(videoOnly)query=query.not("media_url","is",null);
+  if(search)query=query.ilike("caption",`%${search.replace(/[%_]/g,"\\$&")}%`);
+  const {data,error}=await query;
+  if(error)throw error;
+  const posts=data||[];
+  const ownerIds=[...new Set(posts.map(getPostOwnerId).filter(Boolean))];
+  if(ownerIds.length){
+    const {data:profiles}=await state.client.from("profiles").select("*").in("id",ownerIds);
+    const map=new Map((profiles||[]).map(p=>[p.id,p]));
+    posts.forEach(p=>p.profiles=map.get(getPostOwnerId(p))||{});
+  }
+  return posts;
+}
+async function loadUserPostStates(posts){
+  if(!currentUserId()||!posts.length)return;
+  const ids=posts.map(p=>p.id);
+  try{
+    const [{data:likes},{data:saves}]=await Promise.all([
+      state.client.from("likes").select("post_id").eq("user_id",currentUserId()).in("post_id",ids),
+      state.client.from("saved_posts").select("post_id").eq("user_id",currentUserId()).in("post_id",ids)
+    ]);
+    (likes||[]).forEach(x=>state.likedPostIds.add(x.post_id));
+    (saves||[]).forEach(x=>state.savedPostIds.add(x.post_id));
+  }catch(error){console.warn("Post state query:",error.message);}
+}
+function feedComposer(){
+  return `<section class="panel composer">
+    <div class="composer-top"><img class="avatar" src="${escapeHTML(getAvatar())}" alt=""><button class="composer-prompt" data-page="create">What's happening in your universe?</button></div>
+    <div class="composer-actions"><button class="btn" data-page="create"><i class="fa-regular fa-image"></i> Photo / Video</button><button class="btn" data-page="zeefs"><i class="fa-solid fa-bolt"></i> Make a ZEEF</button><button class="btn" data-page="groms"><i class="fa-solid fa-clapperboard"></i> Upload GROM</button></div>
+  </section>`;
+}
+async function renderHome(){
+  const main=$("#main-content");
+  main.innerHTML=pageHeading("Your universe","Fresh updates from your Gromazeef community")+`
+    <section class="panel stories" id="story-strip"><div class="story" data-page="create"><div class="story-ring"><img src="${escapeHTML(getAvatar())}" alt=""></div><span>Make a post</span></div><div class="story" data-page="zeefs"><div class="story-ring"><img src="https://api.dicebear.com/9.x/shapes/svg?seed=zeefs" alt=""></div><span>ZEEFS</span></div><div class="story" data-page="groms"><div class="story-ring"><img src="https://api.dicebear.com/9.x/shapes/svg?seed=groms" alt=""></div><span>GROMS</span></div></section>
+    ${feedComposer()}<div class="feed-filter"><button class="btn ${state.currentFeedFilter==="for-you"?"primary":""}" data-feed-filter="for-you">For you</button><button class="btn ${state.currentFeedFilter==="latest"?"primary":""}" data-feed-filter="latest">Latest</button><button class="btn" data-page="explore">Explore people</button></div>
+    <div id="home-feed" class="main"><div class="loading-state"><div><div class="spinner"></div>Loading your feed…</div></div></div>`;
+  $$("[data-page]",main).forEach(el=>el.onclick=()=>navigate(el.dataset.page));
+  $$("[data-feed-filter]",main).forEach(el=>el.onclick=()=>{state.currentFeedFilter=el.dataset.feedFilter;renderHome();});
+  try{
+    let posts=await loadPosts({limit:30});
+    if(state.currentFeedFilter==="for-you"&&posts.length){
+      const ids=posts.map(getPostOwnerId).filter(Boolean);
+      try{
+        const {data:follows}=await state.client.from("follows").select("following_id").eq("follower_id",currentUserId());
+        const following=new Set((follows||[]).map(x=>x.following_id));
+        const followed=posts.filter(p=>following.has(getPostOwnerId(p)));
+        if(followed.length)posts=followed.concat(posts.filter(p=>!following.has(getPostOwnerId(p))));
+      }catch{}
+    }
+    await loadUserPostStates(posts);
+    const feed=$("#home-feed");
+    if(!feed)return;
+    feed.innerHTML=posts.length?posts.map(p=>postCard(p)).join(""):emptyState("fa-feather","Your feed is waiting","Create your first post or explore the community.","<button class='btn primary' data-page='create'>Create your first post</button>");
+    attachPostEvents(feed);
+    $$("[data-page]",feed).forEach(el=>el.onclick=()=>navigate(el.dataset.page));
+  }catch(error){
+    console.error(error);
+    $("#home-feed").innerHTML=`<div class="error-box">Feed load nahi hui: ${escapeHTML(error.message)}<br>Check karo ki posts table mein read permission (RLS policy) enabled hai.</div>`;
+  }
+}
+async function toggleLike(postId){
+  if(!currentUserId())return toast("Pehle login karo","error");
+  try{
+    if(state.likedPostIds.has(postId)){
+      const {error}=await state.client.from("likes").delete().eq("post_id",postId).eq("user_id",currentUserId());
+      if(error)throw error;state.likedPostIds.delete(postId);toast("Like removed");
+    }else{
+      const {error}=await state.client.from("likes").insert({post_id:postId,user_id:currentUserId()});
+      if(error)throw error;state.likedPostIds.add(postId);toast("Liked");
+    }
+    await renderPage();
+  }catch(error){console.error(error);toast("Like update nahi hua: "+error.message,"error");}
+}
+async function toggleSave(postId){
+  if(!currentUserId())return toast("Pehle login karo","error");
+  try{
+    if(state.savedPostIds.has(postId)){
+      const {error}=await state.client.from("saved_posts").delete().eq("post_id",postId).eq("user_id",currentUserId());
+      if(error)throw error;state.savedPostIds.delete(postId);toast("Removed from saved");
+    }else{
+      const {error}=await state.client.from("saved_posts").insert({post_id:postId,user_id:currentUserId()});
+      if(error)throw error;state.savedPostIds.add(postId);toast("Post saved");
+    }
+    await renderPage();
+  }catch(error){console.error(error);toast("Save nahi hua: "+error.message,"error");}
+}
+async function toggleComments(postId){
+  const box=$("#comments-"+CSS.escape(postId));
+  if(!box)return;
+  box.classList.toggle("hidden");
+  if(box.dataset.loaded==="1")return;
+  box.innerHTML=`<div class="section-card"><div class="muted small">Comments load ho rahe hain…</div><form class="chat-compose" id="comment-form-${escapeHTML(postId)}"><input class="searchbox" name="comment" placeholder="Write a comment…" required><button class="btn primary">Send</button></form></div>`;
+  try{
+    const {data,error}=await state.client.from("comments").select("*").eq("post_id",postId).order("created_at",{ascending:true}).limit(50);
+    if(error)throw error;
+    const form=$("#comment-form-"+CSS.escape(postId));
+    if(form)form.insertAdjacentHTML("beforebegin",(data||[]).map(c=>`<div class="person-row"><div class="person-info"><strong>${escapeHTML(c.username||"Community member")}</strong><span>${escapeHTML(c.content||c.comment||"")}</span></div></div>`).join(""));
+    form?.addEventListener("submit",async e=>{
+      e.preventDefault();const content=new FormData(form).get("comment").toString().trim();if(!content)return;
+      try{
+        const {error:insertError}=await state.client.from("comments").insert({post_id:postId,user_id:currentUserId(),content});
+        if(insertError)throw insertError;toast("Comment added");await toggleComments(postId);
+      }catch(err){toast("Comment nahi bheja: "+err.message,"error");}
+    });
+    box.dataset.loaded="1";
+  }catch(error){box.innerHTML=`<div class="section-card muted small">Comments available nahi: ${escapeHTML(error.message)}</div>`;}
+}
+async function deletePost(postId){
+  if(!confirm("Is post ko delete karna hai?"))return;
+  try{
+    const {error}=await state.client.from("posts").delete().eq("id",postId).eq("user_id",currentUserId());
+    if(error)throw error;toast("Post deleted");await renderPage();
+  }catch(error){toast("Delete nahi hua: "+error.message,"error");}
+}
+async function followUser(userId){
+  if(!userId||userId===currentUserId())return;
+  try{
+    const {data,error}=await state.client.from("follows").select("follower_id").eq("follower_id",currentUserId()).eq("following_id",userId).maybeSingle();
+    if(error)throw error;
+    if(data){
+      const {error:e}=await state.client.from("follows").delete().eq("follower_id",currentUserId()).eq("following_id",userId);if(e)throw e;toast("Unfollowed");
+    }else{
+      const {error:e}=await state.client.from("follows").insert({follower_id:currentUserId(),following_id:userId});if(e)throw e;toast("Following");
+    }
+    await renderPage();
+  }catch(error){toast("Follow action nahi hui: "+error.message,"error");}
+}
+async function renderCreate(kind="post"){
+  const main=$("#main-content");
+  const title=kind==="zeef"?"Create a ZEEF":kind==="grom"?"Upload a GROM":"Create a post";
+  main.innerHTML=pageHeading(title,"Share something with your community")+`
+    <section class="panel section-card">
+      <form id="create-form">
+        <div class="field"><label for="create-caption">Caption / description</label><textarea id="create-caption" name="caption" maxlength="2200" placeholder="Write something…"></textarea></div>
+        <div class="field"><label for="create-file">Photo or video</label><input id="create-file" name="media" type="file" accept="image/*,video/*"></div>
+        <div id="create-preview"></div>
+        <div class="notice">Upload bucket expected: <strong>post-media</strong>. The bucket and Storage policies must exist in Supabase. ZEEFS/GROMS may use the same posts table until their dedicated schema is connected.</div>
+        <button class="btn primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Publish</button>
+      </form>
+    </section>`;
+  const form=$("#create-form"),file=$("#create-file"),preview=$("#create-preview");
+  file.addEventListener("change",()=>{
+    const chosen=file.files?.[0];preview.innerHTML="";
+    if(!chosen)return;
+    const url=URL.createObjectURL(chosen);
+    preview.innerHTML=chosen.type.startsWith("video/")?`<video src="${url}" controls style="max-width:100%;max-height:360px;border-radius:12px"></video>`:`<img src="${url}" alt="Preview" style="max-width:100%;max-height:360px;object-fit:contain;border-radius:12px">`;
+  });
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const button=form.querySelector("button[type=submit]");button.disabled=true;button.textContent="Publishing…";
+    let uploadedURL=null;
+    try{
+      const caption=$("#create-caption").value.trim(),fileObj=file.files?.[0];
+      if(!caption&&!fileObj)throw new Error("Caption ya media add karo.");
+      let mediaType=null;
+      if(fileObj){
+        const max=100*1024*1024;if(fileObj.size>max)throw new Error("File 100 MB se chhoti honi chahiye.");
+        const ext=(fileObj.name.split(".").pop()||"bin").replace(/[^a-zA-Z0-9]/g,"");
+        const path=`${currentUserId()}/${Date.now()}-${crypto.randomUUID()}.${ext}`;
+        const {error:uploadError}=await state.client.storage.from("post-media").upload(path,fileObj,{upsert:false,contentType:fileObj.type});
+        if(uploadError)throw uploadError;
+        const {data:publicData}=state.client.storage.from("post-media").getPublicUrl(path);
+        uploadedURL=publicData?.publicUrl;mediaType=fileObj.type.startsWith("video/")?"video":"image";
+      }
+      const payload={user_id:currentUserId(),caption,media_url:uploadedURL,media_type:mediaType};
+      const {error}=await state.client.from("posts").insert(payload);
+      if(error)throw error;
+      toast(kind==="zeef"?"ZEEF published!":kind==="grom"?"GROM published!":"Post published!");
+      state.currentPage=kind==="zeef"?"zeefs":kind==="grom"?"groms":"home";await renderPage();
+    }catch(error){console.error(error);toast("Publish nahi hua: "+error.message,"error");}
+    finally{button.disabled=false;button.innerHTML='<i class="fa-solid fa-paper-plane"></i> Publish';}
+  });
+}
+async function renderProfile(userId=currentUserId()){
+  const main=$("#main-content");
+  if(!userId){main.innerHTML=emptyState("fa-user","Profile unavailable","Login required.");return;}
+  main.innerHTML=`<div class="loading-state"><div><div class="spinner"></div>Loading profile…</div></div>`;
+  try{
+    const {data:profile,error}=await state.client.from("profiles").select("*").eq("id",userId).single();
+    if(error)throw error;
+    state.viewingProfileId=userId;
+    const [{data:posts,error:postError},{count:followers},{count:following}] = await Promise.all([
+      state.client.from("posts").select("*").eq("user_id",userId).order("created_at",{ascending:false}).limit(100),
+      state.client.from("follows").select("*",{count:"exact",head:true}).eq("following_id",userId),
+      state.client.from("follows").select("*",{count:"exact",head:true}).eq("follower_id",userId)
+    ]);
+    if(postError)throw postError;
+    const {data:existingFollow}=userId===currentUserId()?{data:null}:await state.client.from("follows").select("follower_id").eq("follower_id",currentUserId()).eq("following_id",userId).maybeSingle();
+    const mediaPosts=posts||[];
+    main.innerHTML=`<section class="panel" style="overflow:hidden"><div class="profile-cover"><img src="${escapeHTML(safeURL(profile.cover_url)||DEFAULT_COVER)}" alt=""></div><div class="profile-main">
+      <div class="profile-top"><img class="avatar lg" src="${escapeHTML(getAvatar(profile))}" alt=""><div style="display:flex;gap:8px;flex-wrap:wrap">${userId===currentUserId()?`<button class="btn" data-page="editProfile"><i class="fa-solid fa-pen"></i> Edit profile</button>`:`<button class="btn ${existingFollow?"":"primary"}" data-profile-follow="${escapeHTML(userId)}">${existingFollow?"Following":"Follow"}</button><button class="btn" data-message-user="${escapeHTML(userId)}"><i class="fa-regular fa-message"></i> Message</button>`}</div></div>
+      <h2 style="margin:13px 0 4px">${escapeHTML(getDisplayName(profile))}</h2><div class="muted">${escapeHTML(getUsername(profile))}</div>
+      <div class="profile-bio">${escapeHTML(profile.bio||"No bio yet.")}</div>
+      <div class="profile-stats"><span><strong>${formatCount(mediaPosts.length)}</strong> posts</span><button class="post-action" data-page="followers"><strong>${formatCount(followers||0)}</strong> followers</button><button class="post-action" data-page="following"><strong>${formatCount(following||0)}</strong> following</button></div>
+      </div></section>
+      <div class="tabs"><button class="tab ${state.activeProfileTab==="posts"?"active":""}" data-profile-tab="posts">Posts</button><button class="tab ${state.activeProfileTab==="groms"?"active":""}" data-profile-tab="groms">GROMS</button><button class="tab ${state.activeProfileTab==="zeefs"?"active":""}" data-profile-tab="zeefs">ZEEFS</button></div>
+      <div class="grid-posts" id="profile-post-grid">${mediaPosts.length?mediaPosts.map(p=>`<div class="grid-post" data-open-post="${escapeHTML(p.id)}">${getMediaUrl(p)?(getPostType(p)==="video"?`<video src="${escapeHTML(getMediaUrl(p))}" muted playsinline></video>`:`<img src="${escapeHTML(getMediaUrl(p))}" loading="lazy" alt="">`):`<div style="padding:12px;font-size:12px">${escapeHTML(getPostText(p).slice(0,90))}</div>`}<div class="grid-overlay"><i class="fa-solid fa-heart"></i> ${formatCount(p.likes_count||0)}</div></div>`).join(""):emptyState("fa-images","Nothing here yet","Published posts will appear here.")}</div>`;
+    $$("[data-page]",main).forEach(el=>el.onclick=()=>navigate(el.dataset.page));
+    $("[data-profile-follow]",main)?.addEventListener("click",()=>followUser(userId));
+    $("[data-message-user]",main)?.addEventListener("click",()=>{state.activeChatUserId=userId;navigate("zchat");});
+    $$("[data-profile-tab]",main).forEach(el=>el.onclick=()=>{state.activeProfileTab=el.dataset.profileTab;toast("Dedicated "+el.dataset.profileTab.toUpperCase()+" filtering will use the connected media type fields.");});
+  }catch(error){console.error(error);main.innerHTML=`<div class="error-box">Profile load nahi hui: ${escapeHTML(error.message)}<br>Profiles/follows table permissions aur column names check karna.</div>`;}
+}
+async function renderExplore(){
+  const main=$("#main-content");
+  main.innerHTML=pageHeading("Explore","Discover people, GROMS, ZEEFS and fresh posts")+`
+    <section class="panel section-card"><form id="explore-search" style="display:flex;gap:8px"><input class="searchbox" id="explore-query" placeholder="Search username or display name…" value="${escapeHTML(state.searchQuery)}"><button class="btn primary">Search</button></form></section>
+    <section class="panel section-card"><h3>People</h3><div id="explore-people" class="search-results"><div class="muted small">Search for creators to get started.</div></div></section>
+    <div id="explore-posts" class="main"></div>`;
+  $("#explore-search").addEventListener("submit",async e=>{
+    e.preventDefault();state.searchQuery=$("#explore-query").value.trim();await renderExplore();
+  });
+  if(state.searchQuery){
+    const query=state.searchQuery.replace(/[,%()]/g," ").trim();
+    try{
+      const {data,error}=await state.client.from("profiles").select("*").or(`username.ilike.%${query}%,display_name.ilike.%${query}%`).limit(25);
+      if(error)throw error;
+      $("#explore-people").innerHTML=(data||[]).length?(data||[]).map(p=>`<div class="search-result" data-person="${escapeHTML(p.id)}"><img class="avatar" src="${escapeHTML(getAvatar(p))}" alt=""><div class="person-info"><strong>${escapeHTML(getDisplayName(p))}</strong><span>${escapeHTML(getUsername(p))}</span></div><i class="fa-solid fa-chevron-right muted"></i></div>`).join(""):emptyState("fa-user-slash","No users found","Try a different search.");
+      $$("[data-person]").forEach(el=>el.onclick=()=>{state.viewingProfileId=el.dataset.person;navigate("profile");});
+    }catch(error){$("#explore-people").innerHTML=`<div class="error-box">Search error: ${escapeHTML(error.message)}</div>`;}
+  }
+  try{
+    const posts=await loadPosts({limit:18,search:state.searchQuery});
+    await loadUserPostStates(posts);
+    $("#explore-posts").innerHTML=posts.length?posts.map(p=>postCard(p)).join(""):emptyState("fa-compass","Explore is ready","Search people or publish a post to start the community.");
+    attachPostEvents($("#explore-posts"));
+  }catch(error){$("#explore-posts").innerHTML=`<div class="error-box">Posts load nahi hue: ${escapeHTML(error.message)}</div>`;}
+}
+async function renderMediaFeed(kind){
+  const main=$("#main-content"),isZeef=kind==="zeef",title=isZeef?"ZEEFS":"GROMS";
+  main.innerHTML=pageHeading(title,isZeef?"Quick moments and short videos":"Video stories and longer moments",`<button class="btn primary" id="media-create"><i class="fa-solid fa-plus"></i> Create ${isZeef?"ZEEF":"GROM"}</button>`)+
+    `<div class="notice">${isZeef?"ZEEFS":"GROMS"} ka dedicated table/media_type filter database ke existing schema ke hisaab se connect karna hoga. Filhaal public posts mein video media dikhaya ja raha hai.</div><div class="zfeed" id="media-feed"><div class="loading-state"><div><div class="spinner"></div>Loading videos…</div></div></div>`;
+  $("#media-create").onclick=()=>renderCreate(isZeef?"zeef":"grom");
+  try{
+    const posts=await loadPosts({limit:35,videoOnly:true});
+    await loadUserPostStates(posts);
+    const filtered=posts.filter(p=>getPostType(p)==="video");
+    $("#media-feed").innerHTML=filtered.length?filtered.map(p=>`<article class="panel zfeed-item"><video src="${escapeHTML(getMediaUrl(p))}" controls playsinline preload="metadata"></video><div class="zfeed-meta"><strong>${escapeHTML(getDisplayName(p.profiles||{}))}</strong><p>${escapeHTML(getPostText(p))}</p><div class="post-actions"><button class="post-action ${state.likedPostIds.has(p.id)?"liked":""}" data-like-post="${escapeHTML(p.id)}"><i class="fa-solid fa-heart"></i> ${formatCount(p.likes_count||0)}</button><button class="post-action" data-comment-post="${escapeHTML(p.id)}"><i class="fa-regular fa-comment"></i> Comments</button><button class="post-action" data-save-post="${escapeHTML(p.id)}"><i class="fa-regular fa-bookmark"></i> Save</button></div><div class="post-comments hidden" id="comments-${escapeHTML(p.id)}"></div></div></article>`).join(""):emptyState(isZeef?"fa-bolt":"fa-clapperboard",`No ${title} yet`,"Upload a video to start filling this feed.","<button class='btn primary' id='empty-create'>Create now</button>");
+    attachPostEvents($("#media-feed"));
+    $("#empty-create")?.addEventListener("click",()=>renderCreate(isZeef?"zeef":"grom"));
+  }catch(error){$("#media-feed").innerHTML=`<div class="error-box">Video feed error: ${escapeHTML(error.message)}</div>`;}
+}
+async function renderSaved(){
+  const main=$("#main-content");
+  main.innerHTML=pageHeading("Saved posts","Things you want to keep")+`<div id="saved-feed" class="main"><div class="loading-state">Loading saved posts…</div></div>`;
+  try{
+    const {data,error}=await state.client.from("saved_posts").select("post_id").eq("user_id",currentUserId());
+    if(error)throw error;
+    const ids=(data||[]).map(x=>x.post_id).filter(Boolean);
+    if(!ids.length){$("#saved-feed").innerHTML=emptyState("fa-bookmark","Nothing saved yet","Use the bookmark button on a post to save it.");return;}
+    const {data:posts,error:postError}=await state.client.from("posts").select("*").in("id",ids).order("created_at",{ascending:false});
+    if(postError)throw postError;
+    const owners=[...new Set((posts||[]).map(getPostOwnerId).filter(Boolean))];
+    if(owners.length){const {data:profiles}=await state.client.from("profiles").select("*").in("id",owners);const map=new Map((profiles||[]).map(p=>[p.id,p]));(posts||[]).forEach(p=>p.profiles=map.get(getPostOwnerId(p))||{});}
+    await loadUserPostStates(posts||[]);
+    $("#saved-feed").innerHTML=(posts||[]).length?posts.map(p=>postCard(p)).join(""):emptyState("fa-bookmark","Saved posts unavailable","The saved posts could not be found.");
+    attachPostEvents($("#saved-feed"));
+  }catch(error){$("#saved-feed").innerHTML=`<div class="error-box">Saved posts error: ${escapeHTML(error.message)}</div>`;}
+}
+async function renderPeopleList(mode="followers",userId=currentUserId()){
+  const main=$("#main-content"),followers=mode==="followers";
+  main.innerHTML=pageHeading(followers?"Followers":"Following","People in your community")+`<section class="panel section-card"><div id="people-list" class="search-results">Loading…</div></section>`;
+  try{
+    const field=followers?"follower_id":"following_id",filter=followers?"following_id":"follower_id";
+    const {data,error}=await state.client.from("follows").select(field).eq(filter,userId);
+    if(error)throw error;
+    const ids=[...new Set((data||[]).map(x=>x[field]).filter(Boolean))];
+    if(!ids.length){$("#people-list").innerHTML=emptyState("fa-users",followers?"No followers yet":"Not following anyone yet","As people connect, they will appear here.");return;}
+    const {data:people,error:peopleError}=await state.client.from("profiles").select("*").in("id",ids);
+    if(peopleError)throw peopleError;
+    $("#people-list").innerHTML=(people||[]).map(p=>`<div class="search-result" data-person="${escapeHTML(p.id)}"><img class="avatar" src="${escapeHTML(getAvatar(p))}" alt=""><div class="person-info"><strong>${escapeHTML(getDisplayName(p))}</strong><span>${escapeHTML(getUsername(p))}</span></div><button class="btn" data-follow-user="${escapeHTML(p.id)}">Follow</button></div>`).join("");
+    $$("[data-person]").forEach(el=>el.addEventListener("click",e=>{if(e.target.closest("[data-follow-user]"))return;state.viewingProfileId=el.dataset.person;navigate("profile");}));
+    attachPostEvents(main);
+  }catch(error){$("#people-list").innerHTML=`<div class="error-box">List error: ${escapeHTML(error.message)}</div>`;}
+}
+async function renderEditProfile(){
+  const main=$("#main-content");
+  const p=state.profile||{};
+  main.innerHTML=pageHeading("Edit profile","Make your profile yours")+`<section class="panel section-card"><form id="edit-profile-form">
+    <div class="field"><label>Username</label><input id="ep-username" required maxlength="30" value="${escapeHTML(p.username||"")}"></div>
+    <div class="field"><label>Display name</label><input id="ep-name" maxlength="60" value="${escapeHTML(p.display_name||"")}"></div>
+    <div class="field"><label>Bio</label><textarea id="ep-bio" maxlength="160">${escapeHTML(p.bio||"")}</textarea></div>
+    <button class="btn primary">Save profile</button></form></section>`;
+  $("#edit-profile-form").onsubmit=async e=>{
+    e.preventDefault();
+    const username=$("#ep-username").value.trim().toLowerCase().replace(/^@/,"");
+    if(!/^[a-z0-9._]{3,30}$/.test(username)){toast("Username 3–30 characters: letters, numbers, dot, underscore.","error");return;}
+    try{
+      const {data:existing,error:checkError}=await state.client.from("profiles").select("id").eq("username",username).neq("id",currentUserId()).limit(1);
+      if(checkError)throw checkError;if(existing?.length){toast("Username already taken","error");return;}
+      const {data,error}=await state.client.from("profiles").update({username,display_name:$("#ep-name").value.trim(),bio:$("#ep-bio").value.trim()}).eq("id",currentUserId()).select().single();
+      if(error)throw error;state.profile=data;toast("Profile updated");renderShell();await renderPage();
+    }catch(error){toast("Profile update error: "+error.message,"error");}
+  };
+}
+async function renderSettings(){
+  $("#main-content").innerHTML=pageHeading("Settings","Manage your Gromazeef account")+`
+    <section class="panel section-card"><h3>Account</h3><div class="person-row"><img class="avatar" src="${escapeHTML(getAvatar())}" alt=""><div class="person-info"><strong>${escapeHTML(getDisplayName())}</strong><span>${escapeHTML(state.user.email||"")}</span></div></div>
+    <div class="divider"></div><button class="btn" id="settings-edit"><i class="fa-solid fa-pen"></i> Edit profile</button> <button class="btn danger" id="settings-logout"><i class="fa-solid fa-right-from-bracket"></i> Sign out</button>
+    <div class="divider"></div><div class="notice">Account security: never share passwords or service-role keys. Profile visibility and storage access depend on Supabase RLS policies.</div></section>`;
+  $("#settings-edit").onclick=()=>navigate("editProfile");
+  $("#settings-logout").onclick=async()=>{const {error}=await state.client.auth.signOut();if(error)toast(error.message,"error");};
+}
+async function renderNotifications(){
+  $("#main-content").innerHTML=pageHeading("Notifications","Updates from your community")+`<section class="panel section-card">${emptyState("fa-bell","Your notifications live here","The notifications table/schema needs to be mapped before real alerts can be shown.")}</section>`;
+}
+async function renderZChat(){
+  const main=$("#main-content");
+  main.innerHTML=pageHeading("Z-CHAT","Private conversations with your people")+`
+    <section class="panel zchat-layout"><div class="chat-list"><form id="chat-search-form"><input class="searchbox" id="chat-search" placeholder="Find a person…"><button class="btn" style="margin-top:8px;width:100%">Search</button></form><div id="chat-people" class="search-results" style="margin-top:10px"></div></div>
+    <div class="chat-window"><div id="chat-header"><strong>Select a person</strong><p class="muted small">Search users to open a conversation.</p></div><div id="chat-thread" style="display:grid;gap:8px;align-content:start;flex:1"></div>
+    <form id="chat-send-form" class="chat-compose"><input class="searchbox" id="chat-message-input" placeholder="Write a message…" required><button class="btn primary">Send</button></form></div></section>
+    <div class="notice">Z-CHAT UI is ready. Sending/loading real messages depends on the exact columns and Row Level Security policies of your existing <code>messages</code> table.</div>`;
+  $("#chat-send-form").onsubmit=async e=>{
+    e.preventDefault();
+    if(!state.activeChatUserId)return toast("Pehle user search karke select karo.","error");
+    const content=$("#chat-message-input").value.trim();if(!content)return;
+    try{
+      const {error}=await state.client.from("messages").insert({sender_id:currentUserId(),receiver_id:state.activeChatUserId,content});
+      if(error)throw error;$("#chat-message-input").value="";toast("Message sent");await loadChatThread();
+    }catch(error){toast("Message send nahi hua: "+error.message,"error");}
+  };
+  $("#chat-search-form").onsubmit=async e=>{
+    e.preventDefault();const q=$("#chat-search").value.trim().replace(/[,%()]/g," ");
+    try{
+      const {data,error}=await state.client.from("profiles").select("*").or(`username.ilike.%${q}%,display_name.ilike.%${q}%`).neq("id",currentUserId()).limit(15);
+      if(error)throw error;
+      $("#chat-people").innerHTML=(data||[]).map(p=>`<div class="search-result" data-chat-person="${escapeHTML(p.id)}"><img class="avatar sm" src="${escapeHTML(getAvatar(p))}" alt=""><div class="person-info"><strong>${escapeHTML(getDisplayName(p))}</strong><span>${escapeHTML(getUsername(p))}</span></div></div>`).join("")||`<div class="muted small">No people found.</div>`;
+      $$("[data-chat-person]").forEach(el=>el.onclick=async()=>{state.activeChatUserId=el.dataset.chatPerson;const person=(data||[]).find(p=>p.id===state.activeChatUserId);$("#chat-header").innerHTML=`<strong>${escapeHTML(getDisplayName(person))}</strong><p class="muted small">${escapeHTML(getUsername(person))}</p>`;await loadChatThread();});
+    }catch(error){$("#chat-people").innerHTML=`<div class="error-box">${escapeHTML(error.message)}</div>`;}
+  };
+  if(state.activeChatUserId)await loadChatThread();
+}
+async function loadChatThread(){
+  const thread=$("#chat-thread");if(!thread||!state.activeChatUserId)return;
+  thread.innerHTML=`<div class="muted small">Loading messages…</div>`;
+  try{
+    const {data,error}=await state.client.from("messages").select("*").or(`and(sender_id.eq.${currentUserId()},receiver_id.eq.${state.activeChatUserId}),and(sender_id.eq.${state.activeChatUserId},receiver_id.eq.${currentUserId()})`).order("created_at",{ascending:true}).limit(100);
+    if(error)throw error;
+    thread.innerHTML=(data||[]).map(m=>`<div class="chat-message ${m.sender_id===currentUserId()?"mine":""}">${escapeHTML(m.content||m.message||"")}</div>`).join("")||`<div class="empty"><p>No messages yet. Say hello!</p></div>`;
+  }catch(error){thread.innerHTML=`<div class="error-box">Messages load nahi hue: ${escapeHTML(error.message)}<br>messages table columns may differ.</div>`;}
+}
+async function renderPage(){
+  if(!state.user){renderAuth();return;}
+  switch(state.currentPage){
+    case "home":return renderHome();
+    case "explore":return renderExplore();
+    case "create":return renderCreate("post");
+    case "zeefs":return renderMediaFeed("zeef");
+    case "groms":return renderMediaFeed("grom");
+    case "zchat":return renderZChat();
+    case "profile":return renderProfile(state.viewingProfileId||currentUserId());
+    case "saved":return renderSaved();
+    case "settings":return renderSettings();
+    case "editProfile":return renderEditProfile();
+    case "followers":return renderPeopleList("followers",state.viewingProfileId||currentUserId());
+    case "following":return renderPeopleList("following",state.viewingProfileId||currentUserId());
+    case "notifications":return renderNotifications();
+    default:state.currentPage="home";return renderHome();
+  }
+}
+async function navigate(page){
+  state.currentPage=page;
+  if(page==="profile"&&!state.viewingProfileId)state.viewingProfileId=currentUserId();
+  renderShell();
+  await renderPage();
+  $$(".nav-item,.mobile-nav button").forEach(n=>n.classList.toggle("active",n.dataset.page===page));
+}
+function renderAuth(){
+  $("#app").innerHTML=`<div class="auth-screen"><section class="auth-visual"><div class="brand"><span class="brand-mark">G</span> Gromazeef</div><h1>Your world.<br>Your people.<br><span style="color:var(--accent)">Your universe.</span></h1><p>Connect through ZEEFS, GROMS, posts and Z-CHAT. Find your people and share the moments that matter.</p><div class="tag-cloud"><button>ZEEFS ⚡</button><button>GROMS 🎬</button><button>Z-CHAT 💬</button><button>GROWTAGS #</button></div></section>
+    <section class="auth-box-wrap"><div class="panel auth-box"><div class="brand" style="margin-bottom:25px"><span class="brand-mark">G</span> Gromazeef</div><div id="auth-form-root"><h2>Welcome back</h2><p class="muted">Sign in to your universe.</p><form id="login-form"><div class="field"><label>Email</label><input id="login-email" type="email" autocomplete="email" required placeholder="you@example.com"></div><div class="field"><label>Password</label><input id="login-password" type="password" autocomplete="current-password" required placeholder="Your password"></div><button class="btn primary" style="width:100%">Sign in</button></form><div class="auth-switch">New here? <button id="show-signup">Create account</button></div><button class="btn" id="forgot-password" style="margin-top:15px;width:100%">Forgot password?</button></div></div></section></div>`;
+  $("#show-signup").onclick=renderSignup;
+  $("#login-form").onsubmit=async e=>{
+    e.preventDefault();const button=e.submitter;button.disabled=true;button.textContent="Signing in…";
+    try{const {error}=await state.client.auth.signInWithPassword({email:$("#login-email").value.trim(),password:$("#login-password").value});if(error)throw error;}
+    catch(error){toast("Login failed: "+error.message,"error");}
+    finally{button.disabled=false;button.textContent="Sign in";}
+  };
+  $("#forgot-password").onclick=async()=>{
+    const email=$("#login-email").value.trim();if(!email)return toast("Pehle email likho.","error");
+    const {error}=await state.client.auth.resetPasswordForEmail(email,{redirectTo:location.href});
+    toast(error?error.message:"Password reset email requested",error?"error":"success");
+  };
+}
+function renderSignup(){
+  $("#auth-form-root").innerHTML=`<h2>Create account</h2><p class="muted">Join the Gromazeef community.</p><form id="signup-form"><div class="field"><label>Display name</label><input id="signup-name" maxlength="60" required placeholder="Your name"></div><div class="field"><label>Username</label><input id="signup-username" maxlength="30" pattern="[A-Za-z0-9._]{3,30}" required placeholder="yourname"></div><div class="field"><label>Email</label><input id="signup-email" type="email" required autocomplete="email" placeholder="you@example.com"></div><div class="field"><label>Password</label><input id="signup-password" type="password" minlength="6" required autocomplete="new-password" placeholder="At least 6 characters"></div><button class="btn primary" style="width:100%">Create account</button></form><div class="auth-switch">Already have an account? <button id="show-login">Sign in</button></div>`;
+  $("#show-login").onclick=renderAuth;
+  $("#signup-form").onsubmit=async e=>{
+    e.preventDefault();const button=e.submitter;button.disabled=true;button.textContent="Creating…";
+    const username=$("#signup-username").value.trim().toLowerCase().replace(/^@/,"");
+    try{
+      if(!/^[a-z0-9._]{3,30}$/.test(username))throw new Error("Username 3–30 characters ka hona chahiye.");
+      const {data:existing,error:checkError}=await state.client.from("profiles").select("id").eq("username",username).limit(1);
+      if(checkError)throw checkError;if(existing?.length)throw new Error("Username already taken.");
+      const {data,error}=await state.client.auth.signUp({email:$("#signup-email").value.trim(),password:$("#signup-password").value,options:{data:{username,display_name:$("#signup-name").value.trim()}}});
+      if(error)throw error;
+      if(data.user&&!data.session)toast("Account created. Email verification complete karke login karo.");
+      else toast("Account created!");
+    }catch(error){toast("Signup failed: "+error.message,"error");}
+    finally{button.disabled=false;button.textContent="Create account";}
+  };
+}
+async function ensureProfile(){
+  if(!state.user)return;
+  const {data,error}=await state.client.from("profiles").select("*").eq("id",state.user.id).maybeSingle();
+  if(error)throw error;
+  if(data){state.profile=data;return data;}
+  const meta=state.user.user_metadata||{};
+  const suggested=(meta.username||state.user.email?.split("@")[0]||"member").toLowerCase().replace(/[^a-z0-9._]/g,"").slice(0,25)||"member";
+  const payload={id:state.user.id,username:suggested,display_name:meta.display_name||suggested};
+  const {data:created,error:insertError}=await state.client.from("profiles").insert(payload).select().single();
+  if(insertError)throw insertError;
+  state.profile=created;return created;
+}
+async function boot(){
+  try{
+    if(!window.supabase?.createClient)throw new Error("Supabase library load nahi hui. Internet check karo.");
+    state.client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    const {data,error}=await state.client.auth.getSession();if(error)throw error;
+    state.user=data.session?.user||null;
+    if(state.user){try{await ensureProfile();}catch(error){console.warn("Profile setup:",error.message);state.profile={id:state.user.id,username:state.user.email?.split("@")[0]||"member",display_name:state.user.email?.split("@")[0]||"Member"};}}
+    renderShell();await renderPage();
+    state.client.auth.onAuthStateChange((event,session)=>{
+      if(["SIGNED_IN","SIGNED_OUT","TOKEN_REFRESHED","USER_UPDATED"].includes(event)){
+        setTimeout(async()=>{
+          state.user=session?.user||null;state.profile=null;state.viewingProfileId=null;state.currentPage="home";
+          if(state.user){try{await ensureProfile();}catch(error){console.error(error);}}
+          renderShell();await renderPage();
+        },0);
+      }
+    });
+  }catch(error){showFatal(error);}
+}
+document.addEventListener("DOMContentLoaded",boot);
+</script>
+</body>
+</html>
