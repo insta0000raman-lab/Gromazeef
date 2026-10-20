@@ -5784,6 +5784,43 @@ GROMOZEEF_APP.openDiagnostics = function () {
         startGromozeef();
     }
 })();
+    /* =========================================
+   GROMOZEEF — SUPABASE CONNECTION
+========================================= */
+
+const SUPABASE_URL =
+    "https://jwkpergysvdicyzvqypy.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_Y2J7myGmTRSrRGN5PxnbYg_m07KlrmB";
+
+let gromozeefSupabase = null;
+
+function connectGromozeefSupabase() {
+    if (!window.supabase?.createClient) {
+        console.error(
+            "Supabase SDK load nahi hui. CDN script add karna baaki hai."
+        );
+        return false;
+    }
+
+    try {
+        gromozeefSupabase = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY
+        );
+
+        console.log("Gromozeef Supabase client initialized.");
+        return true;
+    } catch (error) {
+        console.error("Supabase initialization failed:", error);
+        return false;
+    }
+}
+
+connectGromozeefSupabase();
+
+/* End of Supabase connection */
 </script>
 
 </body>
