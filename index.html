@@ -3,1033 +3,3832 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#09090f">
-<title>Gromazeef — Create. Connect. Grow.</title>
+<meta name="theme-color" content="#090b12">
+<title>Gromazeef — Your World</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root{
-  --bg:#09090f;
-  --panel:#12121c;
-  --panel2:#1a1a27;
-  --text:#f8f8ff;
-  --muted:#9999ad;
-  --border:#29293a;
-  --pink:#ff3987;
-  --purple:#8d56ff;
-  --blue:#37a5ff;
+  --bg:#090b12;
+  --panel:#111521;
+  --panel2:#171d2a;
+  --border:#283044;
+  --text:#f4f6fb;
+  --muted:#9aa5ba;
+  --green:#a6f36b;
+  --danger:#ff617c;
 }
 *{box-sizing:border-box}
 body{
-  margin:0;background:var(--bg);color:var(--text);
-  font-family:system-ui,-apple-system,Arial,sans-serif;
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
 }
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
-button:focus-visible,input:focus-visible{
-  outline:2px solid var(--pink);outline-offset:2px;
+button:focus-visible,input:focus-visible,textarea:focus-visible{
+  outline:2px solid var(--green);
 }
+button:disabled{opacity:.5;cursor:not-allowed}
 .hidden{display:none!important}
-.muted{color:var(--muted)}
-.small{font-size:12px}
+button.primary{
+  background:var(--green);
+  color:#10170b;
+  border:0;
+  border-radius:12px;
+  padding:12px 18px;
+  font-weight:bold;
+}
+button.secondary{
+  background:var(--panel2);
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:11px;
+  padding:10px 14px;
+}
+input,textarea,select{
+  width:100%;
+  color:var(--text);
+  background:#0b0e16;
+  border:1px solid var(--border);
+  border-radius:11px;
+  padding:13px;
+}
+label{display:block;font-size:13px;margin-bottom:17px}
+label input,label textarea,label select{margin-top:8px}
+.muted{color:var(--muted);line-height:1.6}
 .brand{
-  font-size:25px;font-weight:900;letter-spacing:-1px;
-  background:linear-gradient(100deg,#ff3987,#a65cff,#37a5ff);
-  color:transparent;background-clip:text;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:22px;
+  font-weight:900;
+  letter-spacing:-1px;
 }
-.btn{
-  border:0;border-radius:12px;padding:12px 16px;
-  font-weight:750;color:white;
-  background:linear-gradient(100deg,var(--pink),var(--purple));
+.brand-icon{
+  width:38px;height:38px;
+  display:grid;place-items:center;
+  background:var(--green);
+  color:#111;
+  border-radius:12px;
+  font-size:25px;
 }
-.btn.secondary{background:var(--panel2);border:1px solid var(--border)}
-.btn.full{width:100%}
-.input{
-  display:block;width:100%;padding:14px;margin:10px 0;
-  background:var(--panel2);border:1px solid var(--border);
-  color:white;border-radius:12px;
+#notice{
+  position:fixed;
+  top:15px;left:50%;
+  transform:translateX(-50%);
+  z-index:1000;
+  width:min(92%,500px);
+  padding:14px;
+  border-radius:12px;
+  background:#1b3020;
+  border:1px solid #527b42;
+  box-shadow:0 10px 40px #0008;
+}
+#notice.error{
+  background:#351722;
+  border-color:#80374b;
+}
+.auth-screen{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+}
+.auth-hero{
+  padding:50px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  background:
+    radial-gradient(circle at 80% 20%,#a6f36b25,transparent 35%),
+    linear-gradient(145deg,#182235,#0c1019);
+  border-right:1px solid var(--border);
+}
+.auth-hero h1{
+  font-size:clamp(42px,6vw,76px);
+  letter-spacing:-4px;
+  line-height:1;
+}
+.auth-hero h1 em{color:var(--green);font-style:normal}
+.auth-panel{
+  width:min(90%,430px);
+  margin:auto;
+  padding:35px 0;
+}
+.tabs{
+  display:flex;
+  gap:5px;
+  padding:5px;
+  background:var(--panel);
+  border-radius:12px;
+  margin-bottom:30px;
+}
+.tabs button{
+  flex:1;
+  border:0;
+  border-radius:9px;
+  padding:12px;
+  color:var(--muted);
+  background:transparent;
+}
+.tabs button.active{
+  background:#273044;
+  color:var(--text);
+}
+.auth-panel h2{font-size:30px}
+.full{width:100%}
+.fineprint{font-size:11px;color:var(--muted);line-height:1.6}
+.layout{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:230px minmax(0,1fr);
+}
+.sidebar{
+  position:fixed;
+  inset:0 auto 0 0;
+  width:230px;
+  padding:25px 15px;
+  background:#0b0e16;
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  gap:35px;
+  z-index:20;
+}
+.sidebar nav{display:grid;gap:7px}
+.nav-btn{
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  color:var(--muted);
+  text-align:left;
+  padding:14px;
+  font-size:15px;
+}
+.nav-btn.active,.nav-btn:hover{
+  background:#1b2231;
+  color:var(--text);
+}
+.nav-btn.active{box-shadow:inset 3px 0 var(--green)}
+.sidebar-user{
+  margin-top:auto;
+  border-top:1px solid var(--border);
+  padding-top:17px;
+  overflow-wrap:anywhere;
+}
+.main{grid-column:2;min-width:0}
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:10;
+  display:flex;
+  align-items:center;
+  gap:15px;
+  padding:16px 4%;
+  min-height:75px;
+  background:#090b12ed;
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.search-top{max-width:440px}
+.top-actions{margin-left:auto;display:flex;gap:8px}
+.avatar{
+  width:40px;height:40px;
+  display:grid;place-items:center;
+  border-radius:50%;
+  background:var(--green);
+  color:#10170b;
+  font-weight:bold;
+}
+.content{padding:35px 4%;max-width:1500px;margin:auto}
+.view{display:none}
+.view.active{display:block}
+.page-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:18px;
+  margin-bottom:28px;
+}
+.page-heading h1{
+  margin:0;
+  font-size:clamp(32px,4vw,52px);
+  letter-spacing:-2px;
+}
+.page-heading h1 em{font-style:normal;color:var(--green)}
+.story-list{
+  display:flex;
+  gap:18px;
+  overflow:auto;
+  padding:20px 0 35px;
+}
+.story-item{
+  flex:0 0 70px;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+}
+.story-circle{
+  width:64px;height:64px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  margin-bottom:8px;
+  border:2px solid var(--green);
+  background:var(--panel2);
+  color:var(--green);
+  font-size:24px;
+}
+.section-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin:20px 0;
+}
+.post-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:17px;
+}
+.post-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px;
+  overflow:hidden;
+  min-width:0;
+}
+.post-media{
+  width:100%;
+  aspect-ratio:1/1.1;
+  display:block;
+  object-fit:cover;
+  background:var(--panel2);
+}
+.post-info{padding:14px}
+.post-author{font-weight:bold;font-size:13px}
+.post-caption{
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  line-height:1.5;
+  font-size:13px;
+}
+.post-actions{
+  display:flex;
+  gap:6px;
+  border-top:1px solid var(--border);
+  margin-top:12px;
+  padding-top:10px;
+}
+.post-actions button{
+  flex:1;
+  background:transparent;
+  border:0;
+  color:var(--muted);
+  padding:6px 0;
+}
+.empty{
+  grid-column:1/-1;
+  border:1px dashed var(--border);
+  border-radius:16px;
+  text-align:center;
+  padding:45px 15px;
+  color:var(--muted);
 }
 .card{
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:18px;padding:16px;margin-bottom:14px;
+  padding:22px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:18px;
+  max-width:760px;
 }
-.row{display:flex;align-items:center;gap:12px}
-.between{justify-content:space-between}
-.avatar{
-  width:43px;height:43px;flex-shrink:0;border-radius:50%;
-  display:grid;place-items:center;font-weight:900;
-  background:linear-gradient(140deg,var(--pink),var(--purple),var(--blue));
+.upload-box{
+  padding:35px 15px;
+  border:1px dashed #52617b;
+  border-radius:14px;
+  text-align:center;
+  margin-bottom:22px;
 }
-header{
-  height:65px;padding:0 16px;display:flex;align-items:center;
-  justify-content:space-between;gap:12px;
+.upload-box input{margin-top:20px}
+.preview img,.preview video{
+  display:block;
+  max-width:100%;
+  max-height:350px;
+  margin:15px auto;
+  border-radius:12px;
+}
+.two-cols{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.profile-cover{
+  height:150px;
+  border-radius:18px 18px 0 0;
+  background:linear-gradient(120deg,#263c33,#19243a,#a6f36b44);
+}
+.profile-details{
+  padding:0 24px 25px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-top:0;
+  border-radius:0 0 18px 18px;
+}
+.profile-picture{
+  width:90px;height:90px;
+  margin-top:-45px;
+  border:5px solid var(--panel);
+  border-radius:50%;
+  background:var(--green);
+  color:#10170b;
+  display:grid;
+  place-items:center;
+  font-size:30px;
+  font-weight:bold;
+}
+.profile-stats{display:flex;gap:25px;margin-top:20px}
+.profile-stats b{display:block;font-size:20px}
+.profile-stats span{color:var(--muted);font-size:12px}
+.setting-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
   border-bottom:1px solid var(--border);
-  position:sticky;top:0;background:#09090fee;backdrop-filter:blur(16px);
-  z-index:10;
+  padding:20px 0;
 }
-.header-actions{display:flex;gap:8px;align-items:center}
-.iconbtn{
-  border:1px solid var(--border);background:var(--panel);
-  color:white;border-radius:12px;min-width:42px;height:42px;
+.setting-row:last-child{border:0}
+.setting-row p{font-size:12px;color:var(--muted)}
+.mobile-nav{display:none}
+@media(max-width:900px){
+  .auth-hero{padding:30px}
+  .post-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sidebar{width:190px}
+  .layout{grid-template-columns:190px minmax(0,1fr)}
 }
-select{
-  background:var(--panel);color:white;border:1px solid var(--border);
-  border-radius:10px;padding:9px;max-width:115px;
-}
-#authScreen{
-  max-width:440px;margin:45px auto;padding:20px;
-}
-.hero{text-align:center;margin-bottom:28px}
-.hero h1{font-size:34px;line-height:1.1;margin-bottom:10px}
-.gradient-text{
-  background:linear-gradient(90deg,var(--pink),#b16aff,var(--blue));
-  color:transparent;background-clip:text;
-}
-.auth-tabs{display:flex;gap:8px;margin-bottom:16px}
-.auth-tabs button{flex:1}
-.note{font-size:12px;color:var(--muted);line-height:1.6}
-#app{padding-bottom:80px}
-main{max-width:650px;margin:auto;padding:16px}
-.page-title{font-size:24px;font-weight:850;margin:4px 0 16px}
-.stories{display:flex;gap:15px;overflow-x:auto;padding:12px 0 18px}
-.story{min-width:66px;text-align:center;font-size:12px}
-.story-ring{
-  width:61px;height:61px;border-radius:50%;padding:3px;
-  background:linear-gradient(135deg,var(--pink),#9b5cff,var(--blue));
-  margin:0 auto 7px;
-}
-.story-inner{
-  width:100%;height:100%;border-radius:50%;
-  border:3px solid var(--bg);display:grid;place-items:center;
-  background:var(--panel2);font-size:20px;
-}
-.feed-media{
-  width:100%;max-height:440px;object-fit:contain;
-  background:#050509;border-radius:14px;margin-top:12px;
-}
-.post-actions{display:flex;justify-content:space-between;gap:6px;margin-top:12px}
-.action{
-  border:0;background:transparent;color:var(--muted);
-  padding:8px 4px;border-radius:8px;
-}
-.action.active{color:var(--pink)}
-.bottom-nav{
-  position:fixed;bottom:0;left:0;right:0;height:66px;
-  background:#101019f5;border-top:1px solid var(--border);
-  display:flex;justify-content:space-around;align-items:center;
-  z-index:20;backdrop-filter:blur(15px);
-}
-.navitem{
-  background:none;border:0;color:var(--muted);
-  display:flex;flex-direction:column;align-items:center;
-  gap:3px;font-size:10px;min-width:48px;
-}
-.navitem span:first-child{font-size:21px}
-.navitem.active{color:#ff65ac}
-.upload-main{
-  font-size:24px!important;background:linear-gradient(120deg,var(--pink),var(--purple));
-  color:white!important;width:42px;height:36px;border-radius:12px;
-  justify-content:center;
-}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
-.griditem{
-  aspect-ratio:1;background:var(--panel2);border-radius:8px;
-  overflow:hidden;display:grid;place-items:center;color:white;
-}
-.griditem img,.griditem video{width:100%;height:100%;object-fit:cover}
-.profile-top{text-align:center;padding:20px 0}
-.profile-avatar{width:86px;height:86px;font-size:26px;margin:0 auto 12px}
-.stats{display:flex;justify-content:space-around;text-align:center;margin:20px 0}
-.stat b{display:block;font-size:19px}
-.tabs{display:flex;gap:8px;overflow:auto;margin:14px 0}
-.tabs button{white-space:nowrap}
-.zeef-view{
-  min-height:calc(100dvh - 150px);background:#11111b;
-  border-radius:18px;display:flex;flex-direction:column;
-  justify-content:space-between;padding:18px;margin-bottom:15px;
-}
-.zeef-view video{width:100%;max-height:60dvh;object-fit:contain}
-.empty{text-align:center;padding:35px 15px;color:var(--muted)}
-hr{border:0;border-top:1px solid var(--border);margin:16px 0}
-.toast{
-  position:fixed;bottom:85px;left:50%;transform:translateX(-50%);
-  background:#252536;padding:12px 18px;border-radius:12px;
-  z-index:100;max-width:90%;text-align:center;
-}
-@media(min-width:750px){
-  main{padding:24px}
-  #authScreen{margin-top:70px}
+@media(max-width:650px){
+  .auth-screen{display:block}
+  .auth-hero{display:none}
+  .auth-panel{padding-top:45px}
+  .layout{display:block;padding-bottom:72px}
+  .sidebar{display:none}
+  .main{display:block}
+  .topbar{padding:12px;min-height:65px}
+  .topbar .brand{font-size:16px}
+  .topbar .brand-icon{width:32px;height:32px}
+  .content{padding:25px 14px}
+  .post-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .post-info{padding:10px}
+  .post-caption{font-size:12px}
+  .top-actions .desktop-only{display:none}
+  .mobile-nav{
+    position:fixed;
+    display:flex;
+    justify-content:space-around;
+    inset:auto 0 0;
+    z-index:30;
+    background:#0b0e16f5;
+    border-top:1px solid var(--border);
+    padding:8px 4px max(8px,env(safe-area-inset-bottom));
+  }
+  .mobile-nav button{
+    flex:1;
+    display:grid;
+    justify-items:center;
+    gap:3px;
+    background:transparent;
+    border:0;
+    color:var(--muted);
+    font-size:20px;
+  }
+  .mobile-nav button.active{color:var(--green)}
+  .mobile-nav small{font-size:10px}
+  .two-cols{grid-template-columns:1fr}
+  .page-heading h1{font-size:35px}
+  .section-heading h2{font-size:18px}
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <div class="brand">Gromazeef</div>
-  <div class="header-actions">
-    <select id="language" aria-label="Language" onchange="changeLanguage()">
-      <option value="en">English</option>
-      <option value="hi">हिन्दी</option>
-    </select>
-    <button class="iconbtn" onclick="navigate('chat')" aria-label="Messages">💬</button>
-  </div>
-</header>
+<div id="notice" class="hidden"></div>
 
-<section id="authScreen">
-  <div class="hero">
-    <div style="font-size:52px">🌌</div>
-    <h1>Welcome to<br><span class="gradient-text">Gromazeef</span></h1>
-    <p class="muted" data-en="Create. Connect. Grow." data-hi="बनाओ। जुड़ो। आगे बढ़ो।">Create. Connect. Grow.</p>
+<!-- AUTH -->
+<section id="authScreen" class="auth-screen">
+  <div class="auth-hero">
+    <div class="brand"><span class="brand-icon">G</span> Gromazeef</div>
+    <div>
+      <p style="color:var(--green);letter-spacing:2px;font-size:11px">
+        YOUR PEOPLE. YOUR MOMENTS.
+      </p>
+      <h1>Make space<br>for <em>your world.</em></h1>
+      <p class="muted">Share photos, short videos and the moments that matter.</p>
+    </div>
+    <p class="muted">A place to express yourself.</p>
   </div>
 
-  <div class="card">
-    <div class="auth-tabs">
-      <button class="btn" id="loginTab" onclick="showAuth('login')">Login</button>
-      <button class="btn secondary" id="signupTab" onclick="showAuth('signup')">Create account</button>
+  <div class="auth-panel">
+    <div class="tabs">
+      <button class="active" data-auth="login">Log in</button>
+      <button data-auth="signup">Create account</button>
     </div>
 
     <form id="loginForm">
-      <h2 data-en="Welcome back" data-hi="वापस स्वागत है">Welcome back</h2>
-      <input class="input" id="loginEmail" type="email" placeholder="Gmail / Email" autocomplete="username" required>
-      <input class="input" id="loginPassword" type="password" placeholder="Password" autocomplete="current-password" required>
-      <button class="btn full" type="submit">Login →</button>
-      <p style="text-align:center"><button type="button" class="action" onclick="forgotPassword()">Forgot password?</button></p>
+      <h2>Welcome back</h2>
+      <p class="muted">Log in to your Gromazeef account.</p>
+      <label>Username or email
+        <input id="loginIdentity" autocomplete="username" required
+               placeholder="Your username or email">
+      </label>
+      <label>Password
+        <input id="loginPassword" type="password"
+               autocomplete="current-password" required>
+      </label>
+      <button class="primary full" type="submit">Log in →</button>
+      <button id="forgotPassword" class="secondary full" type="button"
+              style="margin-top:10px">Forgot password?</button>
+      <p class="fineprint">
+        Email/password authentication is provided by Supabase.
+        Secure username login requires a server-side username lookup.
+      </p>
     </form>
 
     <form id="signupForm" class="hidden">
-      <h2>Create your account</h2>
-      <input class="input" id="signupUsername" placeholder="Username (e.g. raman123)" minlength="3" maxlength="24" autocomplete="username" required>
-      <input class="input" id="signupEmail" type="email" placeholder="Your Gmail / Email" autocomplete="email" required>
-      <input class="input" id="signupPassword" type="password" placeholder="Create password (min 8 characters)" minlength="8" autocomplete="new-password" required>
-      <button class="btn full" type="submit">Create account →</button>
-      <p class="note">Email verification depends on your Supabase Authentication settings. Never share your password or private API keys.</p>
+      <h2>Create account</h2>
+      <p class="muted">Your next chapter starts here.</p>
+      <label>Username
+        <input id="signupUsername" minlength="3" maxlength="30"
+               pattern="[A-Za-z0-9_.]+" required placeholder="raman_07">
+      </label>
+      <label>Email
+        <input id="signupEmail" type="email" required placeholder="you@example.com">
+      </label>
+      <label>Password
+        <input id="signupPassword" type="password" minlength="8"
+               autocomplete="new-password" required>
+      </label>
+      <label>Display name
+        <input id="signupName" maxlength="50" placeholder="Optional">
+      </label>
+      <button class="primary full" type="submit">Create account →</button>
+      <p class="fineprint">
+        Supabase securely manages passwords. Email may be required for
+        verification and recovery.
+      </p>
     </form>
-
-    <p id="authMessage" class="note" role="status"></p>
   </div>
 </section>
 
-<div id="app" class="hidden">
-  <main>
-    <section id="page-home">
-      <div class="row between">
-        <div>
-          <h2 class="page-title" data-en="Your world" data-hi="तुम्हारी दुनिया">Your world</h2>
-          <div class="muted small">Discover your community ✨</div>
+<!-- APP -->
+<section id="appScreen" class="layout hidden">
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-icon">G</span> Gromazeef</div>
+    <nav>
+      <button class="nav-btn active" data-view="home">⌂ &nbsp; Home</button>
+      <button class="nav-btn" data-view="zeefs">▷ &nbsp; Zeefs</button>
+      <button class="nav-btn" data-view="search">⌕ &nbsp; Search</button>
+      <button class="nav-btn" data-view="upload">＋ &nbsp; Create</button>
+      <button class="nav-btn" data-view="profile">◎ &nbsp; Profile</button>
+      <button class="nav-btn" data-view="settings">⚙ &nbsp; Settings</button>
+    </nav>
+    <div class="sidebar-user">
+      <b id="sideName">User</b>
+      <p id="sideUsername" class="muted">@username</p>
+      <button id="sidebarLogout" class="secondary">Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="brand"><span class="brand-icon">G</span> Gromazeef</div>
+      <input id="topSearch" class="search-top" placeholder="Search people...">
+      <div class="top-actions">
+        <button class="secondary desktop-only" data-view="upload">＋ Create</button>
+        <button id="topAvatar" class="avatar">G</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <section id="view-home" class="view active">
+        <div class="page-heading">
+          <div>
+            <p style="color:var(--green);font-size:11px;letter-spacing:2px">
+              YOUR COMMUNITY
+            </p>
+            <h1>Your world, <em>your feed.</em></h1>
+            <p class="muted">Discover photos and short videos.</p>
+          </div>
+          <button class="primary" data-view="upload">＋ Create post</button>
         </div>
-        <button class="iconbtn" onclick="navigate('chat')" aria-label="Messages">💬</button>
-      </div>
 
-      <div class="stories" id="stories">
-        <div class="story" onclick="navigate('upload')">
-          <div class="story-ring"><div class="story-inner">＋</div></div>
-          <span data-en="Your Strip" data-hi="तुम्हारी स्ट्रिप">Your Strip</span>
+        <div class="section-heading">
+          <h2>Strips <span class="muted" style="font-size:12px">24 hours</span></h2>
         </div>
-      </div>
-
-      <div class="card">
-        <div class="row">
-          <div class="avatar" id="quickAvatar">G</div>
-          <button class="input" style="margin:0;text-align:left" onclick="navigate('upload')">Share a Grom or Zeef…</button>
+        <div class="story-list">
+          <div class="story-item">
+            <button class="story-circle" data-view="upload">＋</button>
+            <div>Your strip</div>
+          </div>
+          <div class="story-item">
+            <div class="story-circle">✦</div><div>Discover</div>
+          </div>
+          <div class="story-item">
+            <div class="story-circle">◌</div><div>Community</div>
+          </div>
         </div>
-      </div>
 
-      <div id="feed"></div>
-    </section>
+        <div class="section-heading">
+          <div><h2>Latest Groms</h2><p class="muted">Community posts</p></div>
+          <button id="refreshFeed" class="secondary">↻ Refresh</button>
+        </div>
+        <div id="homeFeed" class="post-grid"></div>
+      </section>
 
-    <section id="page-zeefs" class="hidden">
-      <h2 class="page-title">⚡ Zeefs</h2>
-      <p class="muted">Short videos from your community.</p>
-      <div id="zeefFeed"></div>
-    </section>
+      <section id="view-zeefs" class="view">
+        <div class="page-heading">
+          <div><h1>Explore <em>Zeefs.</em></h1>
+          <p class="muted">Short-video feed.</p></div>
+        </div>
+        <div id="zeefFeed" class="post-grid"></div>
+      </section>
 
-    <section id="page-upload" class="hidden">
-      <h2 class="page-title">＋ Create</h2>
-      <div class="card">
-        <h3>Share something</h3>
-        <p class="muted small">Select a photo or video from your device.</p>
-        <input class="input" id="mediaFile" type="file" accept="image/*,video/*">
-        <div id="preview"></div>
-        <input class="input" id="caption" maxlength="2200" placeholder="Write a caption…">
-        <input class="input" id="tags" placeholder="Growtags: #music #haryana">
-        <select id="postVisibility" style="width:100%;max-width:none">
-          <option value="public">Public</option>
-          <option value="private">Private</option>
-        </select>
-        <br><br>
-        <button class="btn full" onclick="publishPost()">Publish</button>
-        <p class="note">Posting publicly requires database and Storage setup. This demo keeps drafts locally until backend setup is completed.</p>
-      </div>
-    </section>
+      <section id="view-search" class="view">
+        <div class="page-heading"><h1>Find your <em>people.</em></h1></div>
+        <div class="card">
+          <label>Search by username
+            <input id="searchUsername" placeholder="Enter username">
+          </label>
+          <button id="runSearch" class="primary">Search</button>
+        </div>
+        <div id="searchResults" style="margin-top:20px"></div>
+      </section>
 
-    <section id="page-search" class="hidden">
-      <h2 class="page-title">🔎 Search</h2>
-      <input class="input" id="searchInput" placeholder="Search people, Groms or Zeefs…" oninput="searchPosts()">
-      <div id="searchResults"></div>
-    </section>
+      <section id="view-upload" class="view">
+        <div class="page-heading">
+          <div><h1>Create a <em>Grom.</em></h1>
+          <p class="muted">Publish a photo or short video.</p></div>
+        </div>
+        <form id="postForm" class="card">
+          <div class="upload-box">
+            <h3>Choose media</h3>
+            <p class="muted">Images and videos · Maximum 50 MB</p>
+            <input id="mediaFile" type="file" accept="image/*,video/*" required>
+          </div>
+          <div id="mediaPreview" class="preview"></div>
+          <label>Caption
+            <textarea id="postCaption" rows="4" maxlength="2200"
+                      placeholder="Write something..."></textarea>
+          </label>
+          <div class="two-cols">
+            <label>Post type
+              <select id="postType">
+                <option value="grom">Grom · Photo</option>
+                <option value="zeef">Zeef · Video</option>
+              </select>
+            </label>
+            <label>Visibility
+              <select id="postPrivacy">
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+              </select>
+            </label>
+          </div>
+          <button class="primary full" type="submit">Publish post →</button>
+          <p class="fineprint">
+            Requires the Supabase posts table, Storage bucket and matching
+            security policies.
+          </p>
+        </form>
+      </section>
 
-    <section id="page-profile" class="hidden">
-      <div class="profile-top">
-        <div class="avatar profile-avatar" id="profileAvatar">G</div>
-        <h2 id="profileUsername">@creator</h2>
-        <p id="profileEmail" class="muted small"></p>
-        <p class="muted">Create. Connect. Grow. 🌌</p>
-        <button class="btn secondary" onclick="editProfile()">Edit profile</button>
-      </div>
-      <div class="stats">
-        <div class="stat"><b id="postCount">0</b><span class="muted small">Posts</span></div>
-        <div class="stat"><b>0</b><span class="muted small">Followers</span></div>
-        <div class="stat"><b>0</b><span class="muted small">Following</span></div>
-      </div>
-      <div class="tabs">
-        <button class="btn secondary" onclick="profileTab('all')">All</button>
-        <button class="btn secondary" onclick="profileTab('zeef')">Zeefs</button>
-        <button class="btn secondary" onclick="profileTab('grom')">Groms</button>
-        <button class="btn secondary" onclick="profileTab('saved')">Saved</button>
-      </div>
-      <div id="profileGrid" class="grid"></div>
+      <section id="view-profile" class="view">
+        <div class="profile-cover"></div>
+        <div class="profile-details">
+          <div id="profilePicture" class="profile-picture">G</div>
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+            <div><h1 id="profileName">Your profile</h1>
+            <p id="profileUsername" class="muted">@username</p></div>
+            <button id="editProfile" class="secondary">Edit profile</button>
+          </div>
+          <p id="profileBio" class="muted">Tell people about yourself.</p>
+          <div class="profile-stats">
+            <div><b id="profilePostCount">0</b><span>Posts</span></div>
+            <div><b>—</b><span>Followers</span></div>
+            <div><b>—</b><span>Following</span></div>
+          </div>
+        </div>
+        <div class="section-heading"><h2>Your posts</h2></div>
+        <div id="profileFeed" class="post-grid"></div>
+      </section>
 
-      <hr>
-      <h3>Settings & account</h3>
-      <div class="card">
-        <button class="action" onclick="editProfile()">👤 Edit profile</button><hr>
-        <button class="action" onclick="navigate('accounts')">🔄 Account options</button><hr>
-        <button class="action" onclick="navigate('settings')">⚙️ Settings & privacy</button><hr>
-        <button class="action" onclick="forgotPassword()">🔐 Reset password</button><hr>
-        <button class="action" onclick="navigate('help')">❓ Help & support</button><hr>
-        <button class="action" onclick="navigate('about')">ℹ️ About Gromazeef</button><hr>
-        <button class="action" onclick="logout()">🚪 Log out</button>
-      </div>
-    </section>
-
-    <section id="page-chat" class="hidden">
-      <h2 class="page-title">💬 Z-Chat</h2>
-      <div class="card">
-        <p>Connect with your community.</p>
-        <p class="muted small">Real-time messaging will work after the messages table, access policies and realtime configuration are installed.</p>
-      </div>
-    </section>
-
-    <section id="page-accounts" class="hidden">
-      <h2 class="page-title">🔄 Account options</h2>
-      <div class="card">
-        <p id="accountDetails"></p>
-        <button class="btn full" onclick="logout()">Log out and switch account</button>
-        <p class="note">Multiple account switching can be added using a secure account manager. Never store passwords in localStorage.</p>
-      </div>
-    </section>
-
-    <section id="page-settings" class="hidden">
-      <h2 class="page-title">⚙️ Settings & privacy</h2>
-      <div class="card">
-        <label>Language</label>
-        <select style="width:100%;max-width:none" onchange="document.getElementById('language').value=this.value;changeLanguage()">
-          <option value="en">English</option><option value="hi">हिन्दी</option>
-        </select>
-        <hr>
-        <p>🔒 Account security</p>
-        <p>🛡️ Privacy</p>
-        <p>🔔 Notifications</p>
-        <p>♿ Accessibility</p>
-        <p>🎬 Media quality</p>
-        <p>🚫 Blocked accounts</p>
-        <p>📋 Account history</p>
-        <p>📄 Terms and policies</p>
-        <p class="note">Advanced preferences require their backend features to be implemented.</p>
-      </div>
-    </section>
-
-    <section id="page-help" class="hidden">
-      <h2 class="page-title">❓ Help & support</h2>
-      <div class="card"><p>Need help with your account?</p><p class="muted">Support contact details can be added when the project email is ready.</p></div>
-    </section>
-
-    <section id="page-about" class="hidden">
-      <h2 class="page-title">🌌 About Gromazeef</h2>
-      <div class="card"><div class="brand">Gromazeef</div><p>Create. Connect. Grow.</p><p class="muted">A community platform for photos, short videos and stories.</p><p class="small muted">Version 1.0 — initial build</p></div>
-    </section>
+      <section id="view-settings" class="view">
+        <div class="page-heading"><h1>Account <em>settings.</em></h1></div>
+        <div class="card">
+          <div class="setting-row">
+            <div><b>Profile</b><p>Change display name and bio.</p></div>
+            <button class="secondary" data-view="profile">Open profile</button>
+          </div>
+          <div class="setting-row">
+            <div><b>Language</b><p>Language options will be expanded.</p></div>
+            <button id="languageToggle" class="secondary">English / हिन्दी</button>
+          </div>
+          <div class="setting-row">
+            <div><b>Security</b><p>Sign out of this device.</p></div>
+            <button id="settingsLogout" class="secondary">Sign out</button>
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
 
-  <nav class="bottom-nav">
-    <button class="navitem active" data-page="home" onclick="navigate('home')"><span>⌂</span><span>Home</span></button>
-    <button class="navitem" data-page="zeefs" onclick="navigate('zeefs')"><span>▶</span><span>Zeefs</span></button>
-    <button class="navitem" data-page="upload" onclick="navigate('upload')"><span class="upload-main">＋</span><span>Upload</span></button>
-    <button class="navitem" data-page="search" onclick="navigate('search')"><span>⌕</span><span>Search</span></button>
-    <button class="navitem" data-page="profile" onclick="navigate('profile')"><span>◉</span><span>Profile</span></button>
+  <nav class="mobile-nav">
+    <button class="active" data-view="home">⌂<small>Home</small></button>
+    <button data-view="zeefs">▷<small>Zeefs</small></button>
+    <button data-view="upload">＋<small>Create</small></button>
+    <button data-view="search">⌕<small>Search</small></button>
+    <button data-view="profile">◎<small>Profile</small></button>
   </nav>
-</div>
-
-<div id="toast" class="toast hidden" role="status"></div>
+</section>
 
 <script>
-/*
- GROMAZEEF CONFIGURATION
- Supabase URL and publishable key are public frontend credentials.
- Never put a service_role key in this file.
-*/
-const SUPABASE_URL = "https://jwkpergysvdicyzvqypy.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_Y2J7myGmTRSrRGN5PxnbYg_m07KlrmB";
+"use strict";
 
-let supabaseClient = null;
-let currentUser = null;
-let currentProfile = null;
-let posts = [];
-let currentProfileTab = "all";
-let currentPage = "home";
-let selectedFileURL = null;
+/* -------------------------------------------------------
+   GROMAZEEF CONFIGURATION
+   This is a public publishable key, never a service_role key.
+-------------------------------------------------------- */
+const SUPABASE_URL =
+  "https://jwkpergysvdicyzvqypy.supabase.co";
 
-try {
-  if (window.supabase && SUPABASE_URL.startsWith("https://") &&
-      SUPABASE_ANON_KEY.startsWith("sb_publishable_")) {
-    supabaseClient = window.supabase.createClient(
-      SUPABASE_URL, SUPABASE_ANON_KEY
-    );
-  }
-} catch (error) {
-  console.error("Supabase setup error:", error);
-}
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_Y2J7myGmTRSrRGN5PxnbYg_m07KlrmB";
 
-function toast(message) {
-  const el = document.getElementById("toast");
-  el.textContent = message;
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+let activeUser = null;
+let activeProfile = null;
+let allPosts = [];
+let hindiSelected = false;
+
+const $ = selector => document.querySelector(selector);
+const $$ = selector => [...document.querySelectorAll(selector)];
+
+function notify(text,error=false){
+  const el=$("#notice");
+  el.textContent=text;
   el.classList.remove("hidden");
-  clearTimeout(window.toastTimer);
-  window.toastTimer = setTimeout(() => el.classList.add("hidden"), 3200);
+  el.classList.toggle("error",error);
+  clearTimeout(notify.timer);
+  notify.timer=setTimeout(()=>el.classList.add("hidden"),6000);
 }
 
-function showAuth(mode) {
-  const login = mode === "login";
-  document.getElementById("loginForm").classList.toggle("hidden", !login);
-  document.getElementById("signupForm").classList.toggle("hidden", login);
-  document.getElementById("loginTab").className =
-    login ? "btn" : "btn secondary";
-  document.getElementById("signupTab").className =
-    login ? "btn secondary" : "btn";
-  document.getElementById("authMessage").textContent = "";
+function safeText(value){
+  return String(value ?? "").replace(/[&<>"']/g,char=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[char]);
 }
 
-function authMessage(text) {
-  document.getElementById("authMessage").textContent = text;
+function initial(value){
+  return String(value||"G").trim().charAt(0).toUpperCase()||"G";
 }
 
-document.getElementById("loginForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  if (!supabaseClient) {
-    authMessage("Supabase connect nahi hua. URL aur publishable key check karo.");
-    return;
-  }
-
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value;
-
-  authMessage("Logging in…");
-  const {data, error} = await supabaseClient.auth.signInWithPassword({
-    email, password
-  });
-
-  if (error) {
-    authMessage(error.message);
-    return;
-  }
-
-  currentUser = data.user;
-  await enterApp();
-});
-
-document.getElementById("signupForm").addEventListener("submit", async e => {
-  e.preventDefault();
-
-  if (!supabaseClient) {
-    authMessage("Supabase connect nahi hua. Configuration check karo.");
-    return;
-  }
-
-  const username = document.getElementById("signupUsername").value
-    .trim().toLowerCase();
-  const email = document.getElementById("signupEmail").value.trim();
-  const password = document.getElementById("signupPassword").value;
-
-  if (!/^[a-z0-9_.]{3,24}$/.test(username)) {
-    authMessage("Username mein 3–24 characters use karo: letters, numbers, _ ya .");
-    return;
-  }
-
-  authMessage("Creating account…");
-
-  const {data, error} = await supabaseClient.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {username},
-      emailRedirectTo: window.location.origin
-    }
-  });
-
-  if (error) {
-    authMessage(error.message);
-    return;
-  }
-
-  if (data.session) {
-    currentUser = data.user;
-    await enterApp();
-  } else {
-    authMessage("Account request sent! Email inbox check karo aur verification link open karo. Uske baad login karo.");
-    showAuth("login");
-    document.getElementById("loginEmail").value = email;
-  }
-});
-
-async function forgotPassword() {
-  if (!supabaseClient) {
-    toast("Supabase configuration check karo.");
-    return;
-  }
-
-  const email = prompt("Apna registered email address enter karo:");
-  if (!email) return;
-
-  const {error} = await supabaseClient.auth.resetPasswordForEmail(
-    email.trim(),
-    {redirectTo: window.location.origin}
-  );
-
-  toast(error ? error.message : "Password reset email bhej diya gaya hai. Inbox check karo.");
+function usernameValid(value){
+  return /^[a-zA-Z0-9_.]{3,30}$/.test(value);
 }
 
-async function enterApp() {
-  if (!currentUser && supabaseClient) {
-    const {data} = await supabaseClient.auth.getUser();
-    currentUser = data?.user || null;
+function showAuth(){
+  $("#authScreen").classList.remove("hidden");
+  $("#appScreen").classList.add("hidden");
+}
+
+function showApp(){
+  $("#authScreen").classList.add("hidden");
+  $("#appScreen").classList.remove("hidden");
+  refreshIdentity();
+  loadFeed();
+}
+
+function refreshIdentity(){
+  if(!activeUser)return;
+  const username=activeProfile?.username ||
+    activeUser.user_metadata?.username ||
+    activeUser.email?.split("@")[0] ||
+        "User";
+
+  $("#identityName").textContent = username;
+  $("#identityEmail").textContent = activeUser.email || "";
+  $("#profileUsername").textContent = "@" + username;
+
+  if (activeProfile) {
+    $("#profileDisplayName").textContent =
+      activeProfile.display_name || username;
+
+    $("#profileBio").textContent =
+      activeProfile.bio || "Welcome to my Gromazeef profile!";
   }
 
-  if (!currentUser) return;
+  const avatar =
+    activeProfile?.avatar_url ||
+    activeUser.user_metadata?.avatar_url ||
+    "";
 
-  document.getElementById("authScreen").classList.add("hidden");
-  document.getElementById("app").classList.remove("hidden");
-
-  const metadata = currentUser.user_metadata || {};
-  const username = metadata.username ||
-    (currentUser.email || "creator").split("@")[0];
-
-  currentProfile = {
-    id: currentUser.id,
-    username,
-    email: currentUser.email || ""
-  };
-
-  document.getElementById("profileUsername").textContent = "@" + username;
-  document.getElementById("profileEmail").textContent = currentUser.email || "";
-  document.getElementById("profileAvatar").textContent =
-    username.slice(0, 1).toUpperCase();
-  document.getElementById("quickAvatar").textContent =
-    username.slice(0, 1).toUpperCase();
-  document.getElementById("accountDetails").textContent =
-    "Signed in as " + (currentUser.email || username);
-
-  renderPosts();
-  navigate("home");
-  toast("Welcome to Gromazeef 🌌");
+  $("#identityAvatar").src = avatar;
+  $("#profileAvatar").src = avatar;
 }
-async function logout() {
-  if (supabaseClient) {
-    const { error } = await supabaseClient.auth.signOut();
 
-    if (error) {
-      toast(error.message);
+async function loadProfile() {
+  if (!activeUser) return;
+
+  try {
+    const { data, error } = await db
+      .from("profiles")
+      .select("*")
+      .eq("id", activeUser.id)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    activeProfile = data;
+    refreshIdentity();
+  } catch (error) {
+    console.error("Profile loading error:", error);
+  }
+}
+
+async function loadFeed() {
+  const feed = $("#feed");
+  if (!feed) return;
+
+  feed.innerHTML = `
+    <div class="loading-card">
+      <div class="loader"></div>
+      <p>Gromazeef feed load ho rahi hai...</p>
+    </div>
+  `;
+
+  try {
+    const { data, error } = await db
+      .from("posts")
+      .select(`
+        id,
+        user_id,
+        media_url,
+        caption,
+        type,
+        created_at,
+        profiles(username, display_name)
+      `)
+      .eq("is_private", false)
+      .order("created_at", { ascending: false })
+      .limit(30);
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      feed.innerHTML = `
+        <div class="empty-card">
+          <h3>🌱 Your feed starts here</h3>
+          <p>Abhi koi public post nahi hai.</p>
+          <p>Apni pehli photo ya video share karo!</p>
+        </div>
+      `;
       return;
     }
+
+    feed.innerHTML = data.map(post => {
+      const profile = Array.isArray(post.profiles)
+        ? post.profiles[0]
+        : post.profiles;
+
+      const name = escapeHTML(
+        profile?.display_name || profile?.username || "Gromazeef User"
+      );
+
+      const caption = escapeHTML(post.caption || "");
+      const isVideo = post.type === "zeef" ||
+        /\.(mp4|webm|mov)(\?|$)/i.test(post.media_url || "");
+
+      const media = isVideo
+        ? `<video src="${escapeHTML(post.media_url)}"
+             controls playsinline preload="metadata"></video>`
+        : `<img src="${escapeHTML(post.media_url)}"
+             alt="Gromazeef post" loading="lazy">`;
+
+      return `
+        <article class="post-card" data-post-id="${escapeHTML(post.id)}">
+          <div class="post-header">
+            <div class="small-avatar">G</div>
+            <div class="post-author">
+              <strong>${name}</strong>
+              <small>@${escapeHTML(profile?.username || "user")}</small>
+            </div>
+            <button class="more-button" type="button"
+              aria-label="More options">•••</button>
+          </div>
+
+          <div class="post-media">${media}</div>
+
+          <div class="post-actions">
+            <button type="button" data-action="like"
+              data-id="${escapeHTML(post.id)}">♡ Like</button>
+            <button type="button" data-action="comment"
+              data-id="${escapeHTML(post.id)}">💬 Comment</button>
+            <button type="button" data-action="share"
+              data-id="${escapeHTML(post.id)}">↗ Share</button>
+          </div>
+
+          <div class="post-caption">
+            <strong>${name}</strong>
+            <span>${caption}</span>
+          </div>
+
+          <small class="post-date">
+            ${formatDate(post.created_at)}
+          </small>
+        </article>
+      `;
+    }).join("");
+
+  } catch (error) {
+    console.error("Feed error:", error);
+
+    feed.innerHTML = `
+      <div class="error-card">
+        <h3>Feed load nahi hui 😕</h3>
+        <p>${escapeHTML(error.message || "Unknown error")}</p>
+        <button type="button" onclick="loadFeed()">Try Again</button>
+      </div>
+    `;
   }
-
-  currentUser = null;
-  currentProfile = null;
-
-  document.getElementById("app").classList.add("hidden");
-  document.getElementById("authScreen").classList.remove("hidden");
-
-  showAuth("login");
-  toast("Logged out successfully.");
 }
 
-function navigate(page) {
-  const validPages = [
-    "home", "zeefs", "upload", "search", "profile",
-    "chat", "accounts", "settings", "help", "about"
-  ];
-
-  if (!validPages.includes(page)) return;
-
-  currentPage = page;
-
-  document.querySelectorAll('main > section[id^="page-"]').forEach(section => {
-    section.classList.toggle("hidden", section.id !== "page-" + page);
-  });
-
-  document.querySelectorAll(".navitem").forEach(button => {
-    button.classList.toggle("active", button.dataset.page === page);
-  });
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-
-  if (page === "profile") renderProfileGrid();
-  if (page === "zeefs") renderZeefs();
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[character]);
 }
 
-document.getElementById("mediaFile").addEventListener("change", event => {
-  const file = event.target.files?.[0];
-  const preview = document.getElementById("preview");
+function formatDate(dateValue) {
+  if (!dateValue) return "";
 
-  preview.innerHTML = "";
+  const date = new Date(dateValue);
 
-  if (!file) return;
+  if (Number.isNaN(date.getTime())) return "";
 
-  if (file.size > 100 * 1024 * 1024) {
-    event.target.value = "";
-    toast("Maximum file size is 100 MB.");
+  return date.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+  });
+}
+
+/* PROFILE EDITING */
+
+async function saveProfile(event) {
+  event.preventDefault();
+
+  if (!activeUser) {
+    alert("Pehle login karo.");
     return;
   }
 
-  if (selectedFileURL) {
-    URL.revokeObjectURL(selectedFileURL);
+  const displayName = $("#editDisplayName").value.trim();
+  const username = $("#editUsername").value.trim().toLowerCase();
+  const bio = $("#editBio").value.trim();
+
+  if (!username) {
+    alert("Username bharna zaroori hai.");
+    return;
   }
 
-  selectedFileURL = URL.createObjectURL(file);
+  if (!/^[a-z0-9_.]{3,30}$/.test(username)) {
+    alert("Username 3–30 characters ka ho. Letters, numbers, _ aur . use karo.");
+    return;
+  }
 
-  if (file.type.startsWith("image/")) {
-    const img = document.createElement("img");
-    img.src = selectedFileURL;
-    img.className = "feed-media";
-    img.alt = "Selected photo preview";
-    preview.appendChild(img);
-  } else if (file.type.startsWith("video/")) {
-    const video = document.createElement("video");
-    video.src = selectedFileURL;
-    video.className = "feed-media";
-    video.controls = true;
-    preview.appendChild(video);
-  } else {
-    toast("Choose an image or video file.");
+  const button = event.currentTarget.querySelector(
+    'button[type="submit"]'
+  );
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Saving...";
+  }
+
+  try {
+    const { data, error } = await db
+      .from("profiles")
+      .upsert({
+        id: activeUser.id,
+        username,
+        email: activeUser.email,
+        display_name: displayName || username,
+        bio,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: "id"
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    activeProfile = data;
+    refreshIdentity();
+
+    alert("Profile save ho gayi! ✅");
+
+    const editScreen = $("#editProfileScreen");
+    if (editScreen) editScreen.classList.add("hidden");
+
+  } catch (error) {
+    console.error("Profile save error:", error);
+    alert("Profile save nahi hui: " + error.message);
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = "Save Profile";
+    }
+  }
+}
+
+/* OPEN PROFILE EDITOR */
+
+function openEditProfile() {
+  if (!activeUser) {
+    alert("Pehle login karo.");
+    return;
+  }
+
+  $("#editDisplayName").value =
+    activeProfile?.display_name || "";
+
+  $("#editUsername").value =
+    activeProfile?.username ||
+    activeUser.user_metadata?.username ||
+    "";
+
+  $("#editBio").value = activeProfile?.bio || "";
+
+  $("#editProfileScreen").classList.remove("hidden");
+}
+
+/* SEARCH USERS */
+
+async function searchUsers(query) {
+  const results = $("#searchResults");
+  if (!results) return;
+
+  query = String(query || "").trim().replace(/^@/, "");
+
+  if (query.length < 2) {
+    results.innerHTML = "<p>Search ke liye kam se kam 2 characters likho.</p>";
+    return;
+  }
+
+  results.innerHTML = "<p>Searching...</p>";
+
+  try {
+    const { data, error } = await db
+      .from("profiles")
+      .select("id, username, display_name, avatar_url")
+      .ilike("username", `%${query}%`)
+      .limit(20);
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      results.innerHTML = "<p>Koi user nahi mila.</p>";
+      return;
+    }
+
+    results.innerHTML = data.map(user => `
+      <div class="search-user">
+        <div class="small-avatar">G</div>
+        <div>
+          <strong>${escapeHTML(user.display_name || user.username)}</strong>
+          <p>@${escapeHTML(user.username || "")}</p>
+        </div>
+      </div>
+    `).join("");
+
+  } catch (error) {
+    console.error("Search error:", error);
+    results.innerHTML =
+      `<p>Search error: ${escapeHTML(error.message)}</p>`;
+  }
+}
+
+/* NAVIGATION */
+
+function openSection(sectionName) {
+  document.querySelectorAll("[data-section]").forEach(section => {
+    section.classList.toggle(
+      "hidden",
+      section.dataset.section !== sectionName
+    );
+  });
+
+  document.querySelectorAll("[data-nav]").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.nav === sectionName
+    );
+  });
+
+  if (sectionName === "home") loadFeed();
+  if (sectionName === "profile") loadProfile();
+}
+
+/* SIGN OUT */
+
+async function signOut() {
+  if (!confirm("Gromazeef se logout karna hai?")) return;
+
+  try {
+    const { error } = await db.auth.signOut();
+    if (error) throw error;
+
+    activeUser = null;
+    activeProfile = null;
+
+    showAuth();
+
+  } catch (error) {
+    console.error("Logout error:", error);
+    alert("Logout nahi hua: " + error.message);
+  }
+}
+
+/* BUTTON EVENTS */
+
+document.addEventListener("click", async event => {
+  const navButton = event.target.closest("[data-nav]");
+
+  if (navButton) {
+    openSection(navButton.dataset.nav);
+    return;
+  }
+
+  const actionButton = event.target.closest("[data-action]");
+
+  if (actionButton) {
+    const action = actionButton.dataset.action;
+
+    if (action === "like") {
+      alert("Like feature ko activate karne ke liye likes table aur database policy chahiye.");
+    }
+
+    if (action === "comment") {
+      alert("Comments feature ko activate karne ke liye comments table chahiye.");
+    }
+
+    if (action === "share") {
+      const post = actionButton.closest("[data-post-id]");
+      const url = window.location.href + "#post-" +
+        encodeURIComponent(post?.dataset.postId || "");
+
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: "Gromazeef",
+            text: "Check out this post on Gromazeef!",
+            url
+          });
+        } else {
+          await navigator.clipboard.writeText(url);
+          alert("Post link copied!");
+        }
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          alert("Share nahi ho paya.");
+        }
+      }
+    }
   }
 });
 
-function publishPost() {
-  if (!currentUser) {
-    toast("Pehle login karo.");
+/* SEARCH INPUT */
+
+const searchInput = $("#searchInput");
+
+if (searchInput) {
+  let searchTimer;
+
+  searchInput.addEventListener("input", event => {
+    clearTimeout(searchTimer);
+
+    searchTimer = setTimeout(() => {
+      searchUsers(event.target.value);
+    }, 350);
+  });
+}
+
+/* FORM EVENTS */
+
+const editProfileForm = $("#editProfileForm");
+
+if (editProfileForm) {
+  editProfileForm.addEventListener("submit", saveProfile);
+}
+
+/* AUTH STATE */
+
+db.auth.onAuthStateChange(async (event, session) => {
+  activeUser = session?.user || null;
+
+  if (activeUser) {
+    await loadProfile();
+    showApp();
+  } else {
+    activeProfile = null;
+    showAuth();
+  }
+});
+
+/* INITIAL STARTUP */
+
+(async function initializeGromazeef() {
+  try {
+    const { data, error } = await db.auth.getSession();
+
+    if (error) throw error;
+
+    activeUser = data.session?.user || null;
+
+    if (activeUser) {
+      await loadProfile();
+      showApp();
+    } else {
+      showAuth();
+    }
+
+  } catch (error) {
+    console.error("Startup error:", error);
+    showAuth();
+  }
+})();
+  /* ==========================================
+   GROMAZEEF — SAVED POSTS
+========================================== */
+
+async function showSavedPosts() {
+  const root = document.querySelector("#savedPosts");
+  if (!root) {
+    console.warn("HTML mein #savedPosts element nahi mila.");
     return;
   }
 
-  const file = document.getElementById("mediaFile").files?.[0];
-  const caption = document.getElementById("caption").value.trim();
-  const tags = document.getElementById("tags").value.trim();
-  const visibility = document.getElementById("postVisibility").value;
+  if (!activeUser) {
+    root.innerHTML = "<p>Saved posts dekhne ke liye login karo.</p>";
+    return;
+  }
+
+  root.innerHTML = "<p>Saved posts load ho rahi hain...</p>";
+
+  try {
+    const { data, error } = await db
+      .from("saved_posts")
+      .select(`
+        id,
+        post_id,
+        created_at,
+        posts (
+          id,
+          user_id,
+          media_url,
+          caption,
+          type,
+          created_at
+        )
+      `)
+      .eq("user_id", activeUser.id)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    if (!data?.length) {
+      root.innerHTML = `
+        <div class="empty-card">
+          <h3>🔖 No saved posts yet</h3>
+          <p>Jo posts save karoge, woh yahan milengi.</p>
+        </div>
+      `;
+      return;
+    }
+
+    root.innerHTML = data.map(item => {
+      const post = item.posts;
+
+      if (!post) return "";
+
+      const video = post.type === "zeef" ||
+        /\.(mp4|webm|mov)(\?|$)/i.test(post.media_url || "");
+
+      return `
+        <article class="post-card">
+          <div class="post-media">
+            ${
+              video
+                ? `<video src="${escapeHTML(post.media_url)}"
+                     controls playsinline preload="metadata"></video>`
+                : `<img src="${escapeHTML(post.media_url)}"
+                     alt="Saved post" loading="lazy">`
+            }
+          </div>
+
+          <p>${escapeHTML(post.caption || "")}</p>
+
+          <button
+            type="button"
+            data-unsave-post="${escapeHTML(item.post_id)}">
+            Remove from Saved
+          </button>
+        </article>
+      `;
+    }).join("");
+
+  } catch (error) {
+    console.error("Saved posts error:", error);
+
+    root.innerHTML = `
+      <div class="error-card">
+        <h3>Saved posts load nahi hui</h3>
+        <p>${escapeHTML(error.message)}</p>
+      </div>
+    `;
+  }
+}
+
+
+/* ==========================================
+   GROMAZEEF — ARCHIVED POSTS
+========================================== */
+
+async function showArchivedPosts() {
+  const root = document.querySelector("#archivedPosts");
+
+  if (!root) {
+    console.warn("HTML mein #archivedPosts element nahi mila.");
+    return;
+  }
+
+  if (!activeUser) {
+    root.innerHTML = "<p>Login karne ke baad archive dekh sakte ho.</p>";
+    return;
+  }
+
+  root.innerHTML = "<p>Archived posts load ho rahi hain...</p>";
+
+  try {
+    const { data, error } = await db
+      .from("archived_posts")
+      .select(`
+        id,
+        post_id,
+        created_at,
+        posts (
+          id,
+          user_id,
+          media_url,
+          caption,
+          type,
+          created_at
+        )
+      `)
+      .eq("user_id", activeUser.id)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    if (!data?.length) {
+      root.innerHTML = `
+        <div class="empty-card">
+          <h3>📦 Archive khaali hai</h3>
+          <p>Archive ki gayi posts yahan dikhenगी.</p>
+        </div>
+      `;
+      return;
+    }
+
+    root.innerHTML = data.map(item => {
+      const post = item.posts;
+
+      if (!post) return "";
+
+      const video = post.type === "zeef" ||
+        /\.(mp4|webm|mov)(\?|$)/i.test(post.media_url || "");
+
+      return `
+        <article class="post-card">
+          <div class="post-media">
+            ${
+              video
+                ? `<video src="${escapeHTML(post.media_url)}"
+                     controls playsinline preload="metadata"></video>`
+                : `<img src="${escapeHTML(post.media_url)}"
+                     alt="Archived post" loading="lazy">`
+            }
+          </div>
+
+          <p>${escapeHTML(post.caption || "")}</p>
+
+          <button
+            type="button"
+            data-restore-post="${escapeHTML(item.post_id)}">
+            Restore Post
+          </button>
+        </article>
+      `;
+    }).join("");
+
+  } catch (error) {
+    console.error("Archived posts error:", error);
+
+    root.innerHTML = `
+      <div class="error-card">
+        <h3>Archive load nahi hua</h3>
+        <p>${escapeHTML(error.message)}</p>
+      </div>
+    `;
+  }
+}
+
+
+/* ==========================================
+   REMOVE SAVED POST
+========================================== */
+
+async function removeSavedPost(postId) {
+  if (!activeUser || !postId) return;
+
+  try {
+    const { error } = await db
+      .from("saved_posts")
+      .delete()
+      .eq("user_id", activeUser.id)
+      .eq("post_id", postId);
+
+    if (error) throw error;
+
+    await showSavedPosts();
+
+  } catch (error) {
+    console.error("Remove saved post error:", error);
+    alert("Saved post remove nahi hui: " + error.message);
+  }
+}
+
+
+/* ==========================================
+   RESTORE ARCHIVED POST
+========================================== */
+
+async function restoreArchivedPost(postId) {
+  if (!activeUser || !postId) return;
+
+  try {
+    const { error } = await db
+      .from("archived_posts")
+      .delete()
+      .eq("user_id", activeUser.id)
+      .eq("post_id", postId);
+
+    if (error) throw error;
+
+    alert("Post archive se restore ho gayi! ✅");
+
+    await showArchivedPosts();
+
+  } catch (error) {
+    console.error("Restore post error:", error);
+    alert("Post restore nahi hui: " + error.message);
+  }
+}
+
+
+/* ==========================================
+   SAVED / ARCHIVED BUTTON EVENTS
+========================================== */
+
+document.addEventListener("click", async event => {
+  const unsaveButton = event.target.closest("[data-unsave-post]");
+
+  if (unsaveButton) {
+    const postId = unsaveButton.dataset.unsavePost;
+
+    if (confirm("Is post ko Saved se remove karna hai?")) {
+      await removeSavedPost(postId);
+    }
+
+    return;
+  }
+
+  const restoreButton = event.target.closest("[data-restore-post]");
+
+  if (restoreButton) {
+    const postId = restoreButton.dataset.restorePost;
+
+    if (confirm("Is post ko archive se restore karna hai?")) {
+      await restoreArchivedPost(postId);
+    }
+  }
+});
+  /* ==========================================
+   GROMAZEEF — FOLLOW SYSTEM
+========================================== */
+
+async function followUser(targetUserId) {
+  if (!activeUser) {
+    alert("Pehle login karo.");
+    return;
+  }
+
+  if (!targetUserId || targetUserId === activeUser.id) {
+    alert("Apne aap ko follow nahi kar sakte.");
+    return;
+  }
+
+  try {
+    const { error } = await db
+      .from("follows")
+      .insert({
+        follower_id: activeUser.id,
+        following_id: targetUserId
+      });
+
+    if (error) {
+      if (error.code === "23505") {
+        alert("Tum pehle se follow kar rahe ho.");
+        return;
+      }
+
+      throw error;
+    }
+
+    alert("User follow ho gaya! ✅");
+    await loadFollowStats(targetUserId);
+
+  } catch (error) {
+    console.error("Follow error:", error);
+    alert("Follow nahi hua: " + error.message);
+  }
+}
+
+
+/* ==========================================
+   GROMAZEEF — UNFOLLOW SYSTEM
+========================================== */
+
+async function unfollowUser(targetUserId) {
+  if (!activeUser) {
+    alert("Pehle login karo.");
+    return;
+  }
+
+  if (!targetUserId || targetUserId === activeUser.id) return;
+
+  if (!confirm("Is user ko unfollow karna hai?")) return;
+
+  try {
+    const { error } = await db
+      .from("follows")
+      .delete()
+      .eq("follower_id", activeUser.id)
+      .eq("following_id", targetUserId);
+
+    if (error) throw error;
+
+    alert("User unfollow ho gaya.");
+    await loadFollowStats(targetUserId);
+
+  } catch (error) {
+    console.error("Unfollow error:", error);
+    alert("Unfollow nahi hua: " + error.message);
+  }
+}
+
+
+/* ==========================================
+   FOLLOW COUNTS
+========================================== */
+
+async function loadFollowStats(userId) {
+  if (!userId) return null;
+
+  try {
+    const [followersResult, followingResult] = await Promise.all([
+      db
+        .from("follows")
+        .select("follower_id", { count: "exact", head: true })
+        .eq("following_id", userId),
+
+      db
+        .from("follows")
+        .select("following_id", { count: "exact", head: true })
+        .eq("follower_id", userId)
+    ]);
+
+    if (followersResult.error) throw followersResult.error;
+    if (followingResult.error) throw followingResult.error;
+
+    const stats = {
+      followers: followersResult.count || 0,
+      following: followingResult.count || 0
+    };
+
+    const followersElement = document.querySelector("#followersCount");
+    const followingElement = document.querySelector("#followingCount");
+
+    if (followersElement) {
+      followersElement.textContent = stats.followers;
+    }
+
+    if (followingElement) {
+      followingElement.textContent = stats.following;
+    }
+
+    return stats;
+
+  } catch (error) {
+    console.error("Follow stats error:", error);
+    return null;
+  }
+}
+
+
+/* ==========================================
+   CHECK FOLLOW STATUS
+========================================== */
+
+async function isFollowing(targetUserId) {
+  if (!activeUser || !targetUserId) return false;
+
+  try {
+    const { data, error } = await db
+      .from("follows")
+      .select("follower_id")
+      .eq("follower_id", activeUser.id)
+      .eq("following_id", targetUserId)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    return Boolean(data);
+
+  } catch (error) {
+    console.error("Follow status error:", error);
+    return false;
+  }
+}
+
+
+/* ==========================================
+   LOAD FOLLOWERS
+========================================== */
+
+async function loadFollowers(userId) {
+  const root = document.querySelector("#followersList");
+  if (!root) return;
+
+  root.innerHTML = "<p>Followers load ho rahe hain...</p>";
+
+  try {
+    const { data, error } = await db
+      .from("follows")
+      .select(`
+        follower_id,
+        created_at,
+        profiles!follows_follower_id_fkey (
+          id,
+          username,
+          display_name,
+          avatar_url
+        )
+      `)
+      .eq("following_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(100);
+
+    if (error) throw error;
+
+    if (!data?.length) {
+      root.innerHTML = "<p>Abhi koi follower nahi hai.</p>";
+      return;
+    }
+
+    root.innerHTML = data.map(row => {
+      const profile = row.profiles;
+
+      if (!profile) return "";
+
+      return `
+        <div class="user-row">
+          <div class="small-avatar">G</div>
+
+          <div class="user-row-info">
+            <strong>${escapeHTML(
+              profile.display_name || profile.username
+            )}</strong>
+            <small>@${escapeHTML(profile.username || "")}</small>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  } catch (error) {
+    console.error("Followers error:", error);
+
+    root.innerHTML = `
+      <p>Followers load nahi hue:
+        ${escapeHTML(error.message)}
+      </p>
+    `;
+  }
+}
+
+
+/* ==========================================
+   LOAD FOLLOWING
+========================================== */
+
+async function loadFollowing(userId) {
+  const root = document.querySelector("#followingList");
+  if (!root) return;
+
+  root.innerHTML = "<p>Following list load ho rahi hai...</p>";
+
+  try {
+    const { data, error } = await db
+      .from("follows")
+      .select(`
+        following_id,
+        created_at,
+        profiles!follows_following_id_fkey (
+          id,
+          username,
+          display_name,
+          avatar_url
+        )
+      `)
+      .eq("follower_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(100);
+
+    if (error) throw error;
+
+    if (!data?.length) {
+      root.innerHTML = "<p>Abhi tum kisi ko follow nahi karte.</p>";
+      return;
+    }
+
+    root.innerHTML = data.map(row => {
+      const profile = row.profiles;
+
+      if (!profile) return "";
+
+      return `
+        <div class="user-row">
+          <div class="small-avatar">G</div>
+
+          <div class="user-row-info">
+            <strong>${escapeHTML(
+              profile.display_name || profile.username
+            )}</strong>
+            <small>@${escapeHTML(profile.username || "")}</small>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  } catch (error) {
+    console.error("Following error:", error);
+
+    root.innerHTML = `
+      <p>Following list load nahi hui:
+        ${escapeHTML(error.message)}
+      </p>
+    `;
+  }
+}
+
+
+/* ==========================================
+   GROMAZEEF — NOTIFICATIONS
+========================================== */
+
+async function loadNotifications() {
+  const root = document.querySelector("#notificationsList");
+
+  if (!root) return;
+
+  if (!activeUser) {
+    root.innerHTML = "<p>Notifications dekhne ke liye login karo.</p>";
+    return;
+  }
+
+  root.innerHTML = "<p>Notifications load ho rahi hain...</p>";
+
+  try {
+    const { data, error } = await db
+      .from("notifications")
+      .select("id, type, message, is_read, created_at")
+      .eq("recipient_id", activeUser.id)
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (error) throw error;
+
+    if (!data?.length) {
+      root.innerHTML = `
+        <div class="empty-card">
+          <h3>🔔 All quiet here</h3>
+          <p>Nayi notifications aane par yahan dikhenगी.</p>
+        </div>
+      `;
+      return;
+    }
+
+    root.innerHTML = data.map(notification => `
+      <div
+        class="notification-row ${notification.is_read ? "" : "unread"}"
+        data-notification-id="${escapeHTML(notification.id)}"
+      >
+        <div class="small-avatar">G</div>
+
+        <div class="notification-content">
+          <p>${escapeHTML(notification.message || "New notification")}</p>
+          <small>${formatDate(notification.created_at)}</small>
+        </div>
+
+        ${
+          notification.is_read
+            ? ""
+            : `<button type="button"
+                 data-read-notification="${escapeHTML(notification.id)}">
+                 Mark read
+               </button>`
+        }
+      </div>
+    `).join("");
+
+  } catch (error) {
+    console.error("Notifications error:", error);
+
+    root.innerHTML = `
+      <div class="error-card">
+        <p>Notifications load nahi hui.</p>
+        <small>${escapeHTML(error.message)}</small>
+      </div>
+    `;
+  }
+}
+
+
+/* ==========================================
+   MARK NOTIFICATION AS READ
+========================================== */
+
+async function markNotificationRead(notificationId) {
+  if (!activeUser || !notificationId) return;
+
+  try {
+    const { error } = await db
+      .from("notifications")
+      .update({ is_read: true })
+      .eq("id", notificationId)
+      .eq("recipient_id", activeUser.id);
+
+    if (error) throw error;
+
+    await loadNotifications();
+
+  } catch (error) {
+    console.error("Mark read error:", error);
+    alert("Notification update nahi hui: " + error.message);
+  }
+}
+
+
+/* ==========================================
+   NOTIFICATION BUTTON EVENTS
+========================================== */
+
+document.addEventListener("click", async event => {
+  const readButton = event.target.closest(
+    "[data-read-notification]"
+  );
+
+  if (readButton) {
+    await markNotificationRead(
+      readButton.dataset.readNotification
+    );
+  }
+});
+  -- ==========================================
+-- GROMAZEEF DATABASE SETUP
+-- ==========================================
+
+create extension if not exists pgcrypto;
+
+-- ==========================================
+-- 1. PROFILES
+-- ==========================================
+
+create table if not exists public.profiles (
+    id uuid primary key references auth.users(id) on delete cascade,
+    username text unique not null,
+    email text,
+    display_name text,
+    bio text default '',
+    avatar_url text,
+    account_type text not null default 'personal'
+        check (account_type in ('personal', 'creator', 'business')),
+    is_verified boolean not null default false,
+    is_private boolean not null default false,
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now()
+);
+
+create unique index if not exists profiles_username_lower_unique
+on public.profiles (lower(username));
+
+
+-- ==========================================
+-- 2. POSTS
+-- ==========================================
+
+create table if not exists public.posts (
+    id uuid primary key default gen_random_uuid(),
+    user_id uuid not null references public.profiles(id) on delete cascade,
+    media_url text not null,
+    thumbnail_url text,
+    caption text default '',
+    type text not null default 'grom'
+        check (type in ('grom', 'zeef')),
+    audio_title text,
+    location text,
+    is_private boolean not null default false,
+    allow_comments boolean not null default true,
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now()
+);
+
+create index if not exists posts_user_id_idx
+on public.posts(user_id);
+
+create index if not exists posts_created_at_idx
+on public.posts(created_at desc);
+
+
+-- ==========================================
+-- 3. FOLLOWS
+-- ==========================================
+
+create table if not exists public.follows (
+    follower_id uuid not null references public.profiles(id) on delete cascade,
+    following_id uuid not null references public.profiles(id) on delete cascade,
+    created_at timestamptz not null default now(),
+
+    primary key (follower_id, following_id),
+
+    check (follower_id <> following_id)
+);
+
+create index if not exists follows_following_id_idx
+on public.follows(following_id);
+
+
+-- ==========================================
+-- 4. SAVED POSTS
+-- ==========================================
+
+create table if not exists public.saved_posts (
+    id uuid primary key default gen_random_uuid(),
+    user_id uuid not null references public.profiles(id) on delete cascade,
+    post_id uuid not null references public.posts(id) on delete cascade,
+    created_at timestamptz not null default now(),
+
+    unique (user_id, post_id)
+);
+
+
+-- ==========================================
+-- 5. ARCHIVED POSTS
+-- ==========================================
+
+create table if not exists public.archived_posts (
+    id uuid primary key default gen_random_uuid(),
+    user_id uuid not null references public.profiles(id) on delete cascade,
+    post_id uuid not null references public.posts(id) on delete cascade,
+    created_at timestamptz not null default now(),
+
+    unique (user_id, post_id)
+);
+
+
+-- ==========================================
+-- 6. NOTIFICATIONS
+-- ==========================================
+
+create table if not exists public.notifications (
+    id uuid primary key default gen_random_uuid(),
+    recipient_id uuid not null references public.profiles(id) on delete cascade,
+    actor_id uuid references public.profiles(id) on delete set null,
+    type text not null default 'general',
+    message text not null default '',
+    post_id uuid references public.posts(id) on delete cascade,
+    is_read boolean not null default false,
+    created_at timestamptz not null default now()
+);
+
+create index if not exists notifications_recipient_idx
+on public.notifications(recipient_id, created_at desc);
+
+
+-- ==========================================
+-- 7. COMMENTS
+-- ==========================================
+
+create table if not exists public.comments (
+    id uuid primary key default gen_random_uuid(),
+    post_id uuid not null references public.posts(id) on delete cascade,
+    user_id uuid not null references public.profiles(id) on delete cascade,
+    content text not null check (char_length(content) between 1 and 2000),
+    created_at timestamptz not null default now()
+);
+
+create index if not exists comments_post_created_idx
+on public.comments(post_id, created_at);
+
+
+-- ==========================================
+-- 8. LIKES
+-- ==========================================
+
+create table if not exists public.likes (
+    user_id uuid not null references public.profiles(id) on delete cascade,
+    post_id uuid not null references public.posts(id) on delete cascade,
+    created_at timestamptz not null default now(),
+
+    primary key (user_id, post_id)
+);
+
+
+-- ==========================================
+-- 9. STORIES / STRIPS
+-- ==========================================
+
+create table if not exists public.strips (
+    id uuid primary key default gen_random_uuid(),
+    user_id uuid not null references public.profiles(id) on delete cascade,
+    media_url text not null,
+    media_type text not null default 'image'
+        check (media_type in ('image', 'video')),
+    caption text default '',
+    expires_at timestamptz not null default (now() + interval '24 hours'),
+    created_at timestamptz not null default now()
+);
+
+create index if not exists strips_expiry_idx
+on public.strips(expires_at);
+
+
+-- ==========================================
+-- 10. ENABLE ROW LEVEL SECURITY
+-- ==========================================
+
+alter table public.profiles enable row level security;
+alter table public.posts enable row level security;
+alter table public.follows enable row level security;
+alter table public.saved_posts enable row level security;
+alter table public.archived_posts enable row level security;
+alter table public.notifications enable row level security;
+alter table public.comments enable row level security;
+alter table public.likes enable row level security;
+alter table public.strips enable row level security;
+
+
+-- ==========================================
+-- 11. PROFILES POLICIES
+-- ==========================================
+
+create policy "Profiles can be viewed by authenticated users"
+on public.profiles
+for select
+to authenticated
+using (true);
+
+create policy "Users can insert their own profile"
+on public.profiles
+for insert
+to authenticated
+with check (auth.uid() = id);
+
+create policy "Users can update their own profile"
+on public.profiles
+for update
+to authenticated
+using (auth.uid() = id)
+with check (auth.uid() = id);
+
+
+-- ==========================================
+-- 12. POSTS POLICIES
+-- ==========================================
+
+create policy "Authenticated users can view public posts"
+on public.posts
+for select
+to authenticated
+using (
+    is_private = false
+    or user_id = auth.uid()
+);
+
+create policy "Users can create their own posts"
+on public.posts
+for insert
+to authenticated
+with check (auth.uid() = user_id);
+
+create policy "Users can update their own posts"
+on public.posts
+for update
+to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+create policy "Users can delete their own posts"
+on public.posts
+for delete
+to authenticated
+using (auth.uid() = user_id);
+
+
+-- ==========================================
+-- 13. FOLLOWS POLICIES
+-- ==========================================
+
+create policy "Authenticated users can view follows"
+on public.follows
+for select
+to authenticated
+using (true);
+
+create policy "Users can follow from their own account"
+on public.follows
+for insert
+to authenticated
+with check (auth.uid() = follower_id);
+
+create policy "Users can unfollow from their own account"
+on public.follows
+for delete
+to authenticated
+using (auth.uid() = follower_id);
+
+
+-- ==========================================
+-- 14. SAVED POSTS POLICIES
+-- ==========================================
+
+create policy "Users can view their saved posts"
+on public.saved_posts
+for select
+to authenticated
+using (auth.uid() = user_id);
+
+create policy "Users can save posts"
+on public.saved_posts
+for insert
+to authenticated
+with check (auth.uid() = user_id);
+
+create policy "Users can remove saved posts"
+on public.saved_posts
+for delete
+to authenticated
+using (auth.uid() = user_id);
+
+
+-- ==========================================
+-- 15. ARCHIVED POSTS POLICIES
+-- ==========================================
+
+create policy "Users can view their archive"
+on public.archived_posts
+for select
+to authenticated
+using (auth.uid() = user_id);
+
+create policy "Users can archive posts"
+on public.archived_posts
+for insert
+to authenticated
+with check (auth.uid() = user_id);
+
+create policy "Users can restore archived posts"
+on public.archived_posts
+for delete
+to authenticated
+using (auth.uid() = user_id);
+
+
+-- ==========================================
+-- 16. NOTIFICATIONS POLICIES
+-- ==========================================
+
+create policy "Users can view their notifications"
+on public.notifications
+for select
+to authenticated
+using (auth.uid() = recipient_id);
+
+create policy "Users can mark their notifications read"
+on public.notifications
+for update
+to authenticated
+using (auth.uid() = recipient_id)
+with check (auth.uid() = recipient_id);
+
+
+-- ==========================================
+-- 17. COMMENTS POLICIES
+-- ==========================================
+
+create policy "Authenticated users can view comments"
+on public.comments
+for select
+to authenticated
+using (true);
+
+create policy "Users can create comments"
+on public.comments
+for insert
+to authenticated
+with check (auth.uid() = user_id);
+
+create policy "Users can delete their own comments"
+on public.comments
+for delete
+to authenticated
+using (auth.uid() = user_id);
+
+
+-- ==========================================
+-- 18. LIKES POLICIES
+-- ==========================================
+
+create policy "Authenticated users can view likes"
+on public.likes
+for select
+to authenticated
+using (true);
+
+create policy "Users can like posts"
+on public.likes
+for insert
+to authenticated
+with check (auth.uid() = user_id);
+
+create policy "Users can remove their likes"
+on public.likes
+for delete
+to authenticated
+using (auth.uid() = user_id);
+
+
+-- ==========================================
+-- 19. STRIPS POLICIES
+-- ==========================================
+
+create policy "Authenticated users can view active strips"
+on public.strips
+for select
+to authenticated
+using (
+    expires_at > now()
+    or user_id = auth.uid()
+);
+
+create policy "Users can create their strips"
+on public.strips
+for insert
+to authenticated
+with check (auth.uid() = user_id);
+
+create policy "Users can delete their strips"
+on public.strips
+for delete
+to authenticated
+using (auth.uid() = user_id);
+  /* ==========================================
+   GROMAZEEF — INTERACTIONS
+   Likes, Comments, Save, Archive, Follow
+========================================== */
+
+/* ---------- LIKE A POST ---------- */
+
+async function togglePostLike(postId) {
+  if (!activeUser) {
+    alert("Pehle login karo.");
+    return;
+  }
+
+  try {
+    const { data: existing, error: findError } = await db
+      .from("likes")
+      .select("user_id")
+      .eq("user_id", activeUser.id)
+      .eq("post_id", postId)
+      .maybeSingle();
+
+    if (findError) throw findError;
+
+    if (existing) {
+      const { error } = await db
+        .from("likes")
+        .delete()
+        .eq("user_id", activeUser.id)
+        .eq("post_id", postId);
+
+      if (error) throw error;
+    } else {
+      const { error } = await db
+        .from("likes")
+        .insert({
+          user_id: activeUser.id,
+          post_id: postId
+        });
+
+      if (error) throw error;
+    }
+
+    await updatePostLikeDisplay(postId);
+
+  } catch (error) {
+    console.error("Like error:", error);
+    alert("Like update nahi hua: " + error.message);
+  }
+}
+
+
+/* ---------- DISPLAY LIKE COUNT ---------- */
+
+async function updatePostLikeDisplay(postId) {
+  const countElement = document.querySelector(
+    `[data-like-count="${CSS.escape(postId)}"]`
+  );
+
+  const button = document.querySelector(
+    `[data-like-button="${CSS.escape(postId)}"]`
+  );
+
+  try {
+    const { count, error } = await db
+      .from("likes")
+      .select("*", { count: "exact", head: true })
+      .eq("post_id", postId);
+
+    if (error) throw error;
+
+    if (countElement) {
+      countElement.textContent = count || 0;
+    }
+
+    if (button && activeUser) {
+      const { data, error: likeError } = await db
+        .from("likes")
+        .select("user_id")
+        .eq("post_id", postId)
+        .eq("user_id", activeUser.id)
+        .maybeSingle();
+
+      if (likeError) throw likeError;
+
+      button.textContent = data ? "♥ Liked" : "♡ Like";
+      button.setAttribute("aria-pressed", String(Boolean(data)));
+    }
+
+  } catch (error) {
+    console.error("Like count error:", error);
+  }
+}
+
+
+/* ---------- ADD A COMMENT ---------- */
+
+async function addPostComment(postId, content) {
+  if (!activeUser) {
+    alert("Comment karne ke liye login karo.");
+    return;
+  }
+
+  content = String(content || "").trim();
+
+  if (!content) {
+    alert("Comment likho.");
+    return;
+  }
+
+  if (content.length > 2000) {
+    alert("Comment maximum 2000 characters ka ho sakta hai.");
+    return;
+  }
+
+  try {
+    const { error } = await db
+      .from("comments")
+      .insert({
+        post_id: postId,
+        user_id: activeUser.id,
+        content
+      });
+
+    if (error) throw error;
+
+    alert("Comment post ho gaya! ✅");
+
+    await loadPostComments(postId);
+
+  } catch (error) {
+    console.error("Comment error:", error);
+    alert("Comment post nahi hua: " + error.message);
+  }
+}
+
+
+/* ---------- LOAD COMMENTS ---------- */
+
+async function loadPostComments(postId) {
+  const root = document.querySelector(
+    `[data-comments-for="${CSS.escape(postId)}"]`
+  );
+
+  if (!root) return;
+
+  root.innerHTML = "<p>Comments load ho rahe hain...</p>";
+
+  try {
+    const { data, error } = await db
+      .from("comments")
+      .select("id, user_id, content, created_at")
+      .eq("post_id", postId)
+      .order("created_at", { ascending: true })
+      .limit(100);
+
+    if (error) throw error;
+
+    if (!data?.length) {
+      root.innerHTML = "<p>Abhi koi comment nahi hai.</p>";
+      return;
+    }
+
+    root.innerHTML = data.map(comment => `
+      <div class="comment-row">
+        <div class="small-avatar">G</div>
+
+        <div class="comment-content">
+          <p>${escapeHTML(comment.content)}</p>
+          <small>${formatDate(comment.created_at)}</small>
+
+          ${
+            activeUser && comment.user_id === activeUser.id
+              ? `<button type="button"
+                   data-delete-comment="${escapeHTML(comment.id)}"
+                   data-comment-post="${escapeHTML(postId)}">
+                   Delete
+                 </button>`
+              : ""
+          }
+        </div>
+      </div>
+    `).join("");
+
+  } catch (error) {
+    console.error("Load comments error:", error);
+
+    root.innerHTML =
+      `<p>Comments load nahi hue: ${escapeHTML(error.message)}</p>`;
+  }
+}
+
+
+/* ---------- DELETE OWN COMMENT ---------- */
+
+async function deleteOwnComment(commentId, postId) {
+  if (!activeUser) return;
+
+  if (!confirm("Apna comment delete karna hai?")) return;
+
+  try {
+    const { error } = await db
+      .from("comments")
+      .delete()
+      .eq("id", commentId)
+      .eq("user_id", activeUser.id);
+
+    if (error) throw error;
+
+    await loadPostComments(postId);
+
+  } catch (error) {
+    console.error("Delete comment error:", error);
+    alert("Comment delete nahi hua: " + error.message);
+  }
+}
+
+
+/* ---------- SAVE A POST ---------- */
+
+async function savePost(postId) {
+  if (!activeUser) {
+    alert("Post save karne ke liye login karo.");
+    return;
+  }
+
+  try {
+    const { error } = await db
+      .from("saved_posts")
+      .insert({
+        user_id: activeUser.id,
+        post_id: postId
+      });
+
+    if (error && error.code === "23505") {
+      alert("Ye post pehle se Saved mein hai.");
+      return;
+    }
+
+    if (error) throw error;
+
+    alert("Post Saved mein add ho gayi! 🔖");
+
+  } catch (error) {
+    console.error("Save post error:", error);
+    alert("Post save nahi hui: " + error.message);
+  }
+}
+
+
+/* ---------- ARCHIVE OWN POST ---------- */
+
+async function archiveOwnPost(postId) {
+  if (!activeUser) return;
+
+  if (!confirm("Is post ko archive karna hai?")) return;
+
+  try {
+    const { data: post, error: postError } = await db
+      .from("posts")
+      .select("id, user_id")
+      .eq("id", postId)
+      .eq("user_id", activeUser.id)
+      .maybeSingle();
+
+    if (postError) throw postError;
+
+    if (!post) {
+      alert("Sirf apni post archive kar sakte ho.");
+      return;
+    }
+
+    const { error: archiveError } = await db
+      .from("archived_posts")
+      .insert({
+        user_id: activeUser.id,
+        post_id: postId
+      });
+
+    if (archiveError && archiveError.code !== "23505") {
+      throw archiveError;
+    }
+
+    alert("Post archive ho gayi! 📦");
+
+    await loadFeed();
+
+  } catch (error) {
+    console.error("Archive post error:", error);
+    alert("Post archive nahi hui: " + error.message);
+  }
+}
+
+
+/* ---------- FOLLOW + NOTIFICATION ---------- */
+
+async function followUserWithNotification(targetUserId) {
+  if (!activeUser) {
+    alert("Pehle login karo.");
+    return;
+  }
+
+  if (!targetUserId || targetUserId === activeUser.id) {
+    alert("Apne aap ko follow nahi kar sakte.");
+    return;
+  }
+
+  try {
+    const { data: target, error: targetError } = await db
+      .from("profiles")
+      .select("id, username")
+      .eq("id", targetUserId)
+      .maybeSingle();
+
+    if (targetError) throw targetError;
+
+    if (!target) {
+      alert("User nahi mila.");
+      return;
+    }
+
+    const { error: followError } = await db
+      .from("follows")
+      .insert({
+        follower_id: activeUser.id,
+        following_id: targetUserId
+      });
+
+    if (followError?.code === "23505") {
+      alert("Tum is user ko pehle se follow karte ho.");
+      return;
+    }
+
+    if (followError) throw followError;
+
+    /*
+      Notification insert intentionally omitted.
+
+      A secure database trigger or Edge Function should create
+      notifications. Allowing every client to insert arbitrary
+      notifications could enable spam or impersonation.
+    */
+
+    alert("@" + target.username + " ko follow kar liya! ✅");
+
+    await loadFollowStats(targetUserId);
+
+  } catch (error) {
+    console.error("Follow error:", error);
+    alert("Follow nahi hua: " + error.message);
+  }
+}
+
+
+/* ---------- UNFOLLOW ---------- */
+
+async function unfollowUserFromProfile(targetUserId) {
+  if (!activeUser) return;
+
+  if (!confirm("Is user ko unfollow karna hai?")) return;
+
+  try {
+    const { error } = await db
+      .from("follows")
+      .delete()
+      .eq("follower_id", activeUser.id)
+      .eq("following_id", targetUserId);
+
+    if (error) throw error;
+
+    alert("Unfollow ho gaya.");
+
+    await loadFollowStats(targetUserId);
+
+  } catch (error) {
+    console.error("Unfollow error:", error);
+    alert("Unfollow nahi hua: " + error.message);
+  }
+}
+
+
+/* ---------- EVENT HANDLERS ---------- */
+
+document.addEventListener("click", async event => {
+  const likeButton = event.target.closest("[data-like-button]");
+
+  if (likeButton) {
+    await togglePostLike(likeButton.dataset.likeButton);
+    return;
+  }
+
+  const saveButton = event.target.closest("[data-save-post]");
+
+  if (saveButton) {
+    await savePost(saveButton.dataset.savePost);
+    return;
+  }
+
+  const archiveButton = event.target.closest("[data-archive-post]");
+
+  if (archiveButton) {
+    await archiveOwnPost(archiveButton.dataset.archivePost);
+    return;
+  }
+
+  const deleteCommentButton =
+    event.target.closest("[data-delete-comment]");
+
+  if (deleteCommentButton) {
+    await deleteOwnComment(
+      deleteCommentButton.dataset.deleteComment,
+      deleteCommentButton.dataset.commentPost
+    );
+  }
+});
+
+
+/* ---------- COMMENT FORM HANDLERS ---------- */
+
+document.addEventListener("submit", async event => {
+  const form = event.target.closest("[data-comment-form]");
+
+  if (!form) return;
+
+  event.preventDefault();
+
+  const postId = form.dataset.commentForm;
+  const input = form.querySelector('textarea, input[name="content"]');
+
+  if (!input) return;
+
+  await addPostComment(postId, input.value);
+
+  input.value = "";
+});
+  /* ==================================================
+   GROMAZEEF — STRIPS / 24-HOUR STORIES
+================================================== */
+
+/* Upload a story */
+
+async function uploadStrip(file, caption = "") {
+  if (!activeUser) {
+    alert("Story upload karne ke liye login karo.");
+    return;
+  }
 
   if (!file) {
-    toast("Pehle photo ya video select karo.");
+    alert("Photo ya video select karo.");
     return;
   }
 
-  posts.unshift({
-    id: crypto.randomUUID(),
-    user_id: currentUser.id,
-    username: currentProfile.username,
-    type: file.type.startsWith("video/") ? "zeef" : "grom",
-    media_url: selectedFileURL,
-    caption,
-    tags,
-    visibility,
-    likes: [],
-    comments: [],
-    localOnly: true
-  });
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+    "video/mp4",
+    "video/webm",
+    "video/quicktime"
+  ];
 
-  document.getElementById("mediaFile").value = "";
-  document.getElementById("caption").value = "";
-  document.getElementById("tags").value = "";
-  document.getElementById("preview").innerHTML = "";
+  if (!allowedTypes.includes(file.type)) {
+    alert("JPG, PNG, WebP, GIF, MP4 ya WebM file select karo.");
+    return;
+  }
 
-  selectedFileURL = null;
+  const maxSize = 50 * 1024 * 1024;
 
-  renderPosts();
-  navigate("home");
+  if (file.size > maxSize) {
+    alert("Story file 50 MB se chhoti honi chahiye.");
+    return;
+  }
 
-  toast("Post preview added! Abhi server par upload nahi hua.");
+  const isVideo = file.type.startsWith("video/");
+  const extension = file.name.split(".").pop().toLowerCase();
+  const filePath =
+    `${activeUser.id}/strips/${crypto.randomUUID()}.${extension}`;
+
+  try {
+    /*
+      Supabase Storage mein "strip-media" bucket banana hoga.
+      Bucket public ho to media URLs public ho sakte hain.
+      Private stories ke liye private bucket aur signed URLs use karo.
+    */
+
+    const { error: uploadError } = await db.storage
+      .from("strip-media")
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false,
+        contentType: file.type
+      });
+
+    if (uploadError) throw uploadError;
+
+    const { data: urlData } = db.storage
+      .from("strip-media")
+      .getPublicUrl(filePath);
+
+    const mediaUrl = urlData?.publicUrl;
+
+    if (!mediaUrl) {
+      throw new Error("Story media URL nahi mili.");
+    }
+
+    const { error: insertError } = await db
+      .from("strips")
+      .insert({
+        user_id: activeUser.id,
+        media_url: mediaUrl,
+        media_type: isVideo ? "video" : "image",
+        caption: String(caption).slice(0, 500),
+        expires_at: new Date(
+          Date.now() + 24 * 60 * 60 * 1000
+        ).toISOString()
+      });
+
+    if (insertError) throw insertError;
+
+    alert("Tumhari Strip share ho gayi! 🎉");
+
+    await loadStrips();
+
+  } catch (error) {
+    console.error("Strip upload error:", error);
+
+    alert(
+      "Story upload nahi hui: " +
+      (error.message || "Unknown error")
+    );
+  }
 }
 
-function renderPosts() {
-  const feed = document.getElementById("feed");
-  feed.innerHTML = "";
 
-  if (!posts.length) {
-    feed.innerHTML = `
-      <div class="card empty">
-        <div style="font-size:40px">🌱</div>
-        <h3>Your feed starts here</h3>
-        <p>Be the first to share a Grom or Zeef.</p>
-        <button class="btn" onclick="navigate('upload')">
-          Create your first post
+/* Load active stories */
+
+async function loadStrips() {
+  const root = document.querySelector("#stripsContainer");
+
+  if (!root) return;
+
+  if (!activeUser) {
+    root.innerHTML = "<p>Strips dekhne ke liye login karo.</p>";
+    return;
+  }
+
+  root.innerHTML = "<p>Strips load ho rahi hain...</p>";
+
+  try {
+    const { data, error } = await db
+      .from("strips")
+      .select(`
+        id,
+        user_id,
+        media_url,
+        media_type,
+        caption,
+        created_at,
+        expires_at,
+        profiles(username, display_name, avatar_url)
+      `)
+      .gt("expires_at", new Date().toISOString())
+      .order("created_at", { ascending: false })
+      .limit(100);
+
+    if (error) throw error;
+
+    if (!data?.length) {
+      root.innerHTML = `
+        <div class="empty-card">
+          <h3>⭕ No active Strips</h3>
+          <p>Apni pehli 24-hour story share karo.</p>
+        </div>
+      `;
+      return;
+    }
+
+    root.innerHTML = data.map(strip => {
+      const profile = Array.isArray(strip.profiles)
+        ? strip.profiles[0]
+        : strip.profiles;
+
+      const username = profile?.username || "user";
+
+      return `
+        <button
+          class="strip-card"
+          type="button"
+          data-open-strip="${escapeHTML(strip.id)}"
+          aria-label="Open story by ${escapeHTML(username)}"
+        >
+          <div class="strip-avatar">
+            ${
+              profile?.avatar_url
+                ? `<img src="${escapeHTML(profile.avatar_url)}"
+                     alt="" loading="lazy">`
+                : `<span>G</span>`
+            }
+          </div>
+
+          <span>@${escapeHTML(username)}</span>
         </button>
-      </div>`;
+      `;
+    }).join("");
 
-    document.getElementById("postCount").textContent = "0";
-    renderProfileGrid();
+    window.gromazeefStrips = data;
+
+  } catch (error) {
+    console.error("Load strips error:", error);
+
+    root.innerHTML = `
+      <div class="error-card">
+        <p>Strips load nahi hui.</p>
+        <small>${escapeHTML(error.message)}</small>
+      </div>
+    `;
+  }
+}
+
+
+/* Open a story */
+
+function openStrip(stripId) {
+  const strip = (window.gromazeefStrips || [])
+    .find(item => item.id === stripId);
+
+  if (!strip) {
+    alert("Story nahi mili. Refresh karke try karo.");
     return;
   }
 
-  posts.forEach(post => {
-    feed.appendChild(createPostCard(post));
-  });
+  const profile = Array.isArray(strip.profiles)
+    ? strip.profiles[0]
+    : strip.profiles;
 
-  document.getElementById("postCount").textContent =
-    posts.filter(post => post.user_id === currentUser?.id).length;
+  const viewer = document.querySelector("#stripViewer");
 
-  renderProfileGrid();
-}
-
-function createPostCard(post) {
-  const card = document.createElement("article");
-  card.className = "card";
-
-  const headerRow = document.createElement("div");
-  headerRow.className = "row between";
-
-  const user = document.createElement("div");
-  user.className = "row";
-
-  const avatar = document.createElement("div");
-  avatar.className = "avatar";
-  avatar.textContent = (post.username || "G").slice(0, 1).toUpperCase();
-
-  const name = document.createElement("div");
-  name.innerHTML = "<b></b><div class='muted small'></div>";
-  name.children[0].textContent = "@" + post.username;
-  name.children[1].textContent =
-    post.type === "zeef" ? "⚡ Zeef" : "🖼 Grom";
-
-  user.append(avatar, name);
-
-  const menu = document.createElement("button");
-  menu.className = "iconbtn";
-  menu.textContent = "⋯";
-  menu.onclick = () => postMenu(post.id);
-
-  headerRow.append(user, menu);
-  card.appendChild(headerRow);
-
-  if (post.media_url) {
-    const media = post.type === "zeef"
-      ? document.createElement("video")
-      : document.createElement("img");
-
-    media.src = post.media_url;
-    media.className = "feed-media";
-
-    if (post.type === "zeef") {
-      media.controls = true;
-    } else {
-      media.alt = "Post image";
-    }
-
-    card.appendChild(media);
+  if (!viewer) {
+    window.open(strip.media_url, "_blank", "noopener");
+    return;
   }
 
-  const caption = document.createElement("p");
-  caption.textContent = post.caption || "";
-  card.appendChild(caption);
+  const media = strip.media_type === "video"
+    ? `<video src="${escapeHTML(strip.media_url)}"
+         controls autoplay playsinline></video>`
+    : `<img src="${escapeHTML(strip.media_url)}"
+         alt="Gromazeef Strip">`;
 
-  const tags = document.createElement("p");
-  tags.className = "muted small";
-  tags.textContent = post.tags || "";
-  card.appendChild(tags);
+  viewer.innerHTML = `
+    <div class="strip-viewer-content">
+      <button type="button" id="closeStripViewer">
+        ✕ Close
+      </button>
 
-  const actions = document.createElement("div");
-  actions.className = "post-actions";
+      <div class="strip-viewer-user">
+        <strong>
+          @${escapeHTML(profile?.username || "user")}
+        </strong>
+        <small>${formatDate(strip.created_at)}</small>
+      </div>
 
-  const like = document.createElement("button");
-  like.className = "action";
+      <div class="strip-viewer-media">
+        ${media}
+      </div>
 
-  const liked = (post.likes || []).includes(currentUser?.id);
-  like.textContent = (liked ? "❤️ " : "♡ ") + (post.likes || []).length;
-  like.onclick = () => toggleLike(post.id);
+      <p>${escapeHTML(strip.caption || "")}</p>
+    </div>
+  `;
 
-  const comment = document.createElement("button");
-  comment.className = "action";
-  comment.textContent = "💬 " + (post.comments || []).length;
-  comment.onclick = () => addComment(post.id);
+  viewer.classList.remove("hidden");
 
-  const share = document.createElement("button");
-  share.className = "action";
-  share.textContent = "↗ Share";
+  const closeButton = viewer.querySelector("#closeStripViewer");
 
-  share.onclick = async () => {
-    try {
-      await navigator.clipboard.writeText(location.href);
-      toast("Page link copied!");
-    } catch {
-      toast("Share link unavailable.");
+  if (closeButton) {
+    closeButton.addEventListener("click", () => {
+      viewer.classList.add("hidden");
+
+      const video = viewer.querySelector("video");
+      if (video) video.pause();
+    });
+  }
+}
+
+
+/* Story event handler */
+
+document.addEventListener("click", event => {
+  const button = event.target.closest("[data-open-strip]");
+
+  if (button) {
+    openStrip(button.dataset.openStrip);
+  }
+});
+
+
+/* Story upload form */
+
+const stripUploadForm = document.querySelector("#stripUploadForm");
+
+if (stripUploadForm) {
+  stripUploadForm.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const fileInput = stripUploadForm.querySelector(
+      'input[type="file"]'
+    );
+
+    const captionInput = stripUploadForm.querySelector(
+      '[name="caption"]'
+    );
+
+    const file = fileInput?.files?.[0];
+
+    await uploadStrip(file, captionInput?.value || "");
+
+    if (fileInput) fileInput.value = "";
+    if (captionInput) captionInput.value = "";
+  });
+}
+
+
+/* ==================================================
+   GROMAZEEF — ACCOUNT SETTINGS
+================================================== */
+
+/* Load account settings */
+
+async function loadAccountSettings() {
+  if (!activeUser) {
+    alert("Settings dekhne ke liye login karo.");
+    return;
+  }
+
+  const usernameInput = document.querySelector("#settingsUsername");
+  const nameInput = document.querySelector("#settingsDisplayName");
+  const bioInput = document.querySelector("#settingsBio");
+  const privateInput = document.querySelector("#settingsPrivate");
+
+  try {
+    const { data, error } = await db
+      .from("profiles")
+      .select("username, display_name, bio, is_private")
+      .eq("id", activeUser.id)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    if (usernameInput) usernameInput.value = data?.username || "";
+    if (nameInput) nameInput.value = data?.display_name || "";
+    if (bioInput) bioInput.value = data?.bio || "";
+    if (privateInput) privateInput.checked = Boolean(data?.is_private);
+
+  } catch (error) {
+    console.error("Settings load error:", error);
+    alert("Settings load nahi hui: " + error.message);
+  }
+}
+
+
+/* Save account settings */
+
+async function saveAccountSettings(event) {
+  event.preventDefault();
+
+  if (!activeUser) {
+    alert("Pehle login karo.");
+    return;
+  }
+
+  const username =
+    document.querySelector("#settingsUsername")?.value
+      .trim()
+      .toLowerCase();
+
+  const displayName =
+    document.querySelector("#settingsDisplayName")?.value.trim() || "";
+
+  const bio =
+    document.querySelector("#settingsBio")?.value.trim() || "";
+
+  const isPrivate = Boolean(
+    document.querySelector("#settingsPrivate")?.checked
+  );
+
+  if (!username || !/^[a-z0-9_.]{3,30}$/.test(username)) {
+    alert("Username 3–30 characters ka hona chahiye.");
+    return;
+  }
+
+  try {
+    const { data, error } = await db
+      .from("profiles")
+      .update({
+        username,
+        display_name: displayName || username,
+        bio: bio.slice(0, 300),
+        is_private: isPrivate,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", activeUser.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    activeProfile = data;
+
+    refreshIdentity();
+
+    alert("Account settings save ho gayi! ✅");
+
+  } catch (error) {
+    console.error("Settings save error:", error);
+
+    alert(
+      "Settings save nahi hui: " +
+      (error.message || "Unknown error")
+    );
+  }
+}
+
+
+/* Settings form handler */
+
+const accountSettingsForm =
+  document.querySelector("#accountSettingsForm");
+
+if (accountSettingsForm) {
+  accountSettingsForm.addEventListener(
+    "submit",
+    saveAccountSettings
+  );
+}
+
+
+/* ==================================================
+   GROMAZEEF — PASSWORD RESET
+================================================== */
+
+async function sendPasswordReset() {
+  const email = activeUser?.email ||
+    prompt("Apna registered email address enter karo:");
+
+  if (!email) return;
+
+  try {
+    const { error } = await db.auth.resetPasswordForEmail(
+      email.trim(),
+      {
+        redirectTo: window.location.origin
+      }
+    );
+
+    if (error) throw error;
+
+    alert(
+      "Agar is email par account hai, to password reset instructions bhej di jayengi."
+    );
+
+  } catch (error) {
+    console.error("Password reset error:", error);
+
+    alert(
+      "Password reset request nahi bheji ja saki: " +
+      error.message
+    );
+  }
+}
+
+
+/* ==================================================
+   GROMAZEEF — REFRESH DATA
+================================================== */
+
+async function refreshGromazeef() {
+  if (!activeUser) {
+    showAuth();
+    return;
+  }
+
+  await loadProfile();
+  await loadFeed();
+  await loadStrips();
+  await loadFollowStats(activeUser.id);
+}
+
+
+/* Initial story loading */
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (activeUser) {
+    loadStrips();
+  }
+});
+  /* ==================================================
+   GROMAZEEF — PROFILE PHOTO UPLOAD
+================================================== */
+
+async function uploadProfilePhoto(file) {
+  if (!activeUser) {
+    alert("Pehle login karo.");
+    return;
+  }
+
+  if (!file) {
+    alert("Profile photo select karo.");
+    return;
+  }
+
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ];
+
+  if (!allowedTypes.includes(file.type)) {
+    alert("JPG, PNG ya WebP photo select karo.");
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    alert("Profile photo 5 MB se chhoti honi chahiye.");
+    return;
+  }
+
+  const extension = file.type === "image/png"
+    ? "png"
+    : file.type === "image/webp"
+      ? "webp"
+      : "jpg";
+
+  const filePath =
+    `${activeUser.id}/avatar-${crypto.randomUUID()}.${extension}`;
+
+  try {
+    const { error: uploadError } = await db.storage
+      .from("profile-photos")
+      .upload(filePath, file, {
+        upsert: false,
+        contentType: file.type,
+        cacheControl: "3600"
+      });
+
+    if (uploadError) throw uploadError;
+
+    const { data: urlData } = db.storage
+      .from("profile-photos")
+      .getPublicUrl(filePath);
+
+    const avatarUrl = urlData.publicUrl;
+
+    const { data, error } = await db
+      .from("profiles")
+      .update({
+        avatar_url: avatarUrl,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", activeUser.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    activeProfile = data;
+
+    refreshIdentity();
+
+    alert("Profile photo update ho gayi! 📸");
+
+  } catch (error) {
+    console.error("Profile photo error:", error);
+
+    alert(
+      "Photo upload nahi hui: " +
+      (error.message || "Unknown error")
+    );
+  }
+}
+
+
+/* Profile photo form */
+
+const avatarForm = document.querySelector("#avatarUploadForm");
+
+if (avatarForm) {
+  avatarForm.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const file = avatarForm.querySelector(
+      'input[type="file"]'
+    )?.files?.[0];
+
+    await uploadProfilePhoto(file);
+
+    const input = avatarForm.querySelector('input[type="file"]');
+    if (input) input.value = "";
+  });
+}
+
+
+/* ==================================================
+   GROMAZEEF — VIEW USER PROFILE
+================================================== */
+
+async function viewUserProfile(userId) {
+  if (!userId) return;
+
+  const root = document.querySelector("#publicProfile");
+
+  if (!root) {
+    alert("HTML mein #publicProfile element add karna hoga.");
+    return;
+  }
+
+  root.innerHTML = "<p>Profile load ho rahi hai...</p>";
+  root.classList.remove("hidden");
+
+  try {
+    const { data: profile, error: profileError } = await db
+      .from("profiles")
+      .select(`
+        id,
+        username,
+        display_name,
+        bio,
+        avatar_url,
+        is_private,
+        created_at
+      `)
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (profileError) throw profileError;
+
+    if (!profile) {
+      root.innerHTML = "<p>User nahi mila.</p>";
+      return;
     }
+
+    const ownProfile = activeUser?.id === profile.id;
+
+    const stats = await loadFollowStats(profile.id);
+
+    const following = ownProfile
+      ? false
+      : await isFollowing(profile.id);
+
+    let posts = [];
+
+    if (ownProfile || !profile.is_private || following) {
+      const { data, error } = await db
+        .from("posts")
+        .select("id, user_id, media_url, caption, type, created_at")
+        .eq("user_id", profile.id)
+        .eq("is_private", false)
+        .order("created_at", { ascending: false })
+        .limit(30);
+
+      if (error) throw error;
+
+      posts = data || [];
+    }
+
+    const avatar = profile.avatar_url
+      ? `<img src="${escapeHTML(profile.avatar_url)}"
+           alt="Profile photo">`
+      : `<div class="profile-avatar-placeholder">G</div>`;
+
+    root.innerHTML = `
+      <div class="public-profile-header">
+        ${avatar}
+
+        <h2>${escapeHTML(
+          profile.display_name || profile.username
+        )}</h2>
+
+        <p>@${escapeHTML(profile.username)}</p>
+
+        <p>${escapeHTML(profile.bio || "")}</p>
+
+        <div class="profile-stats">
+          <span>
+            <strong>${stats?.followers ?? 0}</strong>
+            Followers
+          </span>
+
+          <span>
+            <strong>${stats?.following ?? 0}</strong>
+            Following
+          </span>
+        </div>
+
+        ${
+          ownProfile
+            ? `<button type="button" data-edit-my-profile>
+                 Edit profile
+               </button>`
+            : activeUser
+              ? following
+                ? `<button type="button"
+                     data-unfollow-user="${escapeHTML(profile.id)}">
+                     Following · Unfollow
+                   </button>`
+                : `<button type="button"
+                     data-follow-user="${escapeHTML(profile.id)}">
+                     Follow
+                   </button>`
+              : `<p>Follow karne ke liye login karo.</p>`
+        }
+      </div>
+
+      <div class="profile-post-grid">
+        ${
+          profile.is_private && !ownProfile && !following
+            ? `<p>🔒 This account is private.</p>`
+            : posts.length
+              ? posts.map(post => {
+                  const video = post.type === "zeef" ||
+                    /\.(mp4|webm|mov)(\?|$)/i.test(
+                      post.media_url || ""
+                    );
+
+                  return `
+                    <article class="profile-post">
+                      ${
+                        video
+                          ? `<video src="${escapeHTML(post.media_url)}"
+                               controls playsinline></video>`
+                          : `<img src="${escapeHTML(post.media_url)}"
+                               alt="User post" loading="lazy">`
+                      }
+                      <p>${escapeHTML(post.caption || "")}</p>
+                    </article>
+                  `;
+                }).join("")
+              : "<p>Abhi koi public post nahi hai.</p>"
+        }
+      </div>
+    `;
+
+  } catch (error) {
+    console.error("Public profile error:", error);
+
+    root.innerHTML = `
+      <div class="error-card">
+        <p>Profile load nahi hui.</p>
+        <small>${escapeHTML(error.message)}</small>
+      </div>
+    `;
+  }
+}
+
+
+/* ==================================================
+   GROMAZEEF — FOLLOW BUTTONS
+================================================== */
+
+document.addEventListener("click", async event => {
+  const followButton = event.target.closest("[data-follow-user]");
+
+  if (followButton) {
+    await followUserWithNotification(
+      followButton.dataset.followUser
+    );
+
+    await viewUserProfile(followButton.dataset.followUser);
+    return;
+  }
+
+  const unfollowButton =
+    event.target.closest("[data-unfollow-user]");
+
+  if (unfollowButton) {
+    const userId = unfollowButton.dataset.unfollowUser;
+
+    await unfollowUserFromProfile(userId);
+    await viewUserProfile(userId);
+    return;
+  }
+
+  const editButton = event.target.closest("[data-edit-my-profile]");
+
+  if (editButton) {
+    openEditProfile();
+  }
+});
+
+
+/* ==================================================
+   GROMAZEEF — DELETE OWN POST
+================================================== */
+
+async function deleteOwnPost(postId) {
+  if (!activeUser || !postId) {
+    alert("Pehle login karo.");
+    return;
+  }
+
+  if (!confirm("Is post ko permanently delete karna hai?")) {
+    return;
+  }
+
+  try {
+    const { data: post, error: findError } = await db
+      .from("posts")
+      .select("id, user_id")
+      .eq("id", postId)
+      .eq("user_id", activeUser.id)
+      .maybeSingle();
+
+    if (findError) throw findError;
+
+    if (!post) {
+      alert("Post nahi mili ya ye tumhari post nahi hai.");
+      return;
+    }
+
+    const { error } = await db
+      .from("posts")
+      .delete()
+      .eq("id", postId)
+      .eq("user_id", activeUser.id);
+
+    if (error) throw error;
+
+    alert("Post delete ho gayi.");
+
+    await loadFeed();
+    await loadProfile();
+
+  } catch (error) {
+    console.error("Delete post error:", error);
+
+    alert(
+      "Post delete nahi hui: " +
+      (error.message || "Unknown error")
+    );
+  }
+}
+
+
+/* Delete post button handler */
+
+document.addEventListener("click", async event => {
+  const button = event.target.closest("[data-delete-post]");
+
+  if (!button) return;
+
+  await deleteOwnPost(button.dataset.deletePost);
+});
+
+
+/* ==================================================
+   GROMAZEEF — EXPORT ACCOUNT DATA
+================================================== */
+
+async function exportMyAccountData() {
+  if (!activeUser) {
+    alert("Pehle login karo.");
+    return;
+  }
+
+  try {
+    const [profileResult, postsResult, followsResult] =
+      await Promise.all([
+        db
+          .from("profiles")
+          .select("*")
+          .eq("id", activeUser.id)
+          .maybeSingle(),
+
+        db
+          .from("posts")
+          .select("*")
+          .eq("user_id", activeUser.id),
+
+        db
+          .from("follows")
+          .select("*")
+          .eq("follower_id", activeUser.id)
+      ]);
+
+    if (profileResult.error) throw profileResult.error;
+    if (postsResult.error) throw postsResult.error;
+    if (followsResult.error) throw followsResult.error;
+
+    const exportData = {
+      exported_at: new Date().toISOString(),
+      account: {
+        id: activeUser.id,
+        email: activeUser.email || null,
+        profile: profileResult.data || null
+      },
+      posts: postsResult.data || [],
+      following: followsResult.data || []
+    };
+
+    const blob = new Blob(
+      [JSON.stringify(exportData, null, 2)],
+      { type: "application/json" }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "gromazeef-account-data.json";
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    URL.revokeObjectURL(url);
+
+    alert("Account data export ho gaya! ✅");
+
+  } catch (error) {
+    console.error("Data export error:", error);
+
+    alert(
+      "Data export nahi hua: " +
+      (error.message || "Unknown error")
+    );
+  }
+}
+
+
+/* Export button */
+
+const exportButton = document.querySelector("#exportAccountData");
+
+if (exportButton) {
+  exportButton.addEventListener("click", exportMyAccountData);
+  }
+  <!-- GROMAZEEF EXTRA SCREENS -->
+
+<section id="savedPosts" class="hidden">
+  <h2>Saved Posts</h2>
+  <div id="savedPostsList"></div>
+</section>
+
+<section id="archivedPosts" class="hidden">
+  <h2>Archived Posts</h2>
+  <div id="archivedPostsList"></div>
+</section>
+
+<section id="notificationsScreen" class="hidden">
+  <h2>Notifications</h2>
+  <div id="notificationsList"></div>
+</section>
+
+<section id="followersScreen" class="hidden">
+  <h2>Followers</h2>
+  <div id="followersList"></div>
+</section>
+
+<section id="followingScreen" class="hidden">
+  <h2>Following</h2>
+  <div id="followingList"></div>
+</section>
+
+<section id="accountSettingsScreen" class="hidden">
+  <h2>Account Settings</h2>
+
+  <form id="accountSettingsForm">
+    <label>Username</label>
+    <input id="settingsUsername"
+           type="text"
+           maxlength="30"
+           required>
+
+    <label>Display Name</label>
+    <input id="settingsDisplayName"
+           type="text"
+           maxlength="60">
+
+    <label>Bio</label>
+    <textarea id="settingsBio"
+              maxlength="160"></textarea>
+
+    <label>
+      <input id="settingsPrivate" type="checkbox">
+      Private Account
+    </label>
+
+    <button type="submit">Save Settings</button>
+  </form>
+
+  <button id="passwordResetButton" type="button">
+    Reset Password
+  </button>
+
+  <button id="exportAccountData" type="button">
+    Export My Data
+  </button>
+
+  <button id="refreshGromazeefButton" type="button">
+    Refresh
+  </button>
+</section>
+
+<section id="avatarSection">
+  <h2>Profile Photo</h2>
+
+  <form id="avatarUploadForm">
+    <input id="avatarFile"
+           type="file"
+           accept="image/jpeg,image/png,image/webp"
+           required>
+
+    <button type="submit">Upload Photo</button>
+  </form>
+</section>
+
+<section id="publicProfile" class="hidden"></section>
+
+<section id="stripViewer" class="hidden">
+  <button type="button"
+          id="closeStripViewer">
+    Close
+  </button>
+
+  <div id="stripViewerContent"></div>
+</section>
+
+<div id="gromazeefStatus"
+     role="status"
+     aria-live="polite"></div>
+
+<style>
+  .hidden {
+    display: none !important;
+  }
+
+  #gromazeefStatus {
+    position: fixed;
+    bottom: 16px;
+    left: 12px;
+    right: 12px;
+    z-index: 9999;
+    padding: 10px;
+    border-radius: 10px;
+    background: #222;
+    color: white;
+    display: none;
+  }
+
+  #gromazeefStatus.visible {
+    display: block;
+  }
+
+  input, textarea, button {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+</style>
+
+<script>
+(function () {
+  "use strict";
+
+  const statusBox = document.getElementById("gromazeefStatus");
+
+  function showStatus(message) {
+    if (!statusBox) return;
+
+    statusBox.textContent = message;
+    statusBox.classList.add("visible");
+
+    clearTimeout(showStatus.timer);
+
+    showStatus.timer = setTimeout(function () {
+      statusBox.classList.remove("visible");
+    }, 3500);
+  }
+
+  function runSafely(action, errorMessage) {
+    try {
+      if (typeof window[action] !== "function") {
+        showStatus(errorMessage || "Ye feature abhi connect nahi hai.");
+        return;
+      }
+
+      const result = window[action]();
+
+      if (result && typeof result.catch === "function") {
+        result.catch(function (error) {
+          console.error(action, error);
+          showStatus("Operation nahi hua. Login aur database settings check karo.");
+        });
+      }
+    } catch (error) {
+      console.error(action, error);
+      showStatus("Error aaya. Console mein details check karo.");
+    }
+  }
+
+  const resetButton =
+    document.getElementById("passwordResetButton");
+
+  if (resetButton) {
+    resetButton.addEventListener("click", function () {
+      runSafely(
+        "sendPasswordReset",
+        "Password reset function abhi connect nahi hai."
+      );
+    });
+  }
+
+  const exportButton =
+    document.getElementById("exportAccountData");
+
+  if (exportButton) {
+    exportButton.addEventListener("click", function () {
+      runSafely(
+        "exportMyAccountData",
+        "Account export function abhi connect nahi hai."
+      );
+    });
+  }
+
+  const refreshButton =
+    document.getElementById("refreshGromazeefButton");
+
+  if (refreshButton) {
+    refreshButton.addEventListener("click", function () {
+      runSafely(
+        "refreshGromazeef",
+        "Refresh function abhi connect nahi hai."
+      );
+    });
+  }
+
+  const closeStripButton =
+    document.getElementById("closeStripViewer");
+
+  if (closeStripButton) {
+    closeStripButton.addEventListener("click", function () {
+      const viewer = document.getElementById("stripViewer");
+
+      if (viewer) {
+        viewer.classList.add("hidden");
+      }
+    });
+  }
+
+  document.addEventListener("click", function (event) {
+    const button = event.target.closest("[data-open-section]");
+
+    if (!button) return;
+
+    const section = button.dataset.openSection;
+
+    const actions = {
+      saved: "showSavedPosts",
+      archived: "showArchivedPosts",
+      notifications: "loadNotifications",
+      followers: "loadFollowers",
+      following: "loadFollowing",
+      settings: "loadAccountSettings"
+    };
+
+    const action = actions[section];
+
+    if (!action) return;
+
+    runSafely(action, "Ye section abhi connect nahi hai.");
+  });
+
+  window.GromazeefUI = {
+    showStatus: showStatus
   };
 
-  actions.append(like, comment, share);
-  card.appendChild(actions);
+  console.log("Gromazeef extra UI loaded.");
+})();
 
-  return card;
-}
+<button type="button" data-open-section="saved">
+  Saved Posts
+</button>
 
-function toggleLike(id) {
-  const post = posts.find(post => post.id === id);
-  if (!post || !currentUser) return;
+<button type="button" data-open-section="archived">
+  Archived Posts
+</button>
 
-  post.likes = post.likes || [];
+<button type="button" data-open-section="notifications">
+  Notifications
+</button>
 
-  const index = post.likes.indexOf(currentUser.id);
+<button type="button" data-open-section="followers">
+  Followers
+</button>
+</script>
 
-  if (index >= 0) {
-    post.likes.splice(index, 1);
-  } else {
-    post.likes.push(currentUser.id);
-  }
-
-  renderPosts();
-}
-
-function addComment(id) {
-  const post = posts.find(post => post.id === id);
-  if (!post || !currentUser) return;
-
-  const comment = prompt("Write your comment:");
-
-  if (!comment?.trim()) return;
-
-  post.comments = post.comments || [];
-
-  post.comments.push({
-    username: currentProfile.username,
-    text: comment.trim()
-  });
-
-  renderPosts();
-}
-
-function postMenu(id) {
-  const post = posts.find(post => post.id === id);
-  if (!post) return;
-
-  const choice = prompt(
-    "Post options:\n1 = Edit caption\n2 = Delete post\n3 = Cancel"
-  );
-
-  if (post.user_id !== currentUser?.id) {
-    toast("You can only edit your own posts.");
-    return;
-  }
-
-  if (choice === "1") {
-    const updated = prompt("Edit caption:", post.caption || "");
-
-    if (updated !== null) {
-      post.caption = updated;
-      renderPosts();
-    }
-  } else if (choice === "2") {
-    if (confirm("Delete this post?")) {
-      posts = posts.filter(item => item.id !== id);
-      renderPosts();
-    }
-  }
-}
-
-function renderZeefs() {
-  const area = document.getElementById("zeefFeed");
-  area.innerHTML = "";
-
-  const zeefs = posts.filter(post => post.type === "zeef");
-
-  if (!zeefs.length) {
-    area.innerHTML = `
-      <div class="card empty">
-        <div style="font-size:40px">▶</div>
-        <h3>No Zeefs yet</h3>
-        <p>Upload a short video to get started.</p>
-        <button class="btn" onclick="navigate('upload')">
-          Create Zeef
-        </button>
-      </div>`;
-    return;
-  }
-
-  zeefs.forEach(post => {
-    const wrapper = document.createElement("div");
-    wrapper.className = "zeef-view";
-
-    const video = document.createElement("video");
-    video.src = post.media_url;
-    video.controls = true;
-    video.playsInline = true;
-
-    const info = document.createElement("div");
-    info.innerHTML = "<b></b><p></p>";
-    info.children[0].textContent = "@" + post.username;
-    info.children[1].textContent = post.caption || "";
-
-    wrapper.append(video, info);
-    area.appendChild(wrapper);
-  });
-}
-
-function searchPosts() {
-  const query = document.getElementById("searchInput")
-    .value.trim().toLowerCase();
-
-  const area = document.getElementById("searchResults");
-  area.innerHTML = "";
-
-  const matches = posts.filter(post =>
-    (post.username || "").toLowerCase().includes(query) ||
-    (post.caption || "").toLowerCase().includes(query) ||
-    (post.tags || "").toLowerCase().includes(query)
-  );
-
-  if (!matches.length) {
-    area.innerHTML =
-      '<div class="empty">No matching posts found.</div>';
-    return;
-  }
-
-  matches.forEach(post => {
-    area.appendChild(createPostCard(post));
-  });
-}
-
-function renderProfileGrid() {
-  const grid = document.getElementById("profileGrid");
-  if (!grid) return;
-
-  grid.innerHTML = "";
-
-  let mine = posts.filter(
-    post => post.user_id === currentUser?.id
-  );
-
-  if (currentProfileTab === "zeef") {
-    mine = mine.filter(post => post.type === "zeef");
-  }
-
-  if (currentProfileTab === "grom") {
-    mine = mine.filter(post => post.type === "grom");
-  }
-
-  if (currentProfileTab === "saved") {
-    mine = [];
-  }
-
-  if (!mine.length) {
-    grid.innerHTML = `
-      <div class="empty" style="grid-column:1/-1">
-        ${currentProfileTab === "saved"
-          ? "Saved collections need backend setup."
-          : "Your posts will appear here."}
-      </div>`;
-    return;
-  }
-
-  mine.forEach(post => {
-    const item = document.createElement("div");
-    item.className = "griditem";
-
-    if (post.type === "zeef") {
-      const video = document.createElement("video");
-      video.src = post.media_url;
-      video.muted = true;
-      item.appendChild(video);
-    } else {
-      const img = document.createElement("img");
-      img.src = post.media_url;
-      img.alt = post.caption || "Grom";
-      item.appendChild(img);
-    }
-
-    grid.appendChild(item);
-  });
-}
-
-function profileTab(tab) {
-  currentProfileTab = tab;
-  renderProfileGrid();
-}
-
-function editProfile() {
-  if (!currentProfile) return;
-
-  const updated = prompt(
-    "Choose a username:",
-    currentProfile.username
-  );
-
-  if (!updated?.trim()) return;
-
-  const username = updated.trim().toLowerCase();
-
-  if (!/^[a-z0-9_.]{3,24}$/.test(username)) {
-    toast("Username 3–24 characters ka hona chahiye.");
-    return;
-  }
-
-  toast("Permanent username changes ke liye profiles table setup karni hogi.");
-}
-
-function changeLanguage() {
-  const lang = document.getElementById("language").value;
-  document.documentElement.lang = lang;
-
-  document.querySelectorAll("[data-en][data-hi]").forEach(el => {
-    el.textContent = el.dataset[lang];
-  });
-
-  try {
-    localStorage.setItem("gromazeef_language", lang);
-  } catch {}
-
-  toast(lang === "hi"
-    ? "भाषा हिन्दी चुनी गई।"
-    : "Language set to English.");
-}
-
-async function initialize() {
-  try {
-    const savedLang = localStorage.getItem("gromazeef_language");
-
-    if (savedLang === "hi" || savedLang === "en") {
-      document.getElementById("language").value = savedLang;
-      changeLanguage();
-    }
-  } catch {}
-
-  if (!supabaseClient) {
-    authMessage("Supabase configuration check karo.");
-    return;
-  }
-
-  const { data, error } = await supabaseClient.auth.getSession();
-
-  if (error) {
-    console.error(error);
-    authMessage(error.message);
-    return;
-  }
-
-  if (data.session?.user) {
-    currentUser = data.session.user;
-    await enterApp();
-  }
-
-  supabaseClient.auth.onAuthStateChange((_event, session) => {
-    currentUser = session?.user || null;
-  });
-}
-
-initialize();
-  </script>
 </body>
 </html>
+<button type="button" data-open-section="following">
+  Following
+</button>
+
+<button type="button" data-open-section="settings">
+  Settings
+</button>
