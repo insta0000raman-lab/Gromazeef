@@ -1819,16 +1819,10 @@ function renderSavedAccounts() {
 ================================ */
 
 function createClient() {
-  if (!window.supabase?.createClient) {
-    console.error("Supabase library is unavailable.");
-    return null;
-  }
-
   if (
-    !SUPABASE_URL.startsWith("https://") ||
-    !SUPABASE_ANON_KEY ||
-    SUPABASE_ANON_KEY === "sb_publishable_Y2J7myGmTRSrRGN5PxnbYg_m07KlrmB"
-  ) {
+  !SUPABASE_URL.startsWith("https://") ||
+  !SUPABASE_ANON_KEY
+) {
     console.error("Supabase URL or publishable/anon key is missing.");
     return null;
   }
