@@ -1,647 +1,1035 @@
 <!DOCTYPE html>
-<html lang="hi" class="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Gromazeef - Social Media Platform</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#09090f">
+<title>Gromazeef — Create. Connect. Grow.</title>
 
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  const SUPABASE_URL = "https://jwkpergysvdicyzvqypy.supabase.co"; 
-const SUPABASE_ANON_KEY = "sb_publishable_Y2J7myGmTRSrRGN5PxnbYg_m07KlrmB";
-  <!-- Supabase JS Client -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              pink: '#E1306C',
-              purple: '#833AB4',
-              orange: '#F77737',
-              dark: '#0A0A0C',
-              card: '#121216',
-              border: '#22222A'
-            }
-          }
-        }
-      }
-    }
-  </script>
-
-  <style>
-    /* Custom Scrollbar Hide */
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    body { background-color: #0A0A0C; color: #FFFFFF; font-family: system-ui, -apple-system, sans-serif; }
-  </style>
+<style>
+:root{
+  --bg:#09090f;
+  --panel:#12121c;
+  --panel2:#1a1a27;
+  --text:#f8f8ff;
+  --muted:#9999ad;
+  --border:#29293a;
+  --pink:#ff3987;
+  --purple:#8d56ff;
+  --blue:#37a5ff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:system-ui,-apple-system,Arial,sans-serif;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{
+  outline:2px solid var(--pink);outline-offset:2px;
+}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.brand{
+  font-size:25px;font-weight:900;letter-spacing:-1px;
+  background:linear-gradient(100deg,#ff3987,#a65cff,#37a5ff);
+  color:transparent;background-clip:text;
+}
+.btn{
+  border:0;border-radius:12px;padding:12px 16px;
+  font-weight:750;color:white;
+  background:linear-gradient(100deg,var(--pink),var(--purple));
+}
+.btn.secondary{background:var(--panel2);border:1px solid var(--border)}
+.btn.full{width:100%}
+.input{
+  display:block;width:100%;padding:14px;margin:10px 0;
+  background:var(--panel2);border:1px solid var(--border);
+  color:white;border-radius:12px;
+}
+.card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:18px;padding:16px;margin-bottom:14px;
+}
+.row{display:flex;align-items:center;gap:12px}
+.between{justify-content:space-between}
+.avatar{
+  width:43px;height:43px;flex-shrink:0;border-radius:50%;
+  display:grid;place-items:center;font-weight:900;
+  background:linear-gradient(140deg,var(--pink),var(--purple),var(--blue));
+}
+header{
+  height:65px;padding:0 16px;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;background:#09090fee;backdrop-filter:blur(16px);
+  z-index:10;
+}
+.header-actions{display:flex;gap:8px;align-items:center}
+.iconbtn{
+  border:1px solid var(--border);background:var(--panel);
+  color:white;border-radius:12px;min-width:42px;height:42px;
+}
+select{
+  background:var(--panel);color:white;border:1px solid var(--border);
+  border-radius:10px;padding:9px;max-width:115px;
+}
+#authScreen{
+  max-width:440px;margin:45px auto;padding:20px;
+}
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:34px;line-height:1.1;margin-bottom:10px}
+.gradient-text{
+  background:linear-gradient(90deg,var(--pink),#b16aff,var(--blue));
+  color:transparent;background-clip:text;
+}
+.auth-tabs{display:flex;gap:8px;margin-bottom:16px}
+.auth-tabs button{flex:1}
+.note{font-size:12px;color:var(--muted);line-height:1.6}
+#app{padding-bottom:80px}
+main{max-width:650px;margin:auto;padding:16px}
+.page-title{font-size:24px;font-weight:850;margin:4px 0 16px}
+.stories{display:flex;gap:15px;overflow-x:auto;padding:12px 0 18px}
+.story{min-width:66px;text-align:center;font-size:12px}
+.story-ring{
+  width:61px;height:61px;border-radius:50%;padding:3px;
+  background:linear-gradient(135deg,var(--pink),#9b5cff,var(--blue));
+  margin:0 auto 7px;
+}
+.story-inner{
+  width:100%;height:100%;border-radius:50%;
+  border:3px solid var(--bg);display:grid;place-items:center;
+  background:var(--panel2);font-size:20px;
+}
+.feed-media{
+  width:100%;max-height:440px;object-fit:contain;
+  background:#050509;border-radius:14px;margin-top:12px;
+}
+.post-actions{display:flex;justify-content:space-between;gap:6px;margin-top:12px}
+.action{
+  border:0;background:transparent;color:var(--muted);
+  padding:8px 4px;border-radius:8px;
+}
+.action.active{color:var(--pink)}
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;height:66px;
+  background:#101019f5;border-top:1px solid var(--border);
+  display:flex;justify-content:space-around;align-items:center;
+  z-index:20;backdrop-filter:blur(15px);
+}
+.navitem{
+  background:none;border:0;color:var(--muted);
+  display:flex;flex-direction:column;align-items:center;
+  gap:3px;font-size:10px;min-width:48px;
+}
+.navitem span:first-child{font-size:21px}
+.navitem.active{color:#ff65ac}
+.upload-main{
+  font-size:24px!important;background:linear-gradient(120deg,var(--pink),var(--purple));
+  color:white!important;width:42px;height:36px;border-radius:12px;
+  justify-content:center;
+}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.griditem{
+  aspect-ratio:1;background:var(--panel2);border-radius:8px;
+  overflow:hidden;display:grid;place-items:center;color:white;
+}
+.griditem img,.griditem video{width:100%;height:100%;object-fit:cover}
+.profile-top{text-align:center;padding:20px 0}
+.profile-avatar{width:86px;height:86px;font-size:26px;margin:0 auto 12px}
+.stats{display:flex;justify-content:space-around;text-align:center;margin:20px 0}
+.stat b{display:block;font-size:19px}
+.tabs{display:flex;gap:8px;overflow:auto;margin:14px 0}
+.tabs button{white-space:nowrap}
+.zeef-view{
+  min-height:calc(100dvh - 150px);background:#11111b;
+  border-radius:18px;display:flex;flex-direction:column;
+  justify-content:space-between;padding:18px;margin-bottom:15px;
+}
+.zeef-view video{width:100%;max-height:60dvh;object-fit:contain}
+.empty{text-align:center;padding:35px 15px;color:var(--muted)}
+hr{border:0;border-top:1px solid var(--border);margin:16px 0}
+.toast{
+  position:fixed;bottom:85px;left:50%;transform:translateX(-50%);
+  background:#252536;padding:12px 18px;border-radius:12px;
+  z-index:100;max-width:90%;text-align:center;
+}
+@media(min-width:750px){
+  main{padding:24px}
+  #authScreen{margin-top:70px}
+}
+</style>
 </head>
-<body class="flex justify-center items-center min-h-screen bg-black">
 
-  <!-- Mobile Container Frame -->
-  <div class="w-full max-w-md h-screen md:h-[92vh] bg-brand-dark md:border border-brand-border md:rounded-3xl flex flex-col justify-between overflow-hidden relative shadow-2xl">
+<body>
 
-    <!-- ========================================== -->
-    <!-- 1. AUTHENTICATION / ONBOARDING SCREEN      -->
-    <!-- ========================================== -->
-    <section id="screen-auth" class="flex-1 flex flex-col justify-between p-6 overflow-y-auto relative z-30 bg-brand-dark">
-      
-      <!-- Top Language Selector -->
-      <div class="flex justify-between items-center">
-        <div class="flex items-center gap-2">
-          <i data-lucide="globe" class="w-4 h-4 text-purple-400"></i>
-          <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-brand-card text-xs text-gray-200 border border-brand-border rounded-lg px-2 py-1 outline-none">
-            <option value="hi">हिंदी (Hindi)</option>
-            <option value="en">English</option>
-          </select>
+<header>
+  <div class="brand">Gromazeef</div>
+  <div class="header-actions">
+    <select id="language" aria-label="Language" onchange="changeLanguage()">
+      <option value="en">English</option>
+      <option value="hi">हिन्दी</option>
+    </select>
+    <button class="iconbtn" onclick="navigate('chat')" aria-label="Messages">💬</button>
+  </div>
+</header>
+
+<section id="authScreen">
+  <div class="hero">
+    <div style="font-size:52px">🌌</div>
+    <h1>Welcome to<br><span class="gradient-text">Gromazeef</span></h1>
+    <p class="muted" data-en="Create. Connect. Grow." data-hi="बनाओ। जुड़ो। आगे बढ़ो।">Create. Connect. Grow.</p>
+  </div>
+
+  <div class="card">
+    <div class="auth-tabs">
+      <button class="btn" id="loginTab" onclick="showAuth('login')">Login</button>
+      <button class="btn secondary" id="signupTab" onclick="showAuth('signup')">Create account</button>
+    </div>
+
+    <form id="loginForm">
+      <h2 data-en="Welcome back" data-hi="वापस स्वागत है">Welcome back</h2>
+      <input class="input" id="loginEmail" type="email" placeholder="Gmail / Email" autocomplete="username" required>
+      <input class="input" id="loginPassword" type="password" placeholder="Password" autocomplete="current-password" required>
+      <button class="btn full" type="submit">Login →</button>
+      <p style="text-align:center"><button type="button" class="action" onclick="forgotPassword()">Forgot password?</button></p>
+    </form>
+
+    <form id="signupForm" class="hidden">
+      <h2>Create your account</h2>
+      <input class="input" id="signupUsername" placeholder="Username (e.g. raman123)" minlength="3" maxlength="24" autocomplete="username" required>
+      <input class="input" id="signupEmail" type="email" placeholder="Your Gmail / Email" autocomplete="email" required>
+      <input class="input" id="signupPassword" type="password" placeholder="Create password (min 8 characters)" minlength="8" autocomplete="new-password" required>
+      <button class="btn full" type="submit">Create account →</button>
+      <p class="note">Email verification depends on your Supabase Authentication settings. Never share your password or private API keys.</p>
+    </form>
+
+    <p id="authMessage" class="note" role="status"></p>
+  </div>
+</section>
+
+<div id="app" class="hidden">
+  <main>
+    <section id="page-home">
+      <div class="row between">
+        <div>
+          <h2 class="page-title" data-en="Your world" data-hi="तुम्हारी दुनिया">Your world</h2>
+          <div class="muted small">Discover your community ✨</div>
         </div>
-        <span class="text-[10px] bg-purple-950 text-purple-300 border border-purple-800 px-2 py-0.5 rounded-full font-bold">Gromazeef v1.0</span>
+        <button class="iconbtn" onclick="navigate('chat')" aria-label="Messages">💬</button>
       </div>
 
-      <!-- App Header / Logo -->
-      <div class="text-center my-4">
-        <h1 class="text-4xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400">
-          GROMAZEEF
-        </h1>
-        <p class="text-xs text-gray-400 mt-1" id="txt-tagline">Short Videos (Zeefs) & Photos (Groms)</p>
+      <div class="stories" id="stories">
+        <div class="story" onclick="navigate('upload')">
+          <div class="story-ring"><div class="story-inner">＋</div></div>
+          <span data-en="Your Strip" data-hi="तुम्हारी स्ट्रिप">Your Strip</span>
+        </div>
       </div>
 
-      <!-- AUTH FORM CONTAINER -->
-      <div id="auth-form-container" class="space-y-4">
-
-        <!-- LOGGED-IN ACCOUNT BANNER (If user previously created account & logged out) -->
-        <div id="saved-account-banner" class="hidden bg-brand-card p-3 rounded-xl border border-purple-500/30 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-600 to-pink-500 p-[2px]">
-              <img id="saved-avatar" src="https://picsum.photos/100" class="w-full h-full rounded-full object-cover">
-            </div>
-            <div>
-              <p class="text-xs text-gray-400">Saved Account</p>
-              <p id="saved-username" class="text-sm font-bold">@username</p>
-            </div>
-          </div>
-          <button onclick="quickLoginSaved()" class="bg-purple-600 text-xs px-3 py-1.5 rounded-lg font-bold">Login</button>
+      <div class="card">
+        <div class="row">
+          <div class="avatar" id="quickAvatar">G</div>
+          <button class="input" style="margin:0;text-align:left" onclick="navigate('upload')">Share a Grom or Zeef…</button>
         </div>
-
-        <!-- AUTH STEP 1: USERNAME & AVAILABILITY CHECK -->
-        <div id="auth-step-1" class="space-y-3">
-          <label class="text-xs font-semibold text-gray-300" id="lbl-username">Choose Username</label>
-          <div class="relative">
-            <input type="text" id="input-username" oninput="checkUsernameAvailability(this.value)" placeholder="Enter username (e.g. rahul_zeef)" class="w-full bg-brand-card border border-brand-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
-            <span id="username-status-icon" class="absolute right-3 top-3 text-xs font-bold"></span>
-          </div>
-          <p id="username-msg" class="text-[11px] h-4"></p>
-          <button onclick="goToAuthStep(2)" id="btn-next-step1" disabled class="w-full bg-gray-800 text-gray-500 font-bold py-3 rounded-xl transition-all">Next</button>
-        </div>
-
-        <!-- AUTH STEP 2: PASSWORD -->
-        <div id="auth-step-2" class="space-y-3 hidden">
-          <label class="text-xs font-semibold text-gray-300" id="lbl-password">Set Password</label>
-          <input type="password" id="input-password" placeholder="Enter password" class="w-full bg-brand-card border border-brand-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
-          <button onclick="goToAuthStep(3)" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 rounded-xl">Next (Set Password)</button>
-        </div>
-
-        <!-- AUTH STEP 3: GMAIL & OTP VERIFICATION -->
-        <div id="auth-step-3" class="space-y-3 hidden">
-          <label class="text-xs font-semibold text-gray-300" id="lbl-email">Gmail Address & OTP</label>
-          <div class="flex gap-2">
-            <input type="email" id="input-email" placeholder="example@gmail.com" class="flex-1 bg-brand-card border border-brand-border rounded-xl px-4 py-2.5 text-sm">
-            <button onclick="sendOtp()" class="bg-purple-600 text-xs px-3 py-2 rounded-xl font-semibold">Send OTP</button>
-          </div>
-          <input type="text" id="input-otp" placeholder="Enter 6-digit OTP" class="w-full bg-brand-card border border-brand-border rounded-xl px-4 py-2.5 text-sm text-center tracking-widest font-mono">
-          <button onclick="verifyOtpAndProceed()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 rounded-xl">Verify Gmail</button>
-        </div>
-
-        <!-- AUTH STEP 4: PROFILE PICTURE (DP) SETUP -->
-        <div id="auth-step-4" class="space-y-4 text-center hidden">
-          <div class="flex justify-between items-center">
-            <h3 class="text-sm font-bold">Profile Photo (DP)</h3>
-            <button onclick="finishAuthAndEnterApp()" class="text-xs text-pink-400 font-semibold hover:underline">Skip</button>
-          </div>
-          <div class="w-24 h-24 mx-auto rounded-full bg-brand-card border-2 border-dashed border-purple-500 flex items-center justify-center relative overflow-hidden">
-            <img id="dp-preview" src="https://picsum.photos/200" class="w-full h-full object-cover">
-          </div>
-          <input type="file" id="dp-file-input" accept="image/*" class="hidden" onchange="previewDP(event)">
-          <button onclick="document.getElementById('dp-file-input').click()" class="bg-brand-card border border-brand-border px-4 py-2 rounded-xl text-xs font-semibold">Choose Photo</button>
-          <button onclick="finishAuthAndEnterApp()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 rounded-xl mt-4">Complete Setup & Enter</button>
-        </div>
-
       </div>
 
-      <!-- Footer Switch Login/Signup -->
-      <div class="text-center pt-4 border-t border-brand-border">
-        <p class="text-xs text-gray-400" id="auth-toggle-msg">
-          Already have an account? <a href="#" onclick="toggleAuthMode()" class="text-pink-500 font-bold">Login</a>
-        </p>
+      <div id="feed"></div>
+    </section>
+
+    <section id="page-zeefs" class="hidden">
+      <h2 class="page-title">⚡ Zeefs</h2>
+      <p class="muted">Short videos from your community.</p>
+      <div id="zeefFeed"></div>
+    </section>
+
+    <section id="page-upload" class="hidden">
+      <h2 class="page-title">＋ Create</h2>
+      <div class="card">
+        <h3>Share something</h3>
+        <p class="muted small">Select a photo or video from your device.</p>
+        <input class="input" id="mediaFile" type="file" accept="image/*,video/*">
+        <div id="preview"></div>
+        <input class="input" id="caption" maxlength="2200" placeholder="Write a caption…">
+        <input class="input" id="tags" placeholder="Growtags: #music #haryana">
+        <select id="postVisibility" style="width:100%;max-width:none">
+          <option value="public">Public</option>
+          <option value="private">Private</option>
+        </select>
+        <br><br>
+        <button class="btn full" onclick="publishPost()">Publish</button>
+        <p class="note">Posting publicly requires database and Storage setup. This demo keeps drafts locally until backend setup is completed.</p>
       </div>
     </section>
 
-    <!-- ========================================== -->
-    <!-- 2. MAIN APP CONTAINER                      -->
-    <!-- ========================================== -->
-    <div id="app-main-wrapper" class="flex-1 flex flex-col justify-between overflow-hidden hidden relative">
+    <section id="page-search" class="hidden">
+      <h2 class="page-title">🔎 Search</h2>
+      <input class="input" id="searchInput" placeholder="Search people, Groms or Zeefs…" oninput="searchPosts()">
+      <div id="searchResults"></div>
+    </section>
 
-      <!-- TOP APP HEADER BAR -->
-      <header class="flex items-center justify-between px-4 py-3 border-b border-brand-border bg-black/90 backdrop-blur z-20">
-        <div class="flex items-center gap-2">
-          <h2 class="text-xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
-            GROMAZEEF
-          </h2>
-          <!-- Multi-Account Switch Button -->
-          <button onclick="toggleAccountSwitchMenu()" class="flex items-center gap-1 text-[11px] bg-brand-card border border-brand-border px-2 py-0.5 rounded-full text-gray-300">
-            <span id="active-header-username">@user</span>
-            <i data-lucide="chevron-down" class="w-3 h-3"></i>
-          </button>
-        </div>
+    <section id="page-profile" class="hidden">
+      <div class="profile-top">
+        <div class="avatar profile-avatar" id="profileAvatar">G</div>
+        <h2 id="profileUsername">@creator</h2>
+        <p id="profileEmail" class="muted small"></p>
+        <p class="muted">Create. Connect. Grow. 🌌</p>
+        <button class="btn secondary" onclick="editProfile()">Edit profile</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><b id="postCount">0</b><span class="muted small">Posts</span></div>
+        <div class="stat"><b>0</b><span class="muted small">Followers</span></div>
+        <div class="stat"><b>0</b><span class="muted small">Following</span></div>
+      </div>
+      <div class="tabs">
+        <button class="btn secondary" onclick="profileTab('all')">All</button>
+        <button class="btn secondary" onclick="profileTab('zeef')">Zeefs</button>
+        <button class="btn secondary" onclick="profileTab('grom')">Groms</button>
+        <button class="btn secondary" onclick="profileTab('saved')">Saved</button>
+      </div>
+      <div id="profileGrid" class="grid"></div>
 
-        <div class="flex items-center gap-3">
-          <!-- Only+ Upload Button -->
-          <button onclick="openTab('upload')" class="bg-gradient-to-r from-pink-500 to-purple-600 px-2.5 py-1 rounded-lg text-white text-xs font-bold flex items-center gap-1">
-            <i data-lucide="plus-square" class="w-3.5 h-3.5"></i> Only+
-          </button>
-          <!-- Z-Chat Button -->
-          <button onclick="alert('Z-Chat Opened')" class="relative">
-            <span class="text-xs font-extrabold text-pink-500">Z-Chat</span>
-            <span class="absolute -top-1.5 -right-2 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
-          </button>
-        </div>
-      </header>
+      <hr>
+      <h3>Settings & account</h3>
+      <div class="card">
+        <button class="action" onclick="editProfile()">👤 Edit profile</button><hr>
+        <button class="action" onclick="navigate('accounts')">🔄 Account options</button><hr>
+        <button class="action" onclick="navigate('settings')">⚙️ Settings & privacy</button><hr>
+        <button class="action" onclick="forgotPassword()">🔐 Reset password</button><hr>
+        <button class="action" onclick="navigate('help')">❓ Help & support</button><hr>
+        <button class="action" onclick="navigate('about')">ℹ️ About Gromazeef</button><hr>
+        <button class="action" onclick="logout()">🚪 Log out</button>
+      </div>
+    </section>
 
-      <!-- MULTI-ACCOUNT SWITCH POPUP MODAL (No Logout) -->
-      <div id="account-switch-modal" class="hidden absolute top-12 left-4 bg-brand-card border border-brand-border rounded-xl p-3 z-50 shadow-2xl w-60">
-        <p class="text-[11px] text-gray-400 font-bold mb-2">Switch Account (No Logout)</p>
-        <div id="account-switch-list" class="space-y-1">
-          <!-- Dynamic Accounts injected here -->
-        </div>
-        <button onclick="addNewAccountFromSwitcher()" class="w-full mt-2 pt-2 border-t border-brand-border text-xs text-pink-400 font-bold flex items-center gap-1">
-          <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Add Another Account
+    <section id="page-chat" class="hidden">
+      <h2 class="page-title">💬 Z-Chat</h2>
+      <div class="card">
+        <p>Connect with your community.</p>
+        <p class="muted small">Real-time messaging will work after the messages table, access policies and realtime configuration are installed.</p>
+      </div>
+    </section>
+
+    <section id="page-accounts" class="hidden">
+      <h2 class="page-title">🔄 Account options</h2>
+      <div class="card">
+        <p id="accountDetails"></p>
+        <button class="btn full" onclick="logout()">Log out and switch account</button>
+        <p class="note">Multiple account switching can be added using a secure account manager. Never store passwords in localStorage.</p>
+      </div>
+    </section>
+
+    <section id="page-settings" class="hidden">
+      <h2 class="page-title">⚙️ Settings & privacy</h2>
+      <div class="card">
+        <label>Language</label>
+        <select style="width:100%;max-width:none" onchange="document.getElementById('language').value=this.value;changeLanguage()">
+          <option value="en">English</option><option value="hi">हिन्दी</option>
+        </select>
+        <hr>
+        <p>🔒 Account security</p>
+        <p>🛡️ Privacy</p>
+        <p>🔔 Notifications</p>
+        <p>♿ Accessibility</p>
+        <p>🎬 Media quality</p>
+        <p>🚫 Blocked accounts</p>
+        <p>📋 Account history</p>
+        <p>📄 Terms and policies</p>
+        <p class="note">Advanced preferences require their backend features to be implemented.</p>
+      </div>
+    </section>
+
+    <section id="page-help" class="hidden">
+      <h2 class="page-title">❓ Help & support</h2>
+      <div class="card"><p>Need help with your account?</p><p class="muted">Support contact details can be added when the project email is ready.</p></div>
+    </section>
+
+    <section id="page-about" class="hidden">
+      <h2 class="page-title">🌌 About Gromazeef</h2>
+      <div class="card"><div class="brand">Gromazeef</div><p>Create. Connect. Grow.</p><p class="muted">A community platform for photos, short videos and stories.</p><p class="small muted">Version 1.0 — initial build</p></div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="navitem active" data-page="home" onclick="navigate('home')"><span>⌂</span><span>Home</span></button>
+    <button class="navitem" data-page="zeefs" onclick="navigate('zeefs')"><span>▶</span><span>Zeefs</span></button>
+    <button class="navitem" data-page="upload" onclick="navigate('upload')"><span class="upload-main">＋</span><span>Upload</span></button>
+    <button class="navitem" data-page="search" onclick="navigate('search')"><span>⌕</span><span>Search</span></button>
+    <button class="navitem" data-page="profile" onclick="navigate('profile')"><span>◉</span><span>Profile</span></button>
+  </nav>
+</div>
+
+<div id="toast" class="toast hidden" role="status"></div>
+
+<script>
+/*
+ GROMAZEEF CONFIGURATION
+ Supabase URL and publishable key are public frontend credentials.
+ Never put a service_role key in this file.
+*/
+const SUPABASE_URL = "https://jwkpergysvdicyzvqypy.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_Y2J7myGmTRSrRGN5PxnbYg_m07KlrmB";
+
+let supabaseClient = null;
+let currentUser = null;
+let currentProfile = null;
+let posts = [];
+let currentProfileTab = "all";
+let currentPage = "home";
+let selectedFileURL = null;
+
+try {
+  if (window.supabase && SUPABASE_URL.startsWith("https://") &&
+      SUPABASE_ANON_KEY.startsWith("sb_publishable_")) {
+    supabaseClient = window.supabase.createClient(
+      SUPABASE_URL, SUPABASE_ANON_KEY
+    );
+  }
+} catch (error) {
+  console.error("Supabase setup error:", error);
+}
+
+function toast(message) {
+  const el = document.getElementById("toast");
+  el.textContent = message;
+  el.classList.remove("hidden");
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => el.classList.add("hidden"), 3200);
+}
+
+function showAuth(mode) {
+  const login = mode === "login";
+  document.getElementById("loginForm").classList.toggle("hidden", !login);
+  document.getElementById("signupForm").classList.toggle("hidden", login);
+  document.getElementById("loginTab").className =
+    login ? "btn" : "btn secondary";
+  document.getElementById("signupTab").className =
+    login ? "btn secondary" : "btn";
+  document.getElementById("authMessage").textContent = "";
+}
+
+function authMessage(text) {
+  document.getElementById("authMessage").textContent = text;
+}
+
+document.getElementById("loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!supabaseClient) {
+    authMessage("Supabase connect nahi hua. URL aur publishable key check karo.");
+    return;
+  }
+
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+
+  authMessage("Logging in…");
+  const {data, error} = await supabaseClient.auth.signInWithPassword({
+    email, password
+  });
+
+  if (error) {
+    authMessage(error.message);
+    return;
+  }
+
+  currentUser = data.user;
+  await enterApp();
+});
+
+document.getElementById("signupForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  if (!supabaseClient) {
+    authMessage("Supabase connect nahi hua. Configuration check karo.");
+    return;
+  }
+
+  const username = document.getElementById("signupUsername").value
+    .trim().toLowerCase();
+  const email = document.getElementById("signupEmail").value.trim();
+  const password = document.getElementById("signupPassword").value;
+
+  if (!/^[a-z0-9_.]{3,24}$/.test(username)) {
+    authMessage("Username mein 3–24 characters use karo: letters, numbers, _ ya .");
+    return;
+  }
+
+  authMessage("Creating account…");
+
+  const {data, error} = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {username},
+      emailRedirectTo: window.location.origin
+    }
+  });
+
+  if (error) {
+    authMessage(error.message);
+    return;
+  }
+
+  if (data.session) {
+    currentUser = data.user;
+    await enterApp();
+  } else {
+    authMessage("Account request sent! Email inbox check karo aur verification link open karo. Uske baad login karo.");
+    showAuth("login");
+    document.getElementById("loginEmail").value = email;
+  }
+});
+
+async function forgotPassword() {
+  if (!supabaseClient) {
+    toast("Supabase configuration check karo.");
+    return;
+  }
+
+  const email = prompt("Apna registered email address enter karo:");
+  if (!email) return;
+
+  const {error} = await supabaseClient.auth.resetPasswordForEmail(
+    email.trim(),
+    {redirectTo: window.location.origin}
+  );
+
+  toast(error ? error.message : "Password reset email bhej diya gaya hai. Inbox check karo.");
+}
+
+async function enterApp() {
+  if (!currentUser && supabaseClient) {
+    const {data} = await supabaseClient.auth.getUser();
+    currentUser = data?.user || null;
+  }
+
+  if (!currentUser) return;
+
+  document.getElementById("authScreen").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+
+  const metadata = currentUser.user_metadata || {};
+  const username = metadata.username ||
+    (currentUser.email || "creator").split("@")[0];
+
+  currentProfile = {
+    id: currentUser.id,
+    username,
+    email: currentUser.email || ""
+  };
+
+  document.getElementById("profileUsername").textContent = "@" + username;
+  document.getElementById("profileEmail").textContent = currentUser.email || "";
+  document.getElementById("profileAvatar").textContent =
+    username.slice(0, 1).toUpperCase();
+  document.getElementById("quickAvatar").textContent =
+    username.slice(0, 1).toUpperCase();
+  document.getElementById("accountDetails").textContent =
+    "Signed in as " + (currentUser.email || username);
+
+  renderPosts();
+  navigate("home");
+  toast("Welcome to Gromazeef 🌌");
+}
+async function logout() {
+  if (supabaseClient) {
+    const { error } = await supabaseClient.auth.signOut();
+
+    if (error) {
+      toast(error.message);
+      return;
+    }
+  }
+
+  currentUser = null;
+  currentProfile = null;
+
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("authScreen").classList.remove("hidden");
+
+  showAuth("login");
+  toast("Logged out successfully.");
+}
+
+function navigate(page) {
+  const validPages = [
+    "home", "zeefs", "upload", "search", "profile",
+    "chat", "accounts", "settings", "help", "about"
+  ];
+
+  if (!validPages.includes(page)) return;
+
+  currentPage = page;
+
+  document.querySelectorAll('main > section[id^="page-"]').forEach(section => {
+    section.classList.toggle("hidden", section.id !== "page-" + page);
+  });
+
+  document.querySelectorAll(".navitem").forEach(button => {
+    button.classList.toggle("active", button.dataset.page === page);
+  });
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  if (page === "profile") renderProfileGrid();
+  if (page === "zeefs") renderZeefs();
+}
+
+document.getElementById("mediaFile").addEventListener("change", event => {
+  const file = event.target.files?.[0];
+  const preview = document.getElementById("preview");
+
+  preview.innerHTML = "";
+
+  if (!file) return;
+
+  if (file.size > 100 * 1024 * 1024) {
+    event.target.value = "";
+    toast("Maximum file size is 100 MB.");
+    return;
+  }
+
+  if (selectedFileURL) {
+    URL.revokeObjectURL(selectedFileURL);
+  }
+
+  selectedFileURL = URL.createObjectURL(file);
+
+  if (file.type.startsWith("image/")) {
+    const img = document.createElement("img");
+    img.src = selectedFileURL;
+    img.className = "feed-media";
+    img.alt = "Selected photo preview";
+    preview.appendChild(img);
+  } else if (file.type.startsWith("video/")) {
+    const video = document.createElement("video");
+    video.src = selectedFileURL;
+    video.className = "feed-media";
+    video.controls = true;
+    preview.appendChild(video);
+  } else {
+    toast("Choose an image or video file.");
+  }
+});
+
+function publishPost() {
+  if (!currentUser) {
+    toast("Pehle login karo.");
+    return;
+  }
+
+  const file = document.getElementById("mediaFile").files?.[0];
+  const caption = document.getElementById("caption").value.trim();
+  const tags = document.getElementById("tags").value.trim();
+  const visibility = document.getElementById("postVisibility").value;
+
+  if (!file) {
+    toast("Pehle photo ya video select karo.");
+    return;
+  }
+
+  posts.unshift({
+    id: crypto.randomUUID(),
+    user_id: currentUser.id,
+    username: currentProfile.username,
+    type: file.type.startsWith("video/") ? "zeef" : "grom",
+    media_url: selectedFileURL,
+    caption,
+    tags,
+    visibility,
+    likes: [],
+    comments: [],
+    localOnly: true
+  });
+
+  document.getElementById("mediaFile").value = "";
+  document.getElementById("caption").value = "";
+  document.getElementById("tags").value = "";
+  document.getElementById("preview").innerHTML = "";
+
+  selectedFileURL = null;
+
+  renderPosts();
+  navigate("home");
+
+  toast("Post preview added! Abhi server par upload nahi hua.");
+}
+
+function renderPosts() {
+  const feed = document.getElementById("feed");
+  feed.innerHTML = "";
+
+  if (!posts.length) {
+    feed.innerHTML = `
+      <div class="card empty">
+        <div style="font-size:40px">🌱</div>
+        <h3>Your feed starts here</h3>
+        <p>Be the first to share a Grom or Zeef.</p>
+        <button class="btn" onclick="navigate('upload')">
+          Create your first post
         </button>
-      </div>
+      </div>`;
 
-      <!-- MAIN CONTENT TAB VIEW -->
-      <main id="app-view-container" class="flex-1 overflow-y-auto relative">
+    document.getElementById("postCount").textContent = "0";
+    renderProfileGrid();
+    return;
+  }
 
-        <!-- TAB 1: HOME FEED (STRIPS + GROMS + ZEEFS) -->
-        <section id="tab-home" class="p-3 space-y-4">
-          <!-- Strips (Story) Bar -->
-          <div class="flex gap-3 overflow-x-auto pb-2 border-b border-brand-border no-scrollbar">
-            <!-- Add Strip -->
-            <div class="flex flex-col items-center flex-shrink-0" onclick="alert('Add Strip Story')">
-              <div class="w-14 h-14 rounded-full border-2 border-dashed border-pink-500 flex items-center justify-center bg-brand-card">
-                <i data-lucide="plus" class="w-5 h-5 text-pink-500"></i>
-              </div>
-              <span class="text-[10px] mt-1 text-gray-300">Add Strip</span>
-            </div>
-            <!-- Dynamic Strips List -->
-            <div id="strips-list" class="flex gap-3"></div>
-          </div>
+  posts.forEach(post => {
+    feed.appendChild(createPostCard(post));
+  });
 
-          <!-- Feed Posts (Groms & Zeefs) -->
-          <div id="home-feed-posts" class="space-y-4"></div>
-        </section>
+  document.getElementById("postCount").textContent =
+    posts.filter(post => post.user_id === currentUser?.id).length;
 
-        <!-- TAB 2: ZEEFS PLAYER (Instagram Reels Inspired Full Screen Video Engine) -->
-        <section id="tab-zeefs" class="hidden h-full w-full bg-black relative flex flex-col justify-end p-4">
-          <img src="https://picsum.photos/400/700?random=88" class="absolute inset-0 w-full h-full object-cover opacity-80">
-          
-          <!-- Right Side Actions -->
-          <div class="absolute right-3 bottom-16 flex flex-col items-center space-y-4 z-10">
-            <button onclick="toggleLike(this)" class="flex flex-col items-center text-xs text-white">
-              <i data-lucide="heart" class="w-7 h-7"></i> <span class="text-[10px] mt-0.5">18.4K</span>
-            </button>
-            <button onclick="openCommentsModal()" class="flex flex-col items-center text-xs text-white">
-              <i data-lucide="message-circle" class="w-7 h-7"></i> <span class="text-[10px] mt-0.5">850</span>
-            </button>
-            <button onclick="openShareModal()" class="flex flex-col items-center text-xs text-white">
-              <i data-lucide="share-2" class="w-7 h-7"></i> <span class="text-[10px] mt-0.5">Share</span>
-            </button>
-            <button onclick="resharePost()" class="flex flex-col items-center text-xs text-green-400">
-              <i data-lucide="repeat" class="w-7 h-7"></i> <span class="text-[10px] mt-0.5">Reshare</span>
-            </button>
-            <button onclick="savePost()" class="flex flex-col items-center text-xs text-white">
-              <i data-lucide="bookmark" class="w-7 h-7"></i> <span class="text-[10px] mt-0.5">Save</span>
-            </button>
-            <button onclick="open3DotsMenu()" class="flex flex-col items-center text-xs text-white">
-              <i data-lucide="more-vertical" class="w-7 h-7"></i>
-            </button>
-          </div>
+  renderProfileGrid();
+}
 
-          <!-- Bottom Caption & Audio Info -->
-          <div class="z-10 max-w-[80%] space-y-2">
-            <div class="flex items-center gap-2">
-              <span class="font-bold text-sm">@zeef_creator</span>
-              <button class="bg-pink-600 text-[10px] px-2 py-0.5 rounded-full font-bold">Follow</button>
-            </div>
-            <p class="text-xs text-gray-200 line-clamp-2">Gromazeef official launch! Growtag: <span class="text-purple-400 font-bold">@gromazeef_admin</span> #viral #zeefs</p>
-            <div onclick="openAudioPage('Trending Beat - Original Sound')" class="flex items-center gap-2 text-xs text-purple-300 cursor-pointer">
-              <i data-lucide="music" class="w-3.5 h-3.5 animate-spin"></i> Original Audio - Trending Beat
-            </div>
-          </div>
-        </section>
+function createPostCard(post) {
+  const card = document.createElement("article");
+  card.className = "card";
 
-        <!-- TAB 3: UPLOAD STUDIO (Only+) -->
-        <section id="tab-upload" class="hidden p-4 space-y-4">
-          <h3 class="font-bold text-base border-b border-brand-border pb-2">Upload Zeefs (Video) or Groms (Photo)</h3>
-          
-          <div class="w-full h-40 rounded-xl border-2 border-dashed border-brand-border flex flex-col items-center justify-center bg-brand-card">
-            <i data-lucide="image" class="w-8 h-8 text-gray-500 mb-2"></i>
-            <button onclick="document.getElementById('upload-file-input').click()" class="bg-purple-600 text-xs px-3 py-1.5 rounded-lg font-bold">Select From Gallery</button>
-            <input type="file" id="upload-file-input" class="hidden">
-          </div>
+  const headerRow = document.createElement("div");
+  headerRow.className = "row between";
 
-          <div class="space-y-3">
-            <input type="text" id="upload-caption" placeholder="Write caption..." class="w-full bg-brand-card border border-brand-border rounded-xl px-3 py-2 text-xs">
-            <input type="text" id="upload-growtag" placeholder="Growtag (@username for Collab)" class="w-full bg-brand-card border border-brand-border rounded-xl px-3 py-2 text-xs">
-            <input type="text" id="upload-location" placeholder="Add Location" class="w-full bg-brand-card border border-brand-border rounded-xl px-3 py-2 text-xs">
-            
-            <div class="flex justify-between items-center bg-brand-card p-3 rounded-xl border border-brand-border">
-              <span class="text-xs font-semibold">Quality Settings</span>
-              <select class="bg-black text-xs p-1 rounded border border-brand-border">
-                <option>Ultra HD (1080p)</option>
-                <option>Standard (720p)</option>
-              </select>
-            </div>
+  const user = document.createElement("div");
+  user.className = "row";
 
-            <button onclick="publishMediaPost()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 font-bold py-3 rounded-xl text-sm">Upload Now</button>
-          </div>
-        </section>
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = (post.username || "G").slice(0, 1).toUpperCase();
 
-        <!-- TAB 4: SEARCH ENGINE -->
-        <section id="tab-search" class="hidden p-3 space-y-4">
-          <div class="relative">
-            <input type="text" oninput="liveSearchAccounts(this.value)" placeholder="Search accounts, zeefs, groms..." class="w-full bg-brand-card border border-brand-border rounded-xl pl-9 pr-3 py-2 text-xs text-white">
-            <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-2.5"></i>
-          </div>
+  const name = document.createElement("div");
+  name.innerHTML = "<b></b><div class='muted small'></div>";
+  name.children[0].textContent = "@" + post.username;
+  name.children[1].textContent =
+    post.type === "zeef" ? "⚡ Zeef" : "🖼 Grom";
 
-          <div id="search-results-accounts" class="space-y-2">
-            <!-- Dynamic Accounts Results -->
-          </div>
+  user.append(avatar, name);
 
-          <div>
-            <h4 class="text-xs font-bold text-gray-400 mb-2">Trending Zeefs & Groms</h4>
-            <div id="search-grid-media" class="grid grid-cols-3 gap-1"></div>
-          </div>
-        </section>
+  const menu = document.createElement("button");
+  menu.className = "iconbtn";
+  menu.textContent = "⋯";
+  menu.onclick = () => postMenu(post.id);
 
-        <!-- TAB 5: PROFILE STUDIO -->
-        <section id="tab-profile" class="hidden p-4 space-y-4">
-          <div class="flex justify-between items-center">
-            <div class="flex items-center gap-1">
-              <i data-lucide="plus-square" onclick="openTab('upload')" class="w-5 h-5 text-pink-500 cursor-pointer"></i>
-              <h3 id="profile-display-username" class="font-bold text-sm">@username</h3>
-            </div>
-            <!-- Open Advanced Settings (15-20 Options) -->
-            <button onclick="toggleSettingsDrawer(true)" class="p-1 bg-brand-card rounded-lg">
-              <i data-lucide="more-vertical" class="w-5 h-5"></i>
-            </button>
-          </div>
+  headerRow.append(user, menu);
+  card.appendChild(headerRow);
 
-          <div class="flex items-center justify-between">
-            <div class="w-16 h-16 rounded-full border-2 border-pink-500 overflow-hidden" onclick="openStripViewers()">
-              <img id="profile-dp-img" src="https://picsum.photos/100" class="w-full h-full object-cover">
-            </div>
-            <div class="flex space-x-4 text-center text-xs">
-              <div><p class="font-bold text-sm">12</p><span class="text-gray-400">Posts</span></div>
-              <div><p class="font-bold text-sm">1.5K</p><span class="text-gray-400">Followers</span></div>
-              <div><p class="font-bold text-sm">230</p><span class="text-gray-400">Following</span></div>
-            </div>
-          </div>
+  if (post.media_url) {
+    const media = post.type === "zeef"
+      ? document.createElement("video")
+      : document.createElement("img");
 
-          <div>
-            <p id="profile-bio" class="text-xs text-gray-300">🚀 Official Gromazeef Creator Account | Coding & Media</p>
-            <button onclick="alert('Edit Profile Modal')" class="w-full mt-2 py-1.5 bg-brand-card border border-brand-border rounded-lg text-xs font-bold">Edit Profile & Dashboard</button>
-          </div>
+    media.src = post.media_url;
+    media.className = "feed-media";
 
-          <!-- Profile Tabs Grid (Groms/Zeefs, Zeefs, Reshares, Growtags) -->
-          <div class="border-t border-brand-border pt-2">
-            <div class="flex justify-around border-b border-brand-border pb-2 text-xs">
-              <button class="font-bold text-pink-500">Posts</button>
-              <button class="text-gray-400">Zeefs</button>
-              <button class="text-gray-400">Reshares</button>
-              <button class="text-gray-400">Growtags</button>
-            </div>
-            <div id="profile-posts-grid" class="grid grid-cols-3 gap-1 mt-2"></div>
-          </div>
-        </section>
+    if (post.type === "zeef") {
+      media.controls = true;
+    } else {
+      media.alt = "Post image";
+    }
 
-      </main>
+    card.appendChild(media);
+  }
 
-      <!-- ----------------- BOTTOM NAVIGATION BAR (5 OPTIONS) ----------------- -->
-      <nav class="flex justify-around items-center py-2.5 bg-black border-t border-brand-border z-20">
-        <button onclick="openTab('home')" id="nav-home" class="text-pink-500"><i data-lucide="home" class="w-6 h-6"></i></button>
-        <button onclick="openTab('zeefs')" id="nav-zeefs" class="text-gray-400"><i data-lucide="film" class="w-6 h-6"></i></button>
-        <button onclick="openTab('upload')" id="nav-upload" class="p-2 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full text-white shadow-lg"><i data-lucide="plus-square" class="w-5 h-5"></i></button>
-        <button onclick="openTab('search')" id="nav-search" class="text-gray-400"><i data-lucide="search" class="w-6 h-6"></i></button>
-        <button onclick="openTab('profile')" id="nav-profile" class="text-gray-400"><i data-lucide="user" class="w-6 h-6"></i></button>
-      </nav>
+  const caption = document.createElement("p");
+  caption.textContent = post.caption || "";
+  card.appendChild(caption);
 
-      <!-- ----------------- ADVANCED PROFILE SETTINGS DRAWER (15-20 OPTIONS) ----------------- -->
-      <div id="settings-drawer" class="hidden absolute inset-0 bg-black/95 z-50 p-4 overflow-y-auto flex flex-col justify-between">
-        <div>
-          <div class="flex justify-between items-center pb-3 border-b border-brand-border mb-4">
-            <h3 class="font-bold text-sm flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4"></i> Settings & Control</h3>
-            <button onclick="toggleSettingsDrawer(false)" class="text-xs font-bold text-pink-500">Close</button>
-          </div>
+  const tags = document.createElement("p");
+  tags.className = "muted small";
+  tags.textContent = post.tags || "";
+  card.appendChild(tags);
 
-          <!-- 15+ Detailed Options -->
-          <div class="space-y-2 text-xs">
-            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="user" class="w-4 h-4 text-purple-400"></i> Account Management</div>
-            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="shield-check" class="w-4 h-4 text-blue-400"></i> Verification & Blue Tick Badge</div>
-            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="globe" class="w-4 h-4 text-green-400"></i> Language (Hindi / English)</div>
-            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="film" class="w-4 h-4 text-pink-400"></i> Media Upload Quality (HD / 4K)</div>
-            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="lock" class="w-4 h-4 text-yellow-400"></i> Account Privacy & Blocked Users</div>
-            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="eye" class="w-4 h-4 text-indigo-400"></i> Account Status & Violations</div>
-            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="file-text" class="w-4 h-4 text-gray-400"></i> Account History & Activity Log</div>
-            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="help-circle" class="w-4 h-4 text-orange-400"></i> Help, Support & Report Bug</div>
-            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="bell" class="w-4 h-4 text-red-400"></i> Notification Preferences</div>
-            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="database" class="w-4 h-4 text-teal-400"></i> Data Saver Mode</div>
-          </div>
-        </div>
+  const actions = document.createElement("div");
+  actions.className = "post-actions";
 
-        <button onclick="logoutActiveAccount()" class="w-full mt-6 py-3 bg-red-600/20 text-red-400 border border-red-600/50 rounded-xl font-bold flex items-center justify-center gap-2 text-xs">
-          <i data-lucide="log-out" class="w-4 h-4"></i> Log Out Current Account
+  const like = document.createElement("button");
+  like.className = "action";
+
+  const liked = (post.likes || []).includes(currentUser?.id);
+  like.textContent = (liked ? "❤️ " : "♡ ") + (post.likes || []).length;
+  like.onclick = () => toggleLike(post.id);
+
+  const comment = document.createElement("button");
+  comment.className = "action";
+  comment.textContent = "💬 " + (post.comments || []).length;
+  comment.onclick = () => addComment(post.id);
+
+  const share = document.createElement("button");
+  share.className = "action";
+  share.textContent = "↗ Share";
+
+  share.onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(location.href);
+      toast("Page link copied!");
+    } catch {
+      toast("Share link unavailable.");
+    }
+  };
+
+  actions.append(like, comment, share);
+  card.appendChild(actions);
+
+  return card;
+}
+
+function toggleLike(id) {
+  const post = posts.find(post => post.id === id);
+  if (!post || !currentUser) return;
+
+  post.likes = post.likes || [];
+
+  const index = post.likes.indexOf(currentUser.id);
+
+  if (index >= 0) {
+    post.likes.splice(index, 1);
+  } else {
+    post.likes.push(currentUser.id);
+  }
+
+  renderPosts();
+}
+
+function addComment(id) {
+  const post = posts.find(post => post.id === id);
+  if (!post || !currentUser) return;
+
+  const comment = prompt("Write your comment:");
+
+  if (!comment?.trim()) return;
+
+  post.comments = post.comments || [];
+
+  post.comments.push({
+    username: currentProfile.username,
+    text: comment.trim()
+  });
+
+  renderPosts();
+}
+
+function postMenu(id) {
+  const post = posts.find(post => post.id === id);
+  if (!post) return;
+
+  const choice = prompt(
+    "Post options:\n1 = Edit caption\n2 = Delete post\n3 = Cancel"
+  );
+
+  if (post.user_id !== currentUser?.id) {
+    toast("You can only edit your own posts.");
+    return;
+  }
+
+  if (choice === "1") {
+    const updated = prompt("Edit caption:", post.caption || "");
+
+    if (updated !== null) {
+      post.caption = updated;
+      renderPosts();
+    }
+  } else if (choice === "2") {
+    if (confirm("Delete this post?")) {
+      posts = posts.filter(item => item.id !== id);
+      renderPosts();
+    }
+  }
+}
+
+function renderZeefs() {
+  const area = document.getElementById("zeefFeed");
+  area.innerHTML = "";
+
+  const zeefs = posts.filter(post => post.type === "zeef");
+
+  if (!zeefs.length) {
+    area.innerHTML = `
+      <div class="card empty">
+        <div style="font-size:40px">▶</div>
+        <h3>No Zeefs yet</h3>
+        <p>Upload a short video to get started.</p>
+        <button class="btn" onclick="navigate('upload')">
+          Create Zeef
         </button>
-      </div>
+      </div>`;
+    return;
+  }
 
-      <!-- ----------------- 3-DOTS ACTION SHEET MODAL ----------------- -->
-      <div id="action-sheet-modal" class="hidden absolute inset-0 bg-black/80 z-50 flex flex-col justify-end">
-        <div class="bg-brand-card p-4 rounded-t-2xl space-y-3 border-t border-brand-border">
-          <button onclick="alert('Full Screen Mode Enabled')" class="w-full text-left py-2 text-xs font-bold flex items-center gap-2"><i data-lucide="maximize" class="w-4 h-4"></i> Full Screen Mode</button>
-          <button onclick="alert('Added to Interested')" class="w-full text-left py-2 text-xs font-bold flex items-center gap-2"><i data-lucide="thumbs-up" class="w-4 h-4 text-green-400"></i> Interested</button>
-          <button onclick="alert('Added to Not Interested')" class="w-full text-left py-2 text-xs font-bold flex items-center gap-2"><i data-lucide="thumbs-down" class="w-4 h-4 text-orange-400"></i> Not Interested</button>
-          <button onclick="alert('Reported')" class="w-full text-left py-2 text-xs font-bold text-red-400 flex items-center gap-2"><i data-lucide="flag" class="w-4 h-4"></i> Report Post</button>
-          <button onclick="close3DotsMenu()" class="w-full bg-brand-dark py-2 rounded-xl text-xs font-bold mt-2">Cancel</button>
-        </div>
-      </div>
+  zeefs.forEach(post => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "zeef-view";
 
-    </div>
+    const video = document.createElement("video");
+    video.src = post.media_url;
+    video.controls = true;
+    video.playsInline = true;
 
-  </div>
+    const info = document.createElement("div");
+    info.innerHTML = "<b></b><p></p>";
+    info.children[0].textContent = "@" + post.username;
+    info.children[1].textContent = post.caption || "";
 
-  <!-- ========================================== -->
-  <!-- 3. JS ENGINE & SUPABASE CONFIGURATION      -->
-  <!-- ========================================== -->
-  <script>
-    // ----------------------------------------------------
-    // SUPABASE SETUP (Insert your own credentials here)
-    // ----------------------------------------------------
-    const SUPABASE_URL = "https://YOUR_SUPABASE_URL.supabase.co"; 
-    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY"; 
-    
-    // Initialize Supabase Client safely
-    let supabase = null;
-    if (SUPABASE_URL !== "https://YOUR_SUPABASE_URL.supabase.co") {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    wrapper.append(video, info);
+    area.appendChild(wrapper);
+  });
+}
+
+function searchPosts() {
+  const query = document.getElementById("searchInput")
+    .value.trim().toLowerCase();
+
+  const area = document.getElementById("searchResults");
+  area.innerHTML = "";
+
+  const matches = posts.filter(post =>
+    (post.username || "").toLowerCase().includes(query) ||
+    (post.caption || "").toLowerCase().includes(query) ||
+    (post.tags || "").toLowerCase().includes(query)
+  );
+
+  if (!matches.length) {
+    area.innerHTML =
+      '<div class="empty">No matching posts found.</div>';
+    return;
+  }
+
+  matches.forEach(post => {
+    area.appendChild(createPostCard(post));
+  });
+}
+
+function renderProfileGrid() {
+  const grid = document.getElementById("profileGrid");
+  if (!grid) return;
+
+  grid.innerHTML = "";
+
+  let mine = posts.filter(
+    post => post.user_id === currentUser?.id
+  );
+
+  if (currentProfileTab === "zeef") {
+    mine = mine.filter(post => post.type === "zeef");
+  }
+
+  if (currentProfileTab === "grom") {
+    mine = mine.filter(post => post.type === "grom");
+  }
+
+  if (currentProfileTab === "saved") {
+    mine = [];
+  }
+
+  if (!mine.length) {
+    grid.innerHTML = `
+      <div class="empty" style="grid-column:1/-1">
+        ${currentProfileTab === "saved"
+          ? "Saved collections need backend setup."
+          : "Your posts will appear here."}
+      </div>`;
+    return;
+  }
+
+  mine.forEach(post => {
+    const item = document.createElement("div");
+    item.className = "griditem";
+
+    if (post.type === "zeef") {
+      const video = document.createElement("video");
+      video.src = post.media_url;
+      video.muted = true;
+      item.appendChild(video);
+    } else {
+      const img = document.createElement("img");
+      img.src = post.media_url;
+      img.alt = post.caption || "Grom";
+      item.appendChild(img);
     }
 
-    // App State Management
-    let currentAuthMode = 'signup'; // 'signup' or 'login'
-    let selectedUsername = '';
-    let currentActiveUser = null;
-    let savedAccounts = JSON.parse(localStorage.getItem('gz_accounts') || '[]');
+    grid.appendChild(item);
+  });
+}
 
-    // Initialize Lucide Icons
-    lucide.createIcons();
+function profileTab(tab) {
+  currentProfileTab = tab;
+  renderProfileGrid();
+}
 
-    // Check Local Storage for Saved Sessions on Startup
-    window.addEventListener('DOMContentLoaded', () => {
-      if (savedAccounts.length > 0) {
-        document.getElementById('saved-account-banner').classList.remove('hidden');
-        document.getElementById('saved-username').innerText = `@${savedAccounts[0].username}`;
-      }
-    });
+function editProfile() {
+  if (!currentProfile) return;
 
-    // ----------------------------------------------------
-    // AUTHENTICATION & ONBOARDING FLOW
-    // ----------------------------------------------------
-    function checkUsernameAvailability(val) {
-      const username = val.trim().toLowerCase();
-      const statusIcon = document.getElementById('username-status-icon');
-      const msg = document.getElementById('username-msg');
-      const nextBtn = document.getElementById('btn-next-step1');
+  const updated = prompt(
+    "Choose a username:",
+    currentProfile.username
+  );
 
-      if (username.length < 3) {
-        statusIcon.innerText = '';
-        msg.innerText = 'Username minimum 3 characters hona chahiye.';
-        msg.className = 'text-[11px] text-gray-400';
-        nextBtn.disabled = true;
-        nextBtn.className = 'w-full bg-gray-800 text-gray-500 font-bold py-3 rounded-xl';
-        return;
-      }
+  if (!updated?.trim()) return;
 
-      // Mock DB Check / Supabase Query
-      const isTaken = savedAccounts.some(acc => acc.username === username);
-      if (isTaken) {
-        statusIcon.innerText = '❌';
-        msg.innerText = 'Username pehle se liya gaya hai.';
-        msg.className = 'text-[11px] text-red-400';
-        nextBtn.disabled = true;
-        nextBtn.className = 'w-full bg-gray-800 text-gray-500 font-bold py-3 rounded-xl';
-      } else {
-        statusIcon.innerText = '✅';
-        msg.innerText = 'Username Available hai!';
-        msg.className = 'text-[11px] text-green-400 font-bold';
-        selectedUsername = username;
-        nextBtn.disabled = false;
-        nextBtn.className = 'w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 rounded-xl cursor-pointer';
-      }
+  const username = updated.trim().toLowerCase();
+
+  if (!/^[a-z0-9_.]{3,24}$/.test(username)) {
+    toast("Username 3–24 characters ka hona chahiye.");
+    return;
+  }
+
+  toast("Permanent username changes ke liye profiles table setup karni hogi.");
+}
+
+function changeLanguage() {
+  const lang = document.getElementById("language").value;
+  document.documentElement.lang = lang;
+
+  document.querySelectorAll("[data-en][data-hi]").forEach(el => {
+    el.textContent = el.dataset[lang];
+  });
+
+  try {
+    localStorage.setItem("gromazeef_language", lang);
+  } catch {}
+
+  toast(lang === "hi"
+    ? "भाषा हिन्दी चुनी गई।"
+    : "Language set to English.");
+}
+
+async function initialize() {
+  try {
+    const savedLang = localStorage.getItem("gromazeef_language");
+
+    if (savedLang === "hi" || savedLang === "en") {
+      document.getElementById("language").value = savedLang;
+      changeLanguage();
     }
+  } catch {}
 
-    function goToAuthStep(step) {
-      document.getElementById('auth-step-1').classList.add('hidden');
-      document.getElementById('auth-step-2').classList.add('hidden');
-      document.getElementById('auth-step-3').classList.add('hidden');
-      document.getElementById('auth-step-4').classList.add('hidden');
+  if (!supabaseClient) {
+    authMessage("Supabase configuration check karo.");
+    return;
+  }
 
-      document.getElementById(`auth-step-${step}`).classList.remove('hidden');
-    }
+  const { data, error } = await supabaseClient.auth.getSession();
 
-    function sendOtp() {
-      const email = document.getElementById('input-email').value;
-      if (!email.includes('@')) {
-        alert('Valid Gmail daalein!');
-        return;
-      }
-      alert(`OTP Gmail (${email}) par bhej diya gaya hai! (Test OTP: 123456)`);
-    }
+  if (error) {
+    console.error(error);
+    authMessage(error.message);
+    return;
+  }
 
-    function verifyOtpAndProceed() {
-      const otp = document.getElementById('input-otp').value;
-      if (otp === '123456' || otp.length === 6) {
-        goToAuthStep(4);
-      } else {
-        alert('Galat OTP! Sahi 6-digit OTP daalein.');
-      }
-    }
+  if (data.session?.user) {
+    currentUser = data.session.user;
+    await enterApp();
+  }
 
-    function previewDP(event) {
-      const reader = new FileReader();
-      reader.onload = function() {
-        document.getElementById('dp-preview').src = reader.result;
-      }
-      reader.readAsDataURL(event.target.files[0]);
-    }
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    currentUser = session?.user || null;
+  });
+}
 
-    function finishAuthAndEnterApp() {
-      currentActiveUser = {
-        username: selectedUsername || 'new_user',
-        avatar: document.getElementById('dp-preview').src
-      };
-
-      // Save Session locally for multi-account switching
-      savedAccounts.push(currentActiveUser);
-      localStorage.setItem('gz_accounts', JSON.stringify(savedAccounts));
-
-      // Enter App Screen
-      document.getElementById('screen-auth').classList.add('hidden');
-      document.getElementById('app-main-wrapper').classList.remove('hidden');
-
-      updateAppUserUI();
-      loadHomeFeedMockData();
-    }
-
-    function quickLoginSaved() {
-      if (savedAccounts.length > 0) {
-        currentActiveUser = savedAccounts[0];
-        document.getElementById('screen-auth').classList.add('hidden');
-        document.getElementById('app-main-wrapper').classList.remove('hidden');
-        updateAppUserUI();
-        loadHomeFeedMockData();
-      }
-    }
-
-    function updateAppUserUI() {
-      document.getElementById('active-header-username').innerText = `@${currentActiveUser.username}`;
-      document.getElementById('profile-display-username').innerText = `@${currentActiveUser.username}`;
-      document.getElementById('profile-dp-img').src = currentActiveUser.avatar;
-    }
-
-    // ----------------------------------------------------
-    // MULTI-ACCOUNT SWITCHER ENGINE (No Logout)
-    // ----------------------------------------------------
-    function toggleAccountSwitchMenu() {
-      const modal = document.getElementById('account-switch-modal');
-      modal.classList.toggle('hidden');
-
-      const listContainer = document.getElementById('account-switch-list');
-      listContainer.innerHTML = '';
-
-      savedAccounts.forEach(acc => {
-        const item = document.createElement('div');
-        item.className = `p-2 text-xs rounded-lg cursor-pointer flex items-center justify-between ${acc.username === currentActiveUser.username ? 'bg-purple-900/40 text-purple-300' : 'hover:bg-gray-800'}`;
-        item.innerHTML = `<span>@${acc.username}</span> ${acc.username === currentActiveUser.username ? '🟢' : ''}`;
-        item.onclick = () => {
-          currentActiveUser = acc;
-          updateAppUserUI();
-          modal.classList.add('hidden');
-        };
-        listContainer.appendChild(item);
-      });
-    }
-
-    function addNewAccountFromSwitcher() {
-      document.getElementById('account-switch-modal').classList.add('hidden');
-      document.getElementById('app-main-wrapper').classList.add('hidden');
-      document.getElementById('screen-auth').classList.remove('hidden');
-      goToAuthStep(1);
-    }
-
-    function logoutActiveAccount() {
-      savedAccounts = savedAccounts.filter(acc => acc.username !== currentActiveUser.username);
-      localStorage.setItem('gz_accounts', JSON.stringify(savedAccounts));
-      window.location.reload();
-    }
-
-    // ----------------------------------------------------
-    // TAB NAVIGATION
-    // ----------------------------------------------------
-    function openTab(tabName) {
-      ['home', 'zeefs', 'upload', 'search', 'profile'].forEach(tab => {
-        document.getElementById(`tab-${tab}`).classList.add('hidden');
-        document.getElementById(`nav-${tab}`).className = 'text-gray-400';
-      });
-
-      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-      document.getElementById(`nav-${tabName}`).className = 'text-pink-500';
-      
-      if(tabName === 'upload') {
-        document.getElementById('nav-upload').className = 'p-2 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full text-white shadow-lg';
-      }
-    }
-
-    // ----------------------------------------------------
-    // FEED & MEDIA ENGINE
-    // ----------------------------------------------------
-    function loadHomeFeedMockData() {
-      // Strips Data
-      const stripsContainer = document.getElementById('strips-list');
-      stripsContainer.innerHTML = '';
-      for (let i = 1; i <= 5; i++) {
-        stripsContainer.innerHTML += `
-          <div class="flex flex-col items-center flex-shrink-0 cursor-pointer" onclick="alert('Viewing Strip ${i}')">
-            <div class="w-14 h-14 rounded-full p-[2px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600">
-              <img src="https://picsum.photos/100/100?random=${i+10}" class="w-full h-full rounded-full border-2 border-black object-cover">
-            </div>
-            <span class="text-[10px] mt-1 text-gray-300">user_${i}</span>
-          </div>
-        `;
-      }
-
-      // Feed Posts Data
-      const postsContainer = document.getElementById('home-feed-posts');
-      postsContainer.innerHTML = `
-        <div class="bg-brand-card border border-brand-border rounded-xl p-3 space-y-2">
-          <div class="flex justify-between items-center">
-            <div class="flex items-center gap-2">
-              <img src="https://picsum.photos/50" class="w-7 h-7 rounded-full">
-              <span class="text-xs font-bold">gromazeef_official</span>
-            </div>
-            <button class="text-xs bg-purple-600 px-2.5 py-0.5 rounded-full font-semibold">Follow</button>
-          </div>
-          <img src="https://picsum.photos/400/300?random=1" class="w-full rounded-lg object-cover h-60">
-          <p class="text-xs text-gray-300">Welcome to Gromazeef platform! <span class="text-purple-400 font-bold">@creator</span> #groms #zeefs</p>
-        </div>
-      `;
-
-      // Profile Grid Data
-      const profileGrid = document.getElementById('profile-posts-grid');
-      profileGrid.innerHTML = '';
-      for(let j=1; j<=6; j++) {
-        profileGrid.innerHTML += `<img src="https://picsum.photos/150/150?random=${j+20}" class="w-full h-24 object-cover rounded">`;
-      }
-    }
-
-    // UI Actions
-    function toggleSettingsDrawer(show) {
-      document.getElementById('settings-drawer').classList.toggle('hidden', !show);
-    }
-
-    function open3DotsMenu() {
-      document.getElementById('action-sheet-modal').classList.remove('hidden');
-    }
-
-    function close3DotsMenu() {
-      document.getElementById('action-sheet-modal').classList.add('hidden');
-    }
-
-    function toggleLike(btn) {
-      btn.classList.toggle('text-red-500');
-    }
-
-    function changeLanguage(lang) {
-      if(lang === 'en') {
-        document.getElementById('txt-tagline').innerText = 'Short Videos (Zeefs) & Photos (Groms)';
-        document.getElementById('lbl-username').innerText = 'Choose Username';
-      } else {
-        document.getElementById('txt-tagline').innerText = 'शॉर्ट वीडियो (Zeefs) और फोटो (Groms)';
-        document.getElementById('lbl-username').innerText = 'अपना Username चुनें';
-      }
-    }
+initialize();
   </script>
 </body>
 </html>
