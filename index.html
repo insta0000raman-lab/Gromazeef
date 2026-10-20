@@ -2244,66 +2244,62 @@ async function renderPage() {
 
       case "editProfile":
         if (typeof renderEditProfile === "function") {
-          await renderEditProfile();
-        } else {
-          renderComingSoon("Edit Profile");
-        }
-        break;
+async function renderPage() {
+  if (!state.user) {
+    renderAuth();
+    return;
+  }
 
-      case "followers":
-        if (typeof renderFollowers === "function") {
-          await renderFollowers();
-        } else {
-          renderComingSoon("Followers");
-        }
-        break;
+  const page = state.currentPage || "home";
 
-      case "following":
-        if (typeof renderFollowing === "function") {
-          await renderFollowing();
-        } else {
-          renderComingSoon("Following");
-        }
-        break;
+  switch (page) {
+    case "home":
+      return await renderHome();
 
-      default:
-        state.currentPage = "home";
-        await renderHome();
-        break;
-    }
-  } catch (error) {
-    handleError(error, "Page rendering");
+    case "explore":
+      return await renderExplore();
 
-    container.innerHTML = `
-      <section class="empty-state">
-        <div class="empty-state-icon">
-          <i class="fa-solid fa-triangle-exclamation"></i>
-        </div>
+    case "create":
+      return await renderCreatePost();
 
-        <h3>This page couldn't load</h3>
+    case "profile":
+      return await renderProfile(
+        state.viewingProfileId || state.user.id
+      );
 
-        <p>${escapeHTML(getDatabaseErrorMessage(error))}</p>
+    case "saved":
+      return await renderSaved();
 
-        <button
-          id="page-retry"
-          class="secondary-btn"
-          type="button"
-        >
-          <i class="fa-solid fa-rotate-right"></i>
-          Try again
-        </button>
-      </section>
-    `;
+    case "settings":
+      return await renderSettings();
 
-    const retryButton = $("#page-retry", container);
+    case "editProfile":
+      return await renderEditProfile();
 
-    if (retryButton) {
-      retryButton.addEventListener("click", renderPage);
-    }
+    case "followers":
+      return await renderFollowers(
+        state.viewingProfileId || state.user.id
+      );
+
+    case "following":
+      return await renderFollowing(
+        state.viewingProfileId || state.user.id
+      );
+
+    case "reels":
+      return await renderReels();
+
+    case "notifications":
+      return await renderNotifications();
+
+    case "messages":
+      return await renderMessages();
+
+    default:
+      return await renderHome();
   }
 }
-
-function renderComingSoon(title) {
+          function renderComingSoon(title) {
   const container = $("#page-content");
 
   if (!container) {
