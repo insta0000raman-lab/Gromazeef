@@ -4440,7 +4440,14 @@ async function bootstrap() {
     if (!state.client) {
       throw new Error("Supabase client could not be initialized.");
     }
-
+app.innerHTML = `
+  <div class="auth-screen">
+    <div class="auth-card">
+      <h1>Gromazeef</h1>
+      <p>Supabase connected. Checking login session...</p>
+    </div>
+  </div>
+`;
     const { data } = await state.client.auth.getSession();
 
     if (data?.session?.user) {
