@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Gromazeef - Social Media Platform</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              pink: '#E1306C',
+              purple: '#833AB4',
+              orange: '#F77737',
+              dark: '#0A0A0C',
+              card: '#121216',
+              border: '#22222A'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar Hide */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    body { background-color: #0A0A0C; color: #FFFFFF; font-family: system-ui, -apple-system, sans-serif; }
+  </style>
+</head>
+<body class="flex justify-center items-center min-h-screen bg-black">
+
+  <!-- Mobile Container Frame -->
+  <div class="w-full max-w-md h-screen md:h-[92vh] bg-brand-dark md:border border-brand-border md:rounded-3xl flex flex-col justify-between overflow-hidden relative shadow-2xl">
+
+    <!-- ========================================== -->
+    <!-- 1. AUTHENTICATION / ONBOARDING SCREEN      -->
+    <!-- ========================================== -->
+    <section id="screen-auth" class="flex-1 flex flex-col justify-between p-6 overflow-y-auto relative z-30 bg-brand-dark">
+      
+      <!-- Top Language Selector -->
+      <div class="flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <i data-lucide="globe" class="w-4 h-4 text-purple-400"></i>
+          <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-brand-card text-xs text-gray-200 border border-brand-border rounded-lg px-2 py-1 outline-none">
+            <option value="hi">हिंदी (Hindi)</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+        <span class="text-[10px] bg-purple-950 text-purple-300 border border-purple-800 px-2 py-0.5 rounded-full font-bold">Gromazeef v1.0</span>
+      </div>
+
+      <!-- App Header / Logo -->
+      <div class="text-center my-4">
+        <h1 class="text-4xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400">
+          GROMAZEEF
+        </h1>
+        <p class="text-xs text-gray-400 mt-1" id="txt-tagline">Short Videos (Zeefs) & Photos (Groms)</p>
+      </div>
+
+      <!-- AUTH FORM CONTAINER -->
+      <div id="auth-form-container" class="space-y-4">
+
+        <!-- LOGGED-IN ACCOUNT BANNER (If user previously created account & logged out) -->
+        <div id="saved-account-banner" class="hidden bg-brand-card p-3 rounded-xl border border-purple-500/30 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-600 to-pink-500 p-[2px]">
+              <img id="saved-avatar" src="https://picsum.photos/100" class="w-full h-full rounded-full object-cover">
+            </div>
+            <div>
+              <p class="text-xs text-gray-400">Saved Account</p>
+              <p id="saved-username" class="text-sm font-bold">@username</p>
+            </div>
+          </div>
+          <button onclick="quickLoginSaved()" class="bg-purple-600 text-xs px-3 py-1.5 rounded-lg font-bold">Login</button>
+        </div>
+
+        <!-- AUTH STEP 1: USERNAME & AVAILABILITY CHECK -->
+        <div id="auth-step-1" class="space-y-3">
+          <label class="text-xs font-semibold text-gray-300" id="lbl-username">Choose Username</label>
+          <div class="relative">
+            <input type="text" id="input-username" oninput="checkUsernameAvailability(this.value)" placeholder="Enter username (e.g. rahul_zeef)" class="w-full bg-brand-card border border-brand-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
+            <span id="username-status-icon" class="absolute right-3 top-3 text-xs font-bold"></span>
+          </div>
+          <p id="username-msg" class="text-[11px] h-4"></p>
+          <button onclick="goToAuthStep(2)" id="btn-next-step1" disabled class="w-full bg-gray-800 text-gray-500 font-bold py-3 rounded-xl transition-all">Next</button>
+        </div>
+
+        <!-- AUTH STEP 2: PASSWORD -->
+        <div id="auth-step-2" class="space-y-3 hidden">
+          <label class="text-xs font-semibold text-gray-300" id="lbl-password">Set Password</label>
+          <input type="password" id="input-password" placeholder="Enter password" class="w-full bg-brand-card border border-brand-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
+          <button onclick="goToAuthStep(3)" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 rounded-xl">Next (Set Password)</button>
+        </div>
+
+        <!-- AUTH STEP 3: GMAIL & OTP VERIFICATION -->
+        <div id="auth-step-3" class="space-y-3 hidden">
+          <label class="text-xs font-semibold text-gray-300" id="lbl-email">Gmail Address & OTP</label>
+          <div class="flex gap-2">
+            <input type="email" id="input-email" placeholder="example@gmail.com" class="flex-1 bg-brand-card border border-brand-border rounded-xl px-4 py-2.5 text-sm">
+            <button onclick="sendOtp()" class="bg-purple-600 text-xs px-3 py-2 rounded-xl font-semibold">Send OTP</button>
+          </div>
+          <input type="text" id="input-otp" placeholder="Enter 6-digit OTP" class="w-full bg-brand-card border border-brand-border rounded-xl px-4 py-2.5 text-sm text-center tracking-widest font-mono">
+          <button onclick="verifyOtpAndProceed()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 rounded-xl">Verify Gmail</button>
+        </div>
+
+        <!-- AUTH STEP 4: PROFILE PICTURE (DP) SETUP -->
+        <div id="auth-step-4" class="space-y-4 text-center hidden">
+          <div class="flex justify-between items-center">
+            <h3 class="text-sm font-bold">Profile Photo (DP)</h3>
+            <button onclick="finishAuthAndEnterApp()" class="text-xs text-pink-400 font-semibold hover:underline">Skip</button>
+          </div>
+          <div class="w-24 h-24 mx-auto rounded-full bg-brand-card border-2 border-dashed border-purple-500 flex items-center justify-center relative overflow-hidden">
+            <img id="dp-preview" src="https://picsum.photos/200" class="w-full h-full object-cover">
+          </div>
+          <input type="file" id="dp-file-input" accept="image/*" class="hidden" onchange="previewDP(event)">
+          <button onclick="document.getElementById('dp-file-input').click()" class="bg-brand-card border border-brand-border px-4 py-2 rounded-xl text-xs font-semibold">Choose Photo</button>
+          <button onclick="finishAuthAndEnterApp()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 rounded-xl mt-4">Complete Setup & Enter</button>
+        </div>
+
+      </div>
+
+      <!-- Footer Switch Login/Signup -->
+      <div class="text-center pt-4 border-t border-brand-border">
+        <p class="text-xs text-gray-400" id="auth-toggle-msg">
+          Already have an account? <a href="#" onclick="toggleAuthMode()" class="text-pink-500 font-bold">Login</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 2. MAIN APP CONTAINER                      -->
+    <!-- ========================================== -->
+    <div id="app-main-wrapper" class="flex-1 flex flex-col justify-between overflow-hidden hidden relative">
+
+      <!-- TOP APP HEADER BAR -->
+      <header class="flex items-center justify-between px-4 py-3 border-b border-brand-border bg-black/90 backdrop-blur z-20">
+        <div class="flex items-center gap-2">
+          <h2 class="text-xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
+            GROMAZEEF
+          </h2>
+          <!-- Multi-Account Switch Button -->
+          <button onclick="toggleAccountSwitchMenu()" class="flex items-center gap-1 text-[11px] bg-brand-card border border-brand-border px-2 py-0.5 rounded-full text-gray-300">
+            <span id="active-header-username">@user</span>
+            <i data-lucide="chevron-down" class="w-3 h-3"></i>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Only+ Upload Button -->
+          <button onclick="openTab('upload')" class="bg-gradient-to-r from-pink-500 to-purple-600 px-2.5 py-1 rounded-lg text-white text-xs font-bold flex items-center gap-1">
+            <i data-lucide="plus-square" class="w-3.5 h-3.5"></i> Only+
+          </button>
+          <!-- Z-Chat Button -->
+          <button onclick="alert('Z-Chat Opened')" class="relative">
+            <span class="text-xs font-extrabold text-pink-500">Z-Chat</span>
+            <span class="absolute -top-1.5 -right-2 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- MULTI-ACCOUNT SWITCH POPUP MODAL (No Logout) -->
+      <div id="account-switch-modal" class="hidden absolute top-12 left-4 bg-brand-card border border-brand-border rounded-xl p-3 z-50 shadow-2xl w-60">
+        <p class="text-[11px] text-gray-400 font-bold mb-2">Switch Account (No Logout)</p>
+        <div id="account-switch-list" class="space-y-1">
+          <!-- Dynamic Accounts injected here -->
+        </div>
+        <button onclick="addNewAccountFromSwitcher()" class="w-full mt-2 pt-2 border-t border-brand-border text-xs text-pink-400 font-bold flex items-center gap-1">
+          <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Add Another Account
+        </button>
+      </div>
+
+      <!-- MAIN CONTENT TAB VIEW -->
+      <main id="app-view-container" class="flex-1 overflow-y-auto relative">
+
+        <!-- TAB 1: HOME FEED (STRIPS + GROMS + ZEEFS) -->
+        <section id="tab-home" class="p-3 space-y-4">
+          <!-- Strips (Story) Bar -->
+          <div class="flex gap-3 overflow-x-auto pb-2 border-b border-brand-border no-scrollbar">
+            <!-- Add Strip -->
+            <div class="flex flex-col items-center flex-shrink-0" onclick="alert('Add Strip Story')">
+              <div class="w-14 h-14 rounded-full border-2 border-dashed border-pink-500 flex items-center justify-center bg-brand-card">
+                <i data-lucide="plus" class="w-5 h-5 text-pink-500"></i>
+              </div>
+              <span class="text-[10px] mt-1 text-gray-300">Add Strip</span>
+            </div>
+            <!-- Dynamic Strips List -->
+            <div id="strips-list" class="flex gap-3"></div>
+          </div>
+
+          <!-- Feed Posts (Groms & Zeefs) -->
+          <div id="home-feed-posts" class="space-y-4"></div>
+        </section>
+
+        <!-- TAB 2: ZEEFS PLAYER (Instagram Reels Inspired Full Screen Video Engine) -->
+        <section id="tab-zeefs" class="hidden h-full w-full bg-black relative flex flex-col justify-end p-4">
+          <img src="https://picsum.photos/400/700?random=88" class="absolute inset-0 w-full h-full object-cover opacity-80">
+          
+          <!-- Right Side Actions -->
+          <div class="absolute right-3 bottom-16 flex flex-col items-center space-y-4 z-10">
+            <button onclick="toggleLike(this)" class="flex flex-col items-center text-xs text-white">
+              <i data-lucide="heart" class="w-7 h-7"></i> <span class="text-[10px] mt-0.5">18.4K</span>
+            </button>
+            <button onclick="openCommentsModal()" class="flex flex-col items-center text-xs text-white">
+              <i data-lucide="message-circle" class="w-7 h-7"></i> <span class="text-[10px] mt-0.5">850</span>
+            </button>
+            <button onclick="openShareModal()" class="flex flex-col items-center text-xs text-white">
+              <i data-lucide="share-2" class="w-7 h-7"></i> <span class="text-[10px] mt-0.5">Share</span>
+            </button>
+            <button onclick="resharePost()" class="flex flex-col items-center text-xs text-green-400">
+              <i data-lucide="repeat" class="w-7 h-7"></i> <span class="text-[10px] mt-0.5">Reshare</span>
+            </button>
+            <button onclick="savePost()" class="flex flex-col items-center text-xs text-white">
+              <i data-lucide="bookmark" class="w-7 h-7"></i> <span class="text-[10px] mt-0.5">Save</span>
+            </button>
+            <button onclick="open3DotsMenu()" class="flex flex-col items-center text-xs text-white">
+              <i data-lucide="more-vertical" class="w-7 h-7"></i>
+            </button>
+          </div>
+
+          <!-- Bottom Caption & Audio Info -->
+          <div class="z-10 max-w-[80%] space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-sm">@zeef_creator</span>
+              <button class="bg-pink-600 text-[10px] px-2 py-0.5 rounded-full font-bold">Follow</button>
+            </div>
+            <p class="text-xs text-gray-200 line-clamp-2">Gromazeef official launch! Growtag: <span class="text-purple-400 font-bold">@gromazeef_admin</span> #viral #zeefs</p>
+            <div onclick="openAudioPage('Trending Beat - Original Sound')" class="flex items-center gap-2 text-xs text-purple-300 cursor-pointer">
+              <i data-lucide="music" class="w-3.5 h-3.5 animate-spin"></i> Original Audio - Trending Beat
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3: UPLOAD STUDIO (Only+) -->
+        <section id="tab-upload" class="hidden p-4 space-y-4">
+          <h3 class="font-bold text-base border-b border-brand-border pb-2">Upload Zeefs (Video) or Groms (Photo)</h3>
+          
+          <div class="w-full h-40 rounded-xl border-2 border-dashed border-brand-border flex flex-col items-center justify-center bg-brand-card">
+            <i data-lucide="image" class="w-8 h-8 text-gray-500 mb-2"></i>
+            <button onclick="document.getElementById('upload-file-input').click()" class="bg-purple-600 text-xs px-3 py-1.5 rounded-lg font-bold">Select From Gallery</button>
+            <input type="file" id="upload-file-input" class="hidden">
+          </div>
+
+          <div class="space-y-3">
+            <input type="text" id="upload-caption" placeholder="Write caption..." class="w-full bg-brand-card border border-brand-border rounded-xl px-3 py-2 text-xs">
+            <input type="text" id="upload-growtag" placeholder="Growtag (@username for Collab)" class="w-full bg-brand-card border border-brand-border rounded-xl px-3 py-2 text-xs">
+            <input type="text" id="upload-location" placeholder="Add Location" class="w-full bg-brand-card border border-brand-border rounded-xl px-3 py-2 text-xs">
+            
+            <div class="flex justify-between items-center bg-brand-card p-3 rounded-xl border border-brand-border">
+              <span class="text-xs font-semibold">Quality Settings</span>
+              <select class="bg-black text-xs p-1 rounded border border-brand-border">
+                <option>Ultra HD (1080p)</option>
+                <option>Standard (720p)</option>
+              </select>
+            </div>
+
+            <button onclick="publishMediaPost()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 font-bold py-3 rounded-xl text-sm">Upload Now</button>
+          </div>
+        </section>
+
+        <!-- TAB 4: SEARCH ENGINE -->
+        <section id="tab-search" class="hidden p-3 space-y-4">
+          <div class="relative">
+            <input type="text" oninput="liveSearchAccounts(this.value)" placeholder="Search accounts, zeefs, groms..." class="w-full bg-brand-card border border-brand-border rounded-xl pl-9 pr-3 py-2 text-xs text-white">
+            <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-2.5"></i>
+          </div>
+
+          <div id="search-results-accounts" class="space-y-2">
+            <!-- Dynamic Accounts Results -->
+          </div>
+
+          <div>
+            <h4 class="text-xs font-bold text-gray-400 mb-2">Trending Zeefs & Groms</h4>
+            <div id="search-grid-media" class="grid grid-cols-3 gap-1"></div>
+          </div>
+        </section>
+
+        <!-- TAB 5: PROFILE STUDIO -->
+        <section id="tab-profile" class="hidden p-4 space-y-4">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-1">
+              <i data-lucide="plus-square" onclick="openTab('upload')" class="w-5 h-5 text-pink-500 cursor-pointer"></i>
+              <h3 id="profile-display-username" class="font-bold text-sm">@username</h3>
+            </div>
+            <!-- Open Advanced Settings (15-20 Options) -->
+            <button onclick="toggleSettingsDrawer(true)" class="p-1 bg-brand-card rounded-lg">
+              <i data-lucide="more-vertical" class="w-5 h-5"></i>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="w-16 h-16 rounded-full border-2 border-pink-500 overflow-hidden" onclick="openStripViewers()">
+              <img id="profile-dp-img" src="https://picsum.photos/100" class="w-full h-full object-cover">
+            </div>
+            <div class="flex space-x-4 text-center text-xs">
+              <div><p class="font-bold text-sm">12</p><span class="text-gray-400">Posts</span></div>
+              <div><p class="font-bold text-sm">1.5K</p><span class="text-gray-400">Followers</span></div>
+              <div><p class="font-bold text-sm">230</p><span class="text-gray-400">Following</span></div>
+            </div>
+          </div>
+
+          <div>
+            <p id="profile-bio" class="text-xs text-gray-300">🚀 Official Gromazeef Creator Account | Coding & Media</p>
+            <button onclick="alert('Edit Profile Modal')" class="w-full mt-2 py-1.5 bg-brand-card border border-brand-border rounded-lg text-xs font-bold">Edit Profile & Dashboard</button>
+          </div>
+
+          <!-- Profile Tabs Grid (Groms/Zeefs, Zeefs, Reshares, Growtags) -->
+          <div class="border-t border-brand-border pt-2">
+            <div class="flex justify-around border-b border-brand-border pb-2 text-xs">
+              <button class="font-bold text-pink-500">Posts</button>
+              <button class="text-gray-400">Zeefs</button>
+              <button class="text-gray-400">Reshares</button>
+              <button class="text-gray-400">Growtags</button>
+            </div>
+            <div id="profile-posts-grid" class="grid grid-cols-3 gap-1 mt-2"></div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- ----------------- BOTTOM NAVIGATION BAR (5 OPTIONS) ----------------- -->
+      <nav class="flex justify-around items-center py-2.5 bg-black border-t border-brand-border z-20">
+        <button onclick="openTab('home')" id="nav-home" class="text-pink-500"><i data-lucide="home" class="w-6 h-6"></i></button>
+        <button onclick="openTab('zeefs')" id="nav-zeefs" class="text-gray-400"><i data-lucide="film" class="w-6 h-6"></i></button>
+        <button onclick="openTab('upload')" id="nav-upload" class="p-2 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full text-white shadow-lg"><i data-lucide="plus-square" class="w-5 h-5"></i></button>
+        <button onclick="openTab('search')" id="nav-search" class="text-gray-400"><i data-lucide="search" class="w-6 h-6"></i></button>
+        <button onclick="openTab('profile')" id="nav-profile" class="text-gray-400"><i data-lucide="user" class="w-6 h-6"></i></button>
+      </nav>
+
+      <!-- ----------------- ADVANCED PROFILE SETTINGS DRAWER (15-20 OPTIONS) ----------------- -->
+      <div id="settings-drawer" class="hidden absolute inset-0 bg-black/95 z-50 p-4 overflow-y-auto flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-center pb-3 border-b border-brand-border mb-4">
+            <h3 class="font-bold text-sm flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4"></i> Settings & Control</h3>
+            <button onclick="toggleSettingsDrawer(false)" class="text-xs font-bold text-pink-500">Close</button>
+          </div>
+
+          <!-- 15+ Detailed Options -->
+          <div class="space-y-2 text-xs">
+            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="user" class="w-4 h-4 text-purple-400"></i> Account Management</div>
+            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="shield-check" class="w-4 h-4 text-blue-400"></i> Verification & Blue Tick Badge</div>
+            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="globe" class="w-4 h-4 text-green-400"></i> Language (Hindi / English)</div>
+            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="film" class="w-4 h-4 text-pink-400"></i> Media Upload Quality (HD / 4K)</div>
+            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="lock" class="w-4 h-4 text-yellow-400"></i> Account Privacy & Blocked Users</div>
+            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="eye" class="w-4 h-4 text-indigo-400"></i> Account Status & Violations</div>
+            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="file-text" class="w-4 h-4 text-gray-400"></i> Account History & Activity Log</div>
+            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="help-circle" class="w-4 h-4 text-orange-400"></i> Help, Support & Report Bug</div>
+            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="bell" class="w-4 h-4 text-red-400"></i> Notification Preferences</div>
+            <div class="p-2.5 bg-brand-card rounded-lg flex items-center gap-3"><i data-lucide="database" class="w-4 h-4 text-teal-400"></i> Data Saver Mode</div>
+          </div>
+        </div>
+
+        <button onclick="logoutActiveAccount()" class="w-full mt-6 py-3 bg-red-600/20 text-red-400 border border-red-600/50 rounded-xl font-bold flex items-center justify-center gap-2 text-xs">
+          <i data-lucide="log-out" class="w-4 h-4"></i> Log Out Current Account
+        </button>
+      </div>
+
+      <!-- ----------------- 3-DOTS ACTION SHEET MODAL ----------------- -->
+      <div id="action-sheet-modal" class="hidden absolute inset-0 bg-black/80 z-50 flex flex-col justify-end">
+        <div class="bg-brand-card p-4 rounded-t-2xl space-y-3 border-t border-brand-border">
+          <button onclick="alert('Full Screen Mode Enabled')" class="w-full text-left py-2 text-xs font-bold flex items-center gap-2"><i data-lucide="maximize" class="w-4 h-4"></i> Full Screen Mode</button>
+          <button onclick="alert('Added to Interested')" class="w-full text-left py-2 text-xs font-bold flex items-center gap-2"><i data-lucide="thumbs-up" class="w-4 h-4 text-green-400"></i> Interested</button>
+          <button onclick="alert('Added to Not Interested')" class="w-full text-left py-2 text-xs font-bold flex items-center gap-2"><i data-lucide="thumbs-down" class="w-4 h-4 text-orange-400"></i> Not Interested</button>
+          <button onclick="alert('Reported')" class="w-full text-left py-2 text-xs font-bold text-red-400 flex items-center gap-2"><i data-lucide="flag" class="w-4 h-4"></i> Report Post</button>
+          <button onclick="close3DotsMenu()" class="w-full bg-brand-dark py-2 rounded-xl text-xs font-bold mt-2">Cancel</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 3. JS ENGINE & SUPABASE CONFIGURATION      -->
+  <!-- ========================================== -->
+  <script>
+    // ----------------------------------------------------
+    // SUPABASE SETUP (Insert your own credentials here)
+    // ----------------------------------------------------
+    const SUPABASE_URL = "https://YOUR_SUPABASE_URL.supabase.co"; 
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY"; 
+    
+    // Initialize Supabase Client safely
+    let supabase = null;
+    if (SUPABASE_URL !== "https://YOUR_SUPABASE_URL.supabase.co") {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    // App State Management
+    let currentAuthMode = 'signup'; // 'signup' or 'login'
+    let selectedUsername = '';
+    let currentActiveUser = null;
+    let savedAccounts = JSON.parse(localStorage.getItem('gz_accounts') || '[]');
+
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Check Local Storage for Saved Sessions on Startup
+    window.addEventListener('DOMContentLoaded', () => {
+      if (savedAccounts.length > 0) {
+        document.getElementById('saved-account-banner').classList.remove('hidden');
+        document.getElementById('saved-username').innerText = `@${savedAccounts[0].username}`;
+      }
+    });
+
+    // ----------------------------------------------------
+    // AUTHENTICATION & ONBOARDING FLOW
+    // ----------------------------------------------------
+    function checkUsernameAvailability(val) {
+      const username = val.trim().toLowerCase();
+      const statusIcon = document.getElementById('username-status-icon');
+      const msg = document.getElementById('username-msg');
+      const nextBtn = document.getElementById('btn-next-step1');
+
+      if (username.length < 3) {
+        statusIcon.innerText = '';
+        msg.innerText = 'Username minimum 3 characters hona chahiye.';
+        msg.className = 'text-[11px] text-gray-400';
+        nextBtn.disabled = true;
+        nextBtn.className = 'w-full bg-gray-800 text-gray-500 font-bold py-3 rounded-xl';
+        return;
+      }
+
+      // Mock DB Check / Supabase Query
+      const isTaken = savedAccounts.some(acc => acc.username === username);
+      if (isTaken) {
+        statusIcon.innerText = '❌';
+        msg.innerText = 'Username pehle se liya gaya hai.';
+        msg.className = 'text-[11px] text-red-400';
+        nextBtn.disabled = true;
+        nextBtn.className = 'w-full bg-gray-800 text-gray-500 font-bold py-3 rounded-xl';
+      } else {
+        statusIcon.innerText = '✅';
+        msg.innerText = 'Username Available hai!';
+        msg.className = 'text-[11px] text-green-400 font-bold';
+        selectedUsername = username;
+        nextBtn.disabled = false;
+        nextBtn.className = 'w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 rounded-xl cursor-pointer';
+      }
+    }
+
+    function goToAuthStep(step) {
+      document.getElementById('auth-step-1').classList.add('hidden');
+      document.getElementById('auth-step-2').classList.add('hidden');
+      document.getElementById('auth-step-3').classList.add('hidden');
+      document.getElementById('auth-step-4').classList.add('hidden');
+
+      document.getElementById(`auth-step-${step}`).classList.remove('hidden');
+    }
+
+    function sendOtp() {
+      const email = document.getElementById('input-email').value;
+      if (!email.includes('@')) {
+        alert('Valid Gmail daalein!');
+        return;
+      }
+      alert(`OTP Gmail (${email}) par bhej diya gaya hai! (Test OTP: 123456)`);
+    }
+
+    function verifyOtpAndProceed() {
+      const otp = document.getElementById('input-otp').value;
+      if (otp === '123456' || otp.length === 6) {
+        goToAuthStep(4);
+      } else {
+        alert('Galat OTP! Sahi 6-digit OTP daalein.');
+      }
+    }
+
+    function previewDP(event) {
+      const reader = new FileReader();
+      reader.onload = function() {
+        document.getElementById('dp-preview').src = reader.result;
+      }
+      reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function finishAuthAndEnterApp() {
+      currentActiveUser = {
+        username: selectedUsername || 'new_user',
+        avatar: document.getElementById('dp-preview').src
+      };
+
+      // Save Session locally for multi-account switching
+      savedAccounts.push(currentActiveUser);
+      localStorage.setItem('gz_accounts', JSON.stringify(savedAccounts));
+
+      // Enter App Screen
+      document.getElementById('screen-auth').classList.add('hidden');
+      document.getElementById('app-main-wrapper').classList.remove('hidden');
+
+      updateAppUserUI();
+      loadHomeFeedMockData();
+    }
+
+    function quickLoginSaved() {
+      if (savedAccounts.length > 0) {
+        currentActiveUser = savedAccounts[0];
+        document.getElementById('screen-auth').classList.add('hidden');
+        document.getElementById('app-main-wrapper').classList.remove('hidden');
+        updateAppUserUI();
+        loadHomeFeedMockData();
+      }
+    }
+
+    function updateAppUserUI() {
+      document.getElementById('active-header-username').innerText = `@${currentActiveUser.username}`;
+      document.getElementById('profile-display-username').innerText = `@${currentActiveUser.username}`;
+      document.getElementById('profile-dp-img').src = currentActiveUser.avatar;
+    }
+
+    // ----------------------------------------------------
+    // MULTI-ACCOUNT SWITCHER ENGINE (No Logout)
+    // ----------------------------------------------------
+    function toggleAccountSwitchMenu() {
+      const modal = document.getElementById('account-switch-modal');
+      modal.classList.toggle('hidden');
+
+      const listContainer = document.getElementById('account-switch-list');
+      listContainer.innerHTML = '';
+
+      savedAccounts.forEach(acc => {
+        const item = document.createElement('div');
+        item.className = `p-2 text-xs rounded-lg cursor-pointer flex items-center justify-between ${acc.username === currentActiveUser.username ? 'bg-purple-900/40 text-purple-300' : 'hover:bg-gray-800'}`;
+        item.innerHTML = `<span>@${acc.username}</span> ${acc.username === currentActiveUser.username ? '🟢' : ''}`;
+        item.onclick = () => {
+          currentActiveUser = acc;
+          updateAppUserUI();
+          modal.classList.add('hidden');
+        };
+        listContainer.appendChild(item);
+      });
+    }
+
+    function addNewAccountFromSwitcher() {
+      document.getElementById('account-switch-modal').classList.add('hidden');
+      document.getElementById('app-main-wrapper').classList.add('hidden');
+      document.getElementById('screen-auth').classList.remove('hidden');
+      goToAuthStep(1);
+    }
+
+    function logoutActiveAccount() {
+      savedAccounts = savedAccounts.filter(acc => acc.username !== currentActiveUser.username);
+      localStorage.setItem('gz_accounts', JSON.stringify(savedAccounts));
+      window.location.reload();
+    }
+
+    // ----------------------------------------------------
+    // TAB NAVIGATION
+    // ----------------------------------------------------
+    function openTab(tabName) {
+      ['home', 'zeefs', 'upload', 'search', 'profile'].forEach(tab => {
+        document.getElementById(`tab-${tab}`).classList.add('hidden');
+        document.getElementById(`nav-${tab}`).className = 'text-gray-400';
+      });
+
+      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+      document.getElementById(`nav-${tabName}`).className = 'text-pink-500';
+      
+      if(tabName === 'upload') {
+        document.getElementById('nav-upload').className = 'p-2 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full text-white shadow-lg';
+      }
+    }
+
+    // ----------------------------------------------------
+    // FEED & MEDIA ENGINE
+    // ----------------------------------------------------
+    function loadHomeFeedMockData() {
+      // Strips Data
+      const stripsContainer = document.getElementById('strips-list');
+      stripsContainer.innerHTML = '';
+      for (let i = 1; i <= 5; i++) {
+        stripsContainer.innerHTML += `
+          <div class="flex flex-col items-center flex-shrink-0 cursor-pointer" onclick="alert('Viewing Strip ${i}')">
+            <div class="w-14 h-14 rounded-full p-[2px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600">
+              <img src="https://picsum.photos/100/100?random=${i+10}" class="w-full h-full rounded-full border-2 border-black object-cover">
+            </div>
+            <span class="text-[10px] mt-1 text-gray-300">user_${i}</span>
+          </div>
+        `;
+      }
+
+      // Feed Posts Data
+      const postsContainer = document.getElementById('home-feed-posts');
+      postsContainer.innerHTML = `
+        <div class="bg-brand-card border border-brand-border rounded-xl p-3 space-y-2">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <img src="https://picsum.photos/50" class="w-7 h-7 rounded-full">
+              <span class="text-xs font-bold">gromazeef_official</span>
+            </div>
+            <button class="text-xs bg-purple-600 px-2.5 py-0.5 rounded-full font-semibold">Follow</button>
+          </div>
+          <img src="https://picsum.photos/400/300?random=1" class="w-full rounded-lg object-cover h-60">
+          <p class="text-xs text-gray-300">Welcome to Gromazeef platform! <span class="text-purple-400 font-bold">@creator</span> #groms #zeefs</p>
+        </div>
+      `;
+
+      // Profile Grid Data
+      const profileGrid = document.getElementById('profile-posts-grid');
+      profileGrid.innerHTML = '';
+      for(let j=1; j<=6; j++) {
+        profileGrid.innerHTML += `<img src="https://picsum.photos/150/150?random=${j+20}" class="w-full h-24 object-cover rounded">`;
+      }
+    }
+
+    // UI Actions
+    function toggleSettingsDrawer(show) {
+      document.getElementById('settings-drawer').classList.toggle('hidden', !show);
+    }
+
+    function open3DotsMenu() {
+      document.getElementById('action-sheet-modal').classList.remove('hidden');
+    }
+
+    function close3DotsMenu() {
+      document.getElementById('action-sheet-modal').classList.add('hidden');
+    }
+
+    function toggleLike(btn) {
+      btn.classList.toggle('text-red-500');
+    }
+
+    function changeLanguage(lang) {
+      if(lang === 'en') {
+        document.getElementById('txt-tagline').innerText = 'Short Videos (Zeefs) & Photos (Groms)';
+        document.getElementById('lbl-username').innerText = 'Choose Username';
+      } else {
+        document.getElementById('txt-tagline').innerText = 'शॉर्ट वीडियो (Zeefs) और फोटो (Groms)';
+        document.getElementById('lbl-username').innerText = 'अपना Username चुनें';
+      }
+    }
+  </script>
+</body>
+</html>
